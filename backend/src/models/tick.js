@@ -2,11 +2,6 @@ module.exports = (sequelize, DataTypes) => {
     const Tick = sequelize.define(
         'tick',
         {
-            id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-            },
             symbol: DataTypes.STRING(25),
             ask: DataTypes.INTEGER,
             bid: DataTypes.INTEGER,
