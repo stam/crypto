@@ -5,11 +5,20 @@ const typeDefs = `
   scalar Date
   type Query {
     tick(id: ID!): Tick
+    candles: [Candle]
   }
   type Tick {
     id: Int!
     last: Int
     timestamp: Date
+  }
+  type Candle {
+    id: Int
+    open: Int
+    close: Int
+    high: Int
+    low: Int
+    datetime: Date
   }
 `;
 
@@ -18,13 +27,16 @@ const resolvers = {
         tick: (_, { id }) => {
             return db.tick.findById(id)
         },
+        candles: (_) => {
+            return db.candle.findAll();
+        }
     },
 };
 
 const server = new GraphQLServer({ typeDefs, resolvers });
 
 const options = {
-    endpoint: '/graphql',
+    endpoint: '/api',
     subscriptions: '/subscriptions',
     playground: '/playground',
 };
