@@ -2,16 +2,32 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.0",
+    "prettier": "^1.12.1",
+    "react-app-rewired": "^1.5.2"
+  },
   "dependencies": {
+    "mobx": "^4.2.1",
+    "mobx-react": "^5.1.2",
     "react": "^16.3.2",
+    "react-app-rewire-mobx": "^1.0.8",
     "react-dom": "^16.3.2",
     "react-scripts": "1.1.4"
   },
+  "lint-staged": {
+    "src/**/*.{js,json}": [
+      "prettier --single-quote --trailing-comma es5 --tab-width 4 --write",
+      "git add"
+    ]
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "precommit": "lint-staged"
   },
   "proxy": {
     "/api": {
