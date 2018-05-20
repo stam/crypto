@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import CandleChart from './CandleChart';
-import './App.css';
+import CandleChart from '../component/CandleChart';
 
 function parseData(data) {
     return data.candles.map(candle => ({
@@ -17,7 +15,7 @@ function parseData(data) {
 }
 
 @observer
-class App extends Component {
+class CoinValue extends Component {
     @observable.ref data;
 
     componentWillMount() {
@@ -35,7 +33,7 @@ class App extends Component {
     }
     render() {
         return (
-            <div>
+            <div className="fill">
                 {!this.data && <p>Loading</p>}
                 {this.data && <CandleChart data={this.data} />}
             </div>
@@ -43,4 +41,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default CoinValue;
