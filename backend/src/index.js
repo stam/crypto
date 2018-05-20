@@ -1,5 +1,6 @@
 const { GraphQLServer } = require('graphql-yoga');
 const db = require('./models');
+const runSimulation = require('./simulation');
 
 const typeDefs = `
   scalar Date
@@ -46,24 +47,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        runSimulation: (_) => {
-            const sim = {
-                from: new Date(),
-                to: new Date(),
-                orders: [{
-                    type: 'buy',
-                    timestamp: new Date(),
-                    quantity: 100,
-                    price: 100,
-                }, {
-                    type: 'sell',
-                    timestamp: new Date(),
-                    quantity: 100,
-                    price: 100,
-                }]
-            }
-            return sim;
-        }
+        runSimulation,
     }
 };
 
