@@ -47,7 +47,9 @@ const resolvers = {
         }
     },
     Mutation: {
-        runSimulation,
+        runSimulation: (_, { from, to, startValue }) => {
+
+        },
     }
 };
 
