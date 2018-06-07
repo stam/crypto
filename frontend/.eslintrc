@@ -1,6 +1,12 @@
 {
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "sourceType": "module"
-  }
+    "extends": "react-app",
+    "plugins": [
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": [
+            "error",
+            { "singleQuote": true, "tabWidth": 4 }
+        ]
+    }
 }

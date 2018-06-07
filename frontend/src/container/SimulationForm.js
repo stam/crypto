@@ -1,10 +1,38 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
+import { observable } from 'mobx';
 
 @observer
 class SimulationForm extends Component {
+    @observable.ref data;
+
     handleSubmit = e => {
         e.preventDefault();
+        fetch('/api', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `mutation {
+                        runSimulation(
+                            startDate: "2018-01-01",
+                            endDate: "2018-12-31",
+                            startValue: "7000USD"
+                        ) {
+                            from
+                            to
+                            orders {
+                            type
+                            quantity
+                            price
+                            }
+                        }
+                    }`,
+            }),
+        })
+            .then(res => res.json())
+            .then(res => {
+                console.log('res', res);
+            });
     };
     render() {
         return (

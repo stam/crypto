@@ -1,6 +1,7 @@
 const { GraphQLServer } = require('graphql-yoga');
 const db = require('./models');
-const runSimulation = require('./simulation');
+const Strategy = require('./strategy');
+const Simulation = require('./simulation');
 
 const typeDefs = `
   scalar Date
@@ -9,7 +10,7 @@ const typeDefs = `
     candles: [Candle]
   }
   type Mutation {
-    runSimulation: Simulation
+    runSimulation(startDate: Date!, endDate: Date!, startValue: String!): Simulation
   }
   type Simulation {
       from: Date
@@ -47,8 +48,23 @@ const resolvers = {
         }
     },
     Mutation: {
-        runSimulation: (_, { from, to, startValue }) => {
+        runSimulation: async (_, { startDate, endDate, startValue }) => {
+            const ticks = await db.tick.findAll({
+                order: ['timestamp'],
+            });
+            const strategy = new Strategy();
+            const simulation = new Simulation({ ticks, strategy, startValue });
 
+            console.log('bla', startDate, endDate);
+
+            simulation.run();
+
+            const sim = {
+                from: startDate,
+                to: endDate,
+                orders: simulation.orders,
+            }
+            return sim;
         },
     }
 };
