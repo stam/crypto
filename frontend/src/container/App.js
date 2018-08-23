@@ -9,26 +9,26 @@ import { observable } from 'mobx';
 
 @observer
 class App extends Component {
-    @observable simulation;
+  @observable simulation;
 
-    setSimulation = simulation => {
-        this.simulation = simulation;
-    };
+  setSimulation = simulation => {
+    this.simulation = simulation;
+  };
 
-    render() {
-        return (
-            <main>
-                <div className="flex-row">
-                    <SimulationForm setSimulation={this.setSimulation} />
-                    <CoinValue />
-                </div>
-                <div className="flex-row">
-                    <Orders simulation={this.simulation} />
-                    <SimulationValue />
-                </div>
-            </main>
-        );
-    }
+  render() {
+    return (
+      <main>
+        <div className="flex-row">
+          <SimulationForm setSimulation={this.setSimulation} />
+          <CoinValue />
+        </div>
+        <div className="flex-row">
+          <Orders simulation={this.simulation} />
+          <SimulationValue />
+        </div>
+      </main>
+    );
+  }
 }
 
 export default App;
