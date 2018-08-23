@@ -55,8 +55,6 @@ const resolvers = {
             const strategy = new Strategy();
             const simulation = new Simulation({ ticks, strategy, startValue });
 
-            console.log('bla', startDate, endDate);
-
             simulation.run();
 
             const sim = {

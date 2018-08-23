@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
+import PropTypes from 'prop-types';
 
 @observer
 class SimulationForm extends Component {
     @observable.ref data;
+
+    static propTypes = {
+        setSimulation: PropTypes.func.isRequired,
+    };
 
     handleSubmit = e => {
         e.preventDefault();
@@ -21,9 +26,10 @@ class SimulationForm extends Component {
                             from
                             to
                             orders {
-                            type
-                            quantity
-                            price
+                                timestamp
+                                type
+                                quantity
+                                price
                             }
                         }
                     }`,
@@ -31,7 +37,7 @@ class SimulationForm extends Component {
         })
             .then(res => res.json())
             .then(res => {
-                console.log('res', res);
+                this.props.setSimulation(res.data.runSimulation);
             });
     };
     render() {
