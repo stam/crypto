@@ -39,47 +39,47 @@ const typeDefs = `
 `;
 
 const resolvers = {
-    Query: {
-        tick: (_, { id }) => {
-            return db.tick.findById(id)
-        },
-        candles: (_) => {
-            return db.candle.findAll();
-        }
+  Query: {
+    tick: (_, { id }) => {
+      return db.tick.findById(id)
     },
-    Mutation: {
-        runSimulation: async (_, { startDate, endDate, startValue }) => {
-            const ticks = await db.tick.findAll({
-                order: ['timestamp'],
-            });
-            const strategy = new Strategy();
-            const simulation = new Simulation({ ticks, strategy, startValue });
-
-            simulation.run();
-
-            const sim = {
-                from: startDate,
-                to: endDate,
-                orders: simulation.orders,
-            }
-            return sim;
-        },
+    candles: (_) => {
+      return db.candle.findAll();
     }
+  },
+  Mutation: {
+    runSimulation: async (_, { startDate, endDate, startValue }) => {
+      const ticks = await db.tick.findAll({
+        order: ['timestamp'],
+      });
+      const strategy = new Strategy();
+      const simulation = new Simulation({ ticks, strategy, startValue });
+
+      simulation.run();
+
+      const sim = {
+        from: startDate,
+        to: endDate,
+        orders: simulation.orders,
+      }
+      return sim;
+    },
+  }
 };
 
 const server = new GraphQLServer({ typeDefs, resolvers });
 
 const options = {
-    endpoint: '/api',
-    subscriptions: '/subscriptions',
-    playground: '/playground',
+  endpoint: '/api',
+  subscriptions: '/subscriptions',
+  playground: '/playground',
 };
 
 db.sequelize
-    .authenticate()
-    .then(async function() {
-      server.start(options, () => console.log('Server is running on localhost:4000'));
-    })
-    .catch(function(e) {
-        throw new Error(e);
-    });
+  .authenticate()
+  .then(async function() {
+    server.start(options, () => console.log('Server is running on localhost:4000'));
+  })
+  .catch(function(e) {
+      throw new Error(e);
+  });
