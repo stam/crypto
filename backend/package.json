@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch"
   },
   "author": "JasperStam",
   "license": "ISC",
@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
+    "jest": "^23.5.0",
     "nodemon": "^1.17.4",
     "sequelize-cli": "^4.0.0"
   }

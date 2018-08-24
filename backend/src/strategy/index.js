@@ -4,7 +4,6 @@ class Asset {
   constructor(buyTick, quantity) {
     this.costBasis = buyTick;
     this.quantity = quantity;
-    console.log('create Asset', buyTick.get('id'), quantity);
   }
 
   handleTick(tick, value) {
@@ -47,15 +46,6 @@ class Strategy {
     }
   }
 
-  // Sell if we have an active order
-  signalSell(tick) {
-    if (this.activeOrder !== null) {
-      this.createOrder(tick, 'sell');
-      this.activeOrder = null;
-    }
-  }
-
-  //
   buyAsset(tick, quantity) {
     this.quantity -= quantity;
 
@@ -85,7 +75,7 @@ class Strategy {
   }
 
   createOrder(tick, type, quantity) {
-    console.log(`> Creating ${type} order: quantity ${quantity}, price: ${tick.get('last')}`)
+    console.info(`> Creating ${type} order: quantity ${quantity}, price: ${tick.get('last')}`)
     const order = {
       type,
       timestamp: tick.get('timestamp'),
