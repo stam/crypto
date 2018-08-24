@@ -52,8 +52,8 @@ const resolvers = {
       const ticks = await db.tick.findAll({
         order: ['timestamp'],
       });
-      const strategy = new Strategy();
-      const simulation = new Simulation({ ticks, strategy, startValue });
+
+      const simulation = new Simulation({ ticks, Strategy, startValue });
 
       simulation.run();
 

@@ -1,4 +1,5 @@
 const Strategy = require('.');
+const AssetInterface = require('../asset/interface');
 const _ = require('lodash');
 
 class Tick {
@@ -18,12 +19,14 @@ const tickData = [
 ];
 
 const ticks = tickData.map(data => new Tick(data));
+const assetInterface = new AssetInterface({ });
 
 describe('The default Strategy', () => {
   let strategy;
 
   beforeEach(() => {
-    strategy = new Strategy();
+    assetInterface.createOrder = jest.fn();
+    strategy = new Strategy(assetInterface);
   })
 
   it('creates assets', () => {
@@ -37,20 +40,17 @@ describe('The default Strategy', () => {
     strategy.handleTick(ticks[0]);
     strategy.handleTick(ticks[1]);
 
-    expect(strategy.orders.length).toBe(2);
-    expect(strategy.orders[0]).toEqual({
-      price: tickData[0].last,
-      quantity: 1,
-      timestamp: tickData[0].timestamp,
-      type: 'buy',
-    });
+    expect(assetInterface.createOrder).toHaveBeenCalledTimes(2);
+    const orders = assetInterface.createOrder.mock.calls;
 
-    expect(strategy.orders[1]).toEqual({
-      price: tickData[1].last,
-      quantity: 1,
-      timestamp: tickData[1].timestamp,
-      type: 'sell',
-    })
+    expect(orders[0][0].price).toBe(tickData[0].last);
+    expect(orders[0][0].asset.quantity).toBe(1);
+    expect(orders[0][0].type).toBe('buy');
+
+    expect(orders[1][0].price).toBe(tickData[1].last);
+    expect(orders[1][0].asset.quantity).toBe(1);
+    expect(orders[1][0].type).toBe('sell');
+
   });
 
   it('removes its assets after selling', () => {
