@@ -1,20 +1,5 @@
 const _ = require('lodash');
-
-class Asset {
-  constructor(cost, quantity, handleSell) {
-    this.cost = cost;
-    this.quantity = quantity;
-    this.handleSell = handleSell;
-    this.id = Date.now();
-  }
-
-  handleTick(tick) {
-    const value = parseInt(tick.get('last') / 100);
-    if (value >= 9500) {
-      this.handleSell(tick.get('last'));
-    }
-  }
-}
+const Asset = require('./asset');
 
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
@@ -26,17 +11,27 @@ class BaseStrategy {
 
     this.assets = [];
     this.market = market;
-    market.Asset = Asset;
+    market.Asset = this.Asset;
     market.onAssetSell = this.handleAssetSell.bind(this);
+  }
+
+  get Asset() {
+    return Asset;
   }
 
   handleTick(tick) {
     const value = parseInt(tick.get('last') / 100);
-    if (value <= 7000) {
+
+    const shouldBuy = this.determineBuy(value);
+    if (shouldBuy) {
       this.signalBuy(tick);
     }
 
     _.each(this.assets, asset => asset.handleTick(tick));
+  }
+
+  determineBuy(value) {
+    return value <= 7000;
   }
 
   // Buy if we have no active order

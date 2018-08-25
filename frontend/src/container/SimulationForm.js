@@ -31,6 +31,11 @@ class SimulationForm extends Component {
               quantity
               price
             }
+            trades {
+              costBasis
+              marketValue
+              result
+            }
           }
       }`,
       }),

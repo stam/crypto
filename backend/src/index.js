@@ -13,20 +13,26 @@ const typeDefs = `
     runSimulation(startDate: Date!, endDate: Date!, startValue: String!): Simulation
   }
   type Simulation {
-      from: Date
-      to: Date
-      orders: [Order]
+    from: Date
+    to: Date
+    orders: [Order]
+    trades: [Trade]
   }
   type Order {
-      type: String
-      timestamp: Date
-      quantity: Int
-      price: Int
+    type: String
+    timestamp: Date
+    quantity: Int
+    price: Int
   }
   type Tick {
     id: Int!
     last: Int
     timestamp: Date
+  }
+  type Trade {
+    costBasis: Int
+    marketValue: Int
+    result: Float
   }
   type Candle {
     id: Int
@@ -61,6 +67,7 @@ const resolvers = {
         from: startDate,
         to: endDate,
         orders: simulation.orders,
+        trades: simulation.trades,
       }
       return sim;
     },
