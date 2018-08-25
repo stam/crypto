@@ -1,5 +1,20 @@
 const _ = require('lodash');
 
+class Asset {
+  constructor(cost, quantity, handleSell) {
+    this.cost = cost;
+    this.quantity = quantity;
+    this.handleSell = handleSell;
+    this.id = Date.now();
+  }
+
+  handleTick(tick) {
+    const value = parseInt(tick.get('last') / 100);
+    if (value >= 9500) {
+      this.handleSell(tick.get('last'));
+    }
+  }
+}
 
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
@@ -11,6 +26,7 @@ class BaseStrategy {
 
     this.assets = [];
     this.market = market;
+    market.Asset = Asset;
     market.onAssetSell = this.handleAssetSell.bind(this);
   }
 
@@ -40,17 +56,6 @@ class BaseStrategy {
 
     this.assets.push(asset);
   }
-
-  // createAsset(buyTick, quantity) {
-  //   const handleSell = (sellTick) => {
-  //     this.handleAssetSell(asset, sellTick);
-  //   };
-
-  //   // Make sure the asset sell is handled in the strategy
-  //   // to fix orders and asset management
-  //   const asset = new Asset(buyTick, quantity, handleSell);
-  //   this.assets.push(asset);
-  // }
 
   handleAssetSell(asset) {
     // Remove asset from this.assets

@@ -1,4 +1,3 @@
-const Asset = require('../strategy/asset');
 
 class Market {
   constructor({ createOrder }) {
@@ -6,7 +5,7 @@ class Market {
   }
 
   buy({ price, quantity }) {
-    const asset = new Asset(price, quantity);
+    const asset = new this.Asset(price, quantity);
 
     // How to clean this up?
     asset.handleSell = (price) => {
