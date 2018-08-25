@@ -1,7 +1,7 @@
 // const db = require('../models');
 // const Strategy = require('../strategy');
 const _ = require('lodash');
-const AssetInterface = require('../asset/interface');
+const Market = require('../market');
 
 class Trade {
   constructor(asset) {
@@ -18,13 +18,13 @@ class Simulation {
   constructor({ ticks, Strategy }) {
     this.ticks = ticks;
 
-    this.assetInterface = new AssetInterface({
+    this.market = new Market({
       createOrder: this.handleOrder.bind(this),
     })
 
     this.trades = {};
     this.orders = [];
-    this.strategy = new Strategy(this.assetInterface);
+    this.strategy = new Strategy(this.market);
   }
 
   run() {

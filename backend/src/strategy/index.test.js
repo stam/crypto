@@ -1,5 +1,5 @@
 const Strategy = require('.');
-const AssetInterface = require('../asset/interface');
+const Market = require('../market');
 const _ = require('lodash');
 
 class Tick {
@@ -19,14 +19,14 @@ const tickData = [
 ];
 
 const ticks = tickData.map(data => new Tick(data));
-const assetInterface = new AssetInterface({ });
+const market = new Market({ });
 
 describe('The default Strategy', () => {
   let strategy;
 
   beforeEach(() => {
-    assetInterface.createOrder = jest.fn();
-    strategy = new Strategy(assetInterface);
+    market.createOrder = jest.fn();
+    strategy = new Strategy(market);
   })
 
   it('creates assets', () => {
@@ -40,8 +40,8 @@ describe('The default Strategy', () => {
     strategy.handleTick(ticks[0]);
     strategy.handleTick(ticks[1]);
 
-    expect(assetInterface.createOrder).toHaveBeenCalledTimes(2);
-    const orders = assetInterface.createOrder.mock.calls;
+    expect(market.createOrder).toHaveBeenCalledTimes(2);
+    const orders = market.createOrder.mock.calls;
 
     expect(orders[0][0].price).toBe(tickData[0].last);
     expect(orders[0][0].asset.quantity).toBe(1);

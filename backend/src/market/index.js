@@ -1,6 +1,6 @@
-const Asset = require('.');
+const Asset = require('../strategy/asset');
 
-class AssetInterface {
+class Market {
   constructor({ createOrder }) {
     this.createOrder = createOrder;
   }
@@ -34,4 +34,4 @@ class AssetInterface {
   }
 }
 
-module.exports = AssetInterface;
+module.exports = Market;

@@ -3,15 +3,15 @@ const _ = require('lodash');
 
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
-class Strategy {
-  constructor(assetInterface) {
+class BaseStrategy {
+  constructor(market) {
     // To be refactored to currency
     // It currently represents the amount of assets we can buy
     this.quantity = 1;
 
     this.assets = [];
-    this.assetInterface = assetInterface;
-    assetInterface.onAssetSell = this.handleAssetSell.bind(this);
+    this.market = market;
+    market.onAssetSell = this.handleAssetSell.bind(this);
   }
 
   handleTick(tick) {
@@ -33,7 +33,7 @@ class Strategy {
   buyAsset(tick, quantity) {
     this.quantity -= quantity;
 
-    const asset = this.assetInterface.buy({
+    const asset = this.market.buy({
       price: tick.get('last'),
       quantity,
     });
@@ -61,4 +61,4 @@ class Strategy {
   }
 }
 
-module.exports = Strategy;
+module.exports = BaseStrategy;
