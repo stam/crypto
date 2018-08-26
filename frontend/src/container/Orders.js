@@ -10,7 +10,7 @@ class Orders extends Component {
 
   renderOrder(order, i) {
     return (
-      <li key={order.timestamp}>
+      <li key={order.timestamp + order.type}>
         {order.timestamp} {order.type} {order.price}
       </li>
     );

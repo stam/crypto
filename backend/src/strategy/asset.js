@@ -7,14 +7,14 @@ class Asset {
   }
 
   handleTick(tick) {
-    const value = parseInt(tick.get('last') / 100);
-
-    if (this.determineSell(value)) {
-      this.handleSell(tick.get('last'));
+    const price = tick.get('last');
+    if (this.determineSell(price)) {
+      this.handleSell(price);
     }
   }
 
-  determineSell(value) {
+  determineSell(price) {
+    const value = parseInt(price / 100);
     return value >= 9500;
   }
 }

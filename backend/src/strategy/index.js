@@ -58,6 +58,8 @@ class BaseStrategy {
     if (index > -1) {
       this.assets.splice(index, 1);
     }
+
+    this.quantity = 1;
   }
 }
 
