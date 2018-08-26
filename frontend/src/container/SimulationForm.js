@@ -4,10 +4,15 @@ import { observable } from 'mobx';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import Button from '../component/Button';
+
 const Form = styled.form`
   grid-row: 2 / 9;
   grid-column: 1 / 2;
-  padding: 16px;
+  padding: 0 16px;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 @observer
@@ -55,8 +60,8 @@ class SimulationForm extends Component {
   render() {
     return (
       <Form onSubmit={this.handleSubmit} className="toolbar">
-        <p>Simulate</p>
-        <button>Run</button>
+        <h3>Simulate</h3>
+        <Button>Run</Button>
       </Form>
     );
   }
