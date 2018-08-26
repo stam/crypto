@@ -9,6 +9,7 @@ This codebase contains some very basic strategies, which can be visualized and b
 The default configuration uses an sqlite database.
 To use PostgreSQL, update the .env
 
+Bootstrapping the database and running the backend:
 ```
 cp .env.example .env
 cd backend
