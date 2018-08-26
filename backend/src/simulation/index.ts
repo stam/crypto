@@ -1,21 +1,39 @@
-// const db = require('../models');
-// const Strategy = require('../strategy');
-const _ = require('lodash');
-const Market = require('../market');
+import { round, each, values } from 'lodash';
+import Market from '../market';
+import Asset from '../strategy/asset';
+import Strategy from '../strategy';
 
 class Trade {
-  constructor(asset) {
+  marketValue: number;
+  result: number;
+  costBasis: number;
+  constructor(asset: Asset) {
     this.costBasis = asset.cost;
   }
 
-  sell(value) {
+  sell(value: number) {
     this.marketValue = value;
-    this.result = _.round(100 * value / this.costBasis, 1);
+    this.result = round(100 * value / this.costBasis, 1);
   }
 }
 
+export interface Order {
+  timestamp: string;
+  quantity: number;
+  price: number;
+  type: string;
+}
+
 class Simulation {
-  constructor({ ticks, Strategy }) {
+  ticks: any;
+  market: Market;
+  trades: {
+    [key: number]: Trade,
+  };
+  strategy: Strategy;
+  orders: Order[];
+
+  constructor({ ticks, Strategy }: { ticks: any[], Strategy: any}) {
     this.ticks = ticks;
 
     this.market = new Market({
@@ -28,18 +46,18 @@ class Simulation {
   }
 
   run() {
-    _.each(this.ticks, (tick) => {
+    each(this.ticks, (tick) => {
       this.strategy.handleTick(tick);
     });
 
-    this.trades = Object.values(this.trades);
+    this.trades = values(this.trades);
   }
 
-  handleOrder({ price, type, asset }) {
+  handleOrder({ price, type, asset }: { price: number, type: string, asset: Asset}) {
     console.info(`> Creating ${type} order: quantity ${asset.quantity}, price: ${price}`)
     const now = new Date();
 
-    const order = {
+    const order: Order = {
       timestamp: now.toISOString(),
       quantity: asset.quantity,
       price,
@@ -60,4 +78,4 @@ class Simulation {
   }
 }
 
-module.exports = Simulation;
+export default Simulation;

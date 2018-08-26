@@ -1,12 +1,12 @@
-const Simulation = require('.');
-const Strategy = require('../strategy');
-const _ = require('lodash');
+import Simulation from '.';
+import Strategy from '../strategy';
+import { forIn } from 'lodash';
 
 
 // Todo move ticks to some kind fixture
-class Tick {
+export class Tick {
   constructor(data) {
-    _.forIn(data, (value, key) => {
+    forIn(data, (value, key) => {
       this[key] = value;
     });
   }

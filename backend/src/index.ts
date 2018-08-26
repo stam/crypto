@@ -1,7 +1,7 @@
-const { GraphQLServer } = require('graphql-yoga');
-const db = require('./models');
-const Strategy = require('./strategy');
-const Simulation = require('./simulation');
+import { GraphQLServer } from 'graphql-yoga';
+import db from './models';
+import Strategy from './strategy';
+import Simulation from './simulation';
 
 const typeDefs = `
   scalar Date
@@ -59,7 +59,7 @@ const resolvers = {
         order: ['timestamp'],
       });
 
-      const simulation = new Simulation({ ticks, Strategy, startValue });
+      const simulation = new Simulation({ ticks, Strategy });
 
       simulation.run();
 

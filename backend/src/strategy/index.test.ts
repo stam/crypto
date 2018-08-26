@@ -1,17 +1,7 @@
-const Strategy = require('.');
-const Market = require('../market');
-const _ = require('lodash');
+import Strategy from '.';
+import Market from '../market';
+import { Tick } from '../simulation/index.test';
 
-class Tick {
-  constructor(data) {
-    _.forIn(data, (value, key) => {
-      this[key] = value;
-    });
-  }
-  get(key) {
-    return this[key];
-  }
-}
 
 const tickData = [
   { timestamp: '2018-08-24T19:21:38.170Z', last: 690000 },
@@ -19,7 +9,7 @@ const tickData = [
 ];
 
 const ticks = tickData.map(data => new Tick(data));
-const market = new Market({ });
+const market = new Market({ createOrder: null});
 
 describe('The default Strategy', () => {
   let strategy;
