@@ -1,6 +1,6 @@
-const Simulation = require('.');
-const Strategy = require('../strategy');
-const _ = require('lodash');
+import Simulation from '.';
+import Strategy from '../strategy';
+import _ from 'lodash';
 
 
 // Todo move ticks to some kind fixture

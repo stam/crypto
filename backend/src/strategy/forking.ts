@@ -1,5 +1,5 @@
-const BaseStrategy = require('.');
-const Asset = require('./asset');
+import BaseStrategy from '.';
+import Asset from './asset';
 
 class HodlAsset extends Asset {
   determineSell(value) {
@@ -20,4 +20,4 @@ class ForkingStrategy extends BaseStrategy {
   }
 }
 
-module.exports = ForkingStrategy;
+export default ForkingStrategy;

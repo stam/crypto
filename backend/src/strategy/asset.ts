@@ -1,3 +1,12 @@
+import { round } from 'lodash';
+
+interface Asset {
+  cost: number;
+  quantity: number;
+  handleSell: any;
+  id: number;
+}
+
 class Asset {
   constructor(cost, quantity, handleSell) {
     this.cost = cost;
@@ -14,10 +23,9 @@ class Asset {
   }
 
   determineSell(price) {
-    const value = parseInt(price / 100);
+    const value = round(price / 100);
     return value >= 9500;
   }
 }
 
-
-module.exports = Asset;
+export default Asset;

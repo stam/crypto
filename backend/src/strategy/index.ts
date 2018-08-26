@@ -1,5 +1,12 @@
-const _ = require('lodash');
-const Asset = require('./asset');
+import { each, round } from 'lodash';
+import Asset from './asset';
+
+interface BaseStrategy {
+  quantity: number;
+  activeOrder: any;
+  assets: any[];
+  market: any;
+}
 
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
@@ -20,14 +27,14 @@ class BaseStrategy {
   }
 
   handleTick(tick) {
-    const value = parseInt(tick.get('last') / 100);
+    const value = round(tick.get('last') / 100);
 
     const shouldBuy = this.determineBuy(value);
     if (shouldBuy) {
       this.signalBuy(tick);
     }
 
-    _.each(this.assets, asset => asset.handleTick(tick));
+    each(this.assets, asset => asset.handleTick(tick));
   }
 
   determineBuy(value) {
@@ -63,4 +70,4 @@ class BaseStrategy {
   }
 }
 
-module.exports = BaseStrategy;
+export default BaseStrategy;

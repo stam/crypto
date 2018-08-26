@@ -1,7 +1,11 @@
-// const db = require('../models');
-// const Strategy = require('../strategy');
-const _ = require('lodash');
-const Market = require('../market');
+import { round, each } from 'lodash';
+import Market from '../market';
+
+interface Trade {
+  marketValue: number;
+  result: number;
+  costBasis: number;
+}
 
 class Trade {
   constructor(asset) {
@@ -10,8 +14,16 @@ class Trade {
 
   sell(value) {
     this.marketValue = value;
-    this.result = _.round(100 * value / this.costBasis, 1);
+    this.result = round(100 * value / this.costBasis, 1);
   }
+}
+
+interface Simulation {
+  ticks: any;
+  market: any;
+  trades: any;
+  strategy: any;
+  orders: any;
 }
 
 class Simulation {
@@ -28,7 +40,7 @@ class Simulation {
   }
 
   run() {
-    _.each(this.ticks, (tick) => {
+    each(this.ticks, (tick) => {
       this.strategy.handleTick(tick);
     });
 
@@ -60,4 +72,4 @@ class Simulation {
   }
 }
 
-module.exports = Simulation;
+export default Simulation;

@@ -1,6 +1,5 @@
-const db = require('../models');
-const _ = require('lodash');
-
+import db from '../models';
+import { each, has, values } from 'lodash';
 
 async function generateCandles() {
   const ticks = await db.tick.findAll({
@@ -14,10 +13,10 @@ async function generateCandles() {
   });
 
   const result = {};
-  _.each(ticks, tick => {
+  each(ticks, tick => {
     let date = tick.get('date');
     let val = tick.get('last');
-    if (!_.has(result, date)) {
+    if (!has(result, date)) {
       result[date] = { open: val, high: val, low: val, close: val, timespan: '1D', datetime: date };
     }
     const candle = result[date];
@@ -29,7 +28,7 @@ async function generateCandles() {
     candle.low = Math.min(candle.low, val);
   });
 
-  const bulkCreateResult = await db.candle.bulkCreate(_.values(result));
+  const bulkCreateResult = await db.candle.bulkCreate(values(result));
   console.log(`Candle generation success! ${bulkCreateResult.length} candles created`);
 }
 

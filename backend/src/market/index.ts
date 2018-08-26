@@ -1,3 +1,9 @@
+interface Market {
+  // createOrder?(x: {}): () => any;
+  createOrder: any;
+  onAssetSell?(asset: any): () => void;
+  Asset: any;
+}
 
 class Market {
   constructor({ createOrder }) {
@@ -33,4 +39,4 @@ class Market {
   }
 }
 
-module.exports = Market;
+export default Market;

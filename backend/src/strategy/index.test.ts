@@ -1,6 +1,6 @@
-const Strategy = require('.');
-const Market = require('../market');
-const _ = require('lodash');
+import Strategy from '.';
+import Market from '../market';
+import _ from 'lodash';
 
 class Tick {
   constructor(data) {
@@ -19,7 +19,7 @@ const tickData = [
 ];
 
 const ticks = tickData.map(data => new Tick(data));
-const market = new Market({ });
+const market = new Market({ createOrder: null});
 
 describe('The default Strategy', () => {
   let strategy;
