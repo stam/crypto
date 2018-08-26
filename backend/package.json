@@ -10,11 +10,13 @@
   "author": "JasperStam",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.0.0",
     "graphql-yoga": "^1.13.1",
     "lodash": "^4.17.10",
     "pg": "^7.4.2",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.37.6"
+    "sequelize": "^4.37.6",
+    "sqlite3": "^4.0.2"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
