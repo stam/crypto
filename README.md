@@ -13,7 +13,7 @@ To use PostgreSQL, update the .env
 cp .env.example .env
 cd backend
 node_modules/.bin/sequelize db:migrate
-sqlite3 backend/database.sqlite ".mode csv" ".import tick_2018_08_25.csv tick"
+sqlite3 database.sqlite ".mode csv" ".import ../tick_2018_08_25.csv tick"
 yarn && yarn create-candles
 yarn start
 ```
