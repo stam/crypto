@@ -8,6 +8,7 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_DIALECT,
+    storage: process.env.SQLITE_PATH,
   },
   test: {
     username: 'postgres',

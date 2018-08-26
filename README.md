@@ -1,17 +1,27 @@
 # Crypto
-Playground for testing crypto trading bots
+Playground for testing crypto trading bots.
+Comes with 5 months of market data from HitBTC with 1 minute resolution.
+
+This data can be used to test strategies of Crypto trading bots.
+This codebase contains some very basic strategies, which can be visualized and backtested in the included react app.
 
 ## Getting started:
+The default configuration uses an sqlite database.
+To use PostgreSQL, update the .env
 
 ```
+cp .env.example .env
+cd backend
 node_modules/.bin/sequelize db:migrate
+sqlite3 backend/database.sqlite ".mode csv" ".import tick_2018_08_25.csv tick"
+yarn && yarn create-candles
+yarn start
 ```
 
-## Generating migrations
-
-Sequelize doesn't have auto migrations and the packages for it are unmaintained.
-It recommends generating models and their migrations through the cli:
+Running the frontend:
 
 ```
-node_modules/.bin/sequelize model:generate --name Tock --attributes symbol:string,ask:integer,bid:integer,last:integer,volume:integer,main_volume:bigint,timestamp:date
+cd ../frontend
+yarn && yarn start
 ```
+

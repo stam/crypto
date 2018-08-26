@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon .",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "create-candles": "node src/commands/createCandles.js"
   },
   "author": "JasperStam",
   "license": "ISC",
