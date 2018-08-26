@@ -9,7 +9,6 @@ import Button from '../component/Button';
 const Form = styled.form`
   grid-row: 2 / 9;
   grid-column: 1 / 2;
-  padding: 0 16px;
 
   display: flex;
   flex-direction: column;

@@ -8,6 +8,8 @@ const Container = styled.div`
   grid-column: 1 / -1;
 `;
 
+const Table = styled.table``;
+
 @observer
 class SimulationResult extends Component {
   static propTypes = {
@@ -16,9 +18,20 @@ class SimulationResult extends Component {
 
   renderOrder(order, i) {
     return (
-      <li key={order.timestamp + order.type}>
+      <div key={order.timestamp + order.type}>
         {order.timestamp} {order.type} {order.price}
-      </li>
+      </div>
+    );
+  }
+
+  renderTrade(trade, i) {
+    return (
+      <tr key={trade.costBasis + trade.marketValue}>
+        <td>{i}.</td>
+        <td>{trade.costBasis}</td>
+        <td>{trade.result}</td>
+        <td>{trade.marketValue}</td>
+      </tr>
     );
   }
 
@@ -26,8 +39,24 @@ class SimulationResult extends Component {
     const { data } = this.props;
     return (
       <Container>
-        {!data && <p>No simulation active</p>}
-        {data && <ul>{data.orders.map(this.renderOrder)}</ul>}
+        {!data && <h3>No simulation active</h3>}
+        {data && <h3>Simulation result: Trades</h3>}
+        {/* <OrderContainer>
+          {data && data.orders.map(this.renderOrder)}
+        </OrderContainer> */}
+        {data && (
+          <Table>
+            <thead>
+              <tr>
+                <th />
+                <th>Cost Basis</th>
+                <th>Gain/Loss</th>
+                <th>Market Value</th>
+              </tr>
+            </thead>
+            <tbody>{data && data.trades.map(this.renderTrade)}</tbody>
+          </Table>
+        )}
       </Container>
     );
   }

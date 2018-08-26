@@ -10,7 +10,7 @@ import SimulationResult from './SimulationResult';
 
 const Main = styled.main`
   display: grid;
-  padding: 16px;
+  padding: 16px 32px;
   height: 100vh;
   width: 100vw;
   font-family: system-ui;
