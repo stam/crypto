@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon build/",
+    "start": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
     "test": "jest --watch",
     "create-candles": "node src/commands/createCandles.js"

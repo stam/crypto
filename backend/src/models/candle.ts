@@ -1,6 +1,9 @@
 'use strict';
-export default (sequelize, DataTypes) => {
-  var candle = sequelize.define('candle', { timespan: DataTypes.STRING, open: DataTypes.INTEGER, close: DataTypes.INTEGER, high: DataTypes.INTEGER, low: DataTypes.INTEGER, datetime: DataTypes.DATE }, { tableName: 'candle' });
+
+import Sequelize from 'sequelize';
+
+export default (sequelize) => {
+  var candle = sequelize.define('candle', { timespan: Sequelize.STRING, open: Sequelize.INTEGER, close: Sequelize.INTEGER, high: Sequelize.INTEGER, low: Sequelize.INTEGER, datetime: Sequelize.DATE }, { tableName: 'candle' });
   candle.associate = function(models) {
     // associations can be defined here
   };

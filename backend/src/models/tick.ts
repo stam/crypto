@@ -1,14 +1,16 @@
-export default(sequelize, DataTypes) => {
+import Sequelize from 'sequelize';
+
+export default(sequelize) => {
   const Tick = sequelize.define(
     'tick',
     {
-      symbol: DataTypes.STRING(25),
-      ask: DataTypes.INTEGER,
-      bid: DataTypes.INTEGER,
-      last: DataTypes.INTEGER,
-      volume: DataTypes.INTEGER,
-      main_volume: DataTypes.BIGINT,
-      timestamp: DataTypes.DATE,
+      symbol: Sequelize.STRING(25),
+      ask: Sequelize.INTEGER,
+      bid: Sequelize.INTEGER,
+      last: Sequelize.INTEGER,
+      volume: Sequelize.INTEGER,
+      main_volume: Sequelize.BIGINT,
+      timestamp: Sequelize.DATE,
     },
     {
       timestamps: false,

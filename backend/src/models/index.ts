@@ -12,32 +12,16 @@ interface Database {
   sequelize: any;
 }
 
+const associate = (Model: any) => {
+  return Model(sequelize);
+}
+
 const { development: env } = config;
 const sequelize = new Sequelize(env.database, env.username, env.password, env);
 const db: Database = {
-  tick,
-  candle,
+  tick: associate(tick),
+  candle: associate(candle),
   sequelize,
 };
-
-/*
-// fs
-//   .readdirSync(__dirname)
-//   .filter(file => {
-//     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.ts');
-//   })
-//   .forEach(file => {
-//     const model = sequelize['import'](path.join(__dirname, file));
-//     db[model.name] = model;
-//   });
-
-// Object.keys(db).forEach(modelName => {
-//   if (db[modelName].associate) {
-//     db[modelName].associate(db);
-//   }
-// });
-
-// db.sequelize = sequelize;
-// db.Sequelize = Sequelize;*/
 
 export default db;
