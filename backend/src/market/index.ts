@@ -1,16 +1,15 @@
-interface Market {
-  // createOrder?(x: {}): () => any;
-  createOrder: any;
-  onAssetSell?(asset: any): () => void;
-  Asset: any;
-}
+import Asset from '../strategy/asset';
 
 class Market {
+  createOrder: any;
+  onAssetSell?(asset: Asset): () => void;
+  Asset: any;
+
   constructor({ createOrder }) {
     this.createOrder = createOrder;
   }
 
-  buy({ price, quantity }) {
+  buy(price: number, quantity: number) {
     const asset = new this.Asset(price, quantity);
 
     // How to clean this up?
@@ -26,7 +25,7 @@ class Market {
     return asset;
   }
 
-  handleAssetSell(asset, price) {
+  handleAssetSell(asset: Asset, price: number) {
     this.createOrder({
       type: 'sell',
       asset,

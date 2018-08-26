@@ -6,9 +6,19 @@ import config from '../../config';
 import tick from './tick';
 import candle from './candle';
 
+interface SequelizeInstance {
+  id: number;
+}
+
+interface SequelizeModel {
+  findById(id: number): SequelizeInstance;
+  findAll(filter?: any): SequelizeInstance[];
+  bulkCreate(data: any[]) : SequelizeInstance[];
+}
+
 interface Database {
-  tick: any;
-  candle: any;
+  tick: SequelizeModel;
+  candle: SequelizeModel;
   sequelize: any;
 }
 

@@ -1,33 +1,39 @@
-import { round, each } from 'lodash';
+import { round, each, values } from 'lodash';
 import Market from '../market';
+import Asset from '../strategy/asset';
+import Strategy from '../strategy';
 
-interface Trade {
+class Trade {
   marketValue: number;
   result: number;
   costBasis: number;
-}
-
-class Trade {
-  constructor(asset) {
+  constructor(asset: Asset) {
     this.costBasis = asset.cost;
   }
 
-  sell(value) {
+  sell(value: number) {
     this.marketValue = value;
     this.result = round(100 * value / this.costBasis, 1);
   }
 }
 
-interface Simulation {
-  ticks: any;
-  market: any;
-  trades: any;
-  strategy: any;
-  orders: any;
+export interface Order {
+  timestamp: string;
+  quantity: number;
+  price: number;
+  type: string;
 }
 
 class Simulation {
-  constructor({ ticks, Strategy }) {
+  ticks: any;
+  market: Market;
+  trades: {
+    [key: number]: Trade,
+  };
+  strategy: Strategy;
+  orders: Order[];
+
+  constructor({ ticks, Strategy }: { ticks: any[], Strategy: any}) {
     this.ticks = ticks;
 
     this.market = new Market({
@@ -44,14 +50,14 @@ class Simulation {
       this.strategy.handleTick(tick);
     });
 
-    this.trades = Object.values(this.trades);
+    this.trades = values(this.trades);
   }
 
-  handleOrder({ price, type, asset }) {
+  handleOrder({ price, type, asset }: { price: number, type: string, asset: Asset}) {
     console.info(`> Creating ${type} order: quantity ${asset.quantity}, price: ${price}`)
     const now = new Date();
 
-    const order = {
+    const order: Order = {
       timestamp: now.toISOString(),
       quantity: asset.quantity,
       price,

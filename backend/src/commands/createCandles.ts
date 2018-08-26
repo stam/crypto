@@ -13,7 +13,7 @@ async function generateCandles() {
   });
 
   const result = {};
-  each(ticks, tick => {
+  each(ticks, (tick: any) => {
     let date = tick.get('date');
     let val = tick.get('last');
     if (!has(result, date)) {

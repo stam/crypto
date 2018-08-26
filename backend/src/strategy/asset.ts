@@ -1,14 +1,12 @@
 import { round } from 'lodash';
 
-interface Asset {
+class Asset {
+  id: number;
   cost: number;
   quantity: number;
-  handleSell: any;
-  id: number;
-}
+  handleSell?(price: number): () => void;
 
-class Asset {
-  constructor(cost, quantity, handleSell) {
+  constructor(cost: number, quantity: number, handleSell) {
     this.cost = cost;
     this.quantity = quantity;
     this.handleSell = handleSell;
@@ -16,13 +14,14 @@ class Asset {
   }
 
   handleTick(tick) {
-    const price = tick.get('last');
+    const price: number = tick.get('last');
+
     if (this.determineSell(price)) {
       this.handleSell(price);
     }
   }
 
-  determineSell(price) {
+  determineSell(price: number) {
     const value = round(price / 100);
     return value >= 9500;
   }

@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
+    "@types/lodash": "^4.14.116",
     "concurrently": "^4.0.1",
     "jest": "^23.5.0",
     "nodemon": "^1.17.4",
