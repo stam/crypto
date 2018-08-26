@@ -3,32 +3,3 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
-
-main {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
-.flex-column {
-    display: flex;
-    flex-direction: column;
-}
-
-.flex-row {
-    display: flex;
-}
-
-.toolbar {
-    width: 250px;
-    border-right: 1px solid #ccc;
-    margin-right: 5px;
-}
-
-.fill {
-    flex: 1;
-}
-
-.App {
-  text-align: center;
-}

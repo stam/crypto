@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const Form = styled.form`
+  grid-row: 2 / 9;
+  grid-column: 1 / 2;
+  padding: 16px;
+`;
 
 @observer
 class SimulationForm extends Component {
@@ -47,10 +54,10 @@ class SimulationForm extends Component {
   };
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className="toolbar">
+      <Form onSubmit={this.handleSubmit} className="toolbar">
         <p>Simulate</p>
         <button>Run</button>
-      </form>
+      </Form>
     );
   }
 }
