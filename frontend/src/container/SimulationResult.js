@@ -13,7 +13,7 @@ const Table = styled.table``;
 @observer
 class SimulationResult extends Component {
   static propTypes = {
-    data: PropTypes.object,
+    simulation: PropTypes.object,
   };
 
   renderOrder(order, i) {
@@ -36,27 +36,39 @@ class SimulationResult extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { simulation } = this.props;
+
+    if (simulation.loading) {
+      return (
+        <Container>
+          <h3>Loading...</h3>
+        </Container>
+      );
+    }
+    if (!simulation.orders) {
+      return (
+        <Container>
+          <h3>No simulation active</h3>
+        </Container>
+      );
+    }
     return (
       <Container>
-        {!data && <h3>No simulation active</h3>}
-        {data && <h3>Simulation result: Trades</h3>}
+        <h3>Simulation result: Trades</h3>
         {/* <OrderContainer>
           {data && data.orders.map(this.renderOrder)}
         </OrderContainer> */}
-        {data && (
-          <Table>
-            <thead>
-              <tr>
-                <th />
-                <th>Cost Basis</th>
-                <th>Gain/Loss</th>
-                <th>Market Value</th>
-              </tr>
-            </thead>
-            <tbody>{data && data.trades.map(this.renderTrade)}</tbody>
-          </Table>
-        )}
+        <Table>
+          <thead>
+            <tr>
+              <th />
+              <th>Cost Basis</th>
+              <th>Gain/Loss</th>
+              <th>Market Value</th>
+            </tr>
+          </thead>
+          <tbody>{simulation.trades.map(this.renderTrade)}</tbody>
+        </Table>
       </Container>
     );
   }

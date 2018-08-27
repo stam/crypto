@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
-import { observable } from 'mobx';
 
 import Header from '../component/Header';
 import SimulationForm from './SimulationForm';
 import CoinValue from './CoinValue';
 import SimulationResult from './SimulationResult';
+import Simulation from '../store/Simulation';
 
 const Main = styled.main`
   display: grid;
@@ -23,19 +23,17 @@ const Main = styled.main`
 
 @observer
 class App extends Component {
-  @observable simulation;
-
-  setSimulation = simulation => {
-    this.simulation = simulation;
-  };
+  componentWillMount() {
+    this.simulation = new Simulation();
+  }
 
   render() {
     return (
       <Main>
         <Header>Crypto</Header>
-        <SimulationForm setSimulation={this.setSimulation} />
+        <SimulationForm simulation={this.simulation} />
         <CoinValue />
-        <SimulationResult data={this.simulation} />
+        <SimulationResult simulation={this.simulation} />
       </Main>
     );
   }
