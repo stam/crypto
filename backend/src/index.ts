@@ -1,6 +1,6 @@
 import { GraphQLServer } from 'graphql-yoga';
 import db from './models';
-import Strategy from './strategy';
+import Strategy from './strategy/forking';
 import Simulation from './simulation';
 
 const typeDefs = `
