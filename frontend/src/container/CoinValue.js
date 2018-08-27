@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
+import styled from 'styled-components';
+
 import CandleChart from '../component/CandleChart';
+
+const Container = styled.div`
+  grid-row: 2 / 10;
+  grid-column: 2 / -1;
+`;
 
 function parseData(data) {
   return data.candles.map(candle => ({
@@ -33,10 +40,10 @@ class CoinValue extends Component {
   }
   render() {
     return (
-      <div className="fill">
+      <Container>
         {!this.data && <p>Loading</p>}
         {this.data && <CandleChart data={this.data} />}
-      </div>
+      </Container>
     );
   }
 }

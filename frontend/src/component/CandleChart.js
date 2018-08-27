@@ -14,10 +14,10 @@ import {
 } from 'react-stockcharts/lib/coordinates';
 import { CandlestickSeries } from 'react-stockcharts/lib/series';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
-import { fitWidth } from 'react-stockcharts/lib/helper';
+import { fitDimensions } from 'react-stockcharts/lib/helper';
 import { last, timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
 
-@fitWidth
+@fitDimensions
 export default class CandleStickChart extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
@@ -25,12 +25,13 @@ export default class CandleStickChart extends React.Component {
     ratio: PropTypes.number.isRequired,
   };
   render() {
-    const { width, data, ratio } = this.props;
+    // console.log('fitDimensinos', this.props);
+    const { width, height, data, ratio } = this.props;
     const xAccessor = d => d.date;
     const xExtents = [xAccessor(last(data)), xAccessor(data[0])];
     return (
       <ChartCanvas
-        height={400}
+        height={height}
         ratio={ratio}
         width={width}
         margin={{ left: 50, right: 50, top: 10, bottom: 30 }}

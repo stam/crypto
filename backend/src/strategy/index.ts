@@ -49,7 +49,7 @@ class BaseStrategy {
   buyAsset(tick: any, quantity: number) {
     this.quantity -= quantity;
 
-    const asset = this.market.buy(tick.get('last'), quantity);
+    const asset = this.market.buy(tick, quantity);
 
     this.assets.push(asset);
   }

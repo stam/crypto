@@ -3,7 +3,6 @@ import Asset from './asset';
 
 class HodlAsset extends Asset {
   determineSell(value) {
-    console.log('value', value, this.cost);
     // Sell if we made 10% profit...
     return value / this.cost >= 1.1;
   }

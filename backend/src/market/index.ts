@@ -9,8 +9,8 @@ class Market {
     this.createOrder = createOrder;
   }
 
-  buy(price: number, quantity: number) {
-    const asset = new this.Asset(price, quantity);
+  buy(tick: any, quantity: number) {
+    const asset = new this.Asset(tick.get('last'), quantity, tick.get('timestamp'));
 
     // How to clean this up?
     asset.handleSell = (price) => {
@@ -18,6 +18,7 @@ class Market {
     };
 
     this.createOrder({
+      date: tick.get('timestamp'),
       type: 'buy',
       price: asset.cost,
       asset,

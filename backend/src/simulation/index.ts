@@ -53,13 +53,12 @@ class Simulation {
     this.trades = values(this.trades);
   }
 
-  handleOrder({ price, type, asset }: { price: number, type: string, asset: Asset}) {
+  handleOrder({ price, type, date, asset }: { price: number, type: string, asset: Asset, date: string }) {
     console.info(`> Creating ${type} order: quantity ${asset.quantity}, price: ${price}`)
-    const now = new Date();
 
     const order: Order = {
-      timestamp: now.toISOString(),
       quantity: asset.quantity,
+      timestamp: date,
       price,
       type,
     };
