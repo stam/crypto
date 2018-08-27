@@ -1,35 +1,51 @@
-import { round, each, values } from 'lodash';
+import { round, each, values, uniqueId } from 'lodash';
 import Market from '../market';
-import Asset from '../strategy/asset';
+// import Asset from '../strategy/asset';
 import Strategy from '../strategy';
+
+
+export class Order {
+  id: string;
+  date: string;
+  quantity: number;
+  price: number;
+  type: string;
+
+  constructor({ date, quantity, price, type }: {
+    date: string;
+    quantity: number;
+    price: number;
+    type: string;
+  }) {
+    this.id = uniqueId();
+    this.date = date;
+    this.quantity = quantity;
+    this.price = price;
+    this.type = type;
+  }
+}
 
 class Trade {
   marketValue: number;
   result: number;
   costBasis: number;
-  constructor(asset: Asset) {
-    this.costBasis = asset.cost;
+  constructor(order: Order) {
+    this.costBasis = order.price;
   }
 
-  sell(value: number) {
-    this.marketValue = value;
-    this.result = round(100 * value / this.costBasis, 1);
+  sell(order: Order) {
+    this.marketValue = order.price;
+    this.result = round(100 * order.price / this.costBasis, 1);
   }
-}
-
-export interface Order {
-  timestamp: string;
-  quantity: number;
-  price: number;
-  type: string;
 }
 
 class Simulation {
   ticks: any;
   market: Market;
-  trades: {
+  trades: Trade[];
+  openTrades: {
     [key: number]: Trade,
-  };
+  }
   strategy: Strategy;
   orders: Order[];
 
@@ -37,10 +53,11 @@ class Simulation {
     this.ticks = ticks;
 
     this.market = new Market({
-      createOrder: this.handleOrder.bind(this),
+      saveOrder: this.handleOrder.bind(this),
     })
 
-    this.trades = {};
+    this.trades = [];
+    this.openTrades = {};
     this.orders = [];
     this.strategy = new Strategy(this.market);
   }
@@ -53,27 +70,24 @@ class Simulation {
     this.trades = values(this.trades);
   }
 
-  handleOrder({ price, type, date, asset }: { price: number, type: string, asset: Asset, date: string }) {
-    console.info(`> Creating ${type} order: quantity ${asset.quantity}, price: ${price}`)
-
-    const order: Order = {
-      quantity: asset.quantity,
-      timestamp: date,
-      price,
-      type,
-    };
-
+  handleOrder(order: Order) {
     this.orders.push(order);
 
-    if (type === 'buy') {
-      const trade = new Trade(asset);
-      this.trades[asset.id] = trade;
-    } else {
-      const trade = this.trades[asset.id];
-      trade.sell(price);
-
+    if (order.type === 'buy') {
+      const trade = new Trade(order);
+      this.trades.push(trade);
+      this.openTrades[order.quantity] = trade;
+      return;
     }
-    return order;
+
+    const trade = this.openTrades[order.quantity];
+
+    // It could be that we don't fully sell the bitcoin we have.
+    if (trade) {
+      trade.sell(order);
+      // remove trade from index
+    }
+
   }
 }
 
