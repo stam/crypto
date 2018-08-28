@@ -1,4 +1,5 @@
 import Asset from '../strategy/asset';
+import Tick from '../models/tick';
 
 class Market {
   createOrder: any;
@@ -9,8 +10,8 @@ class Market {
     this.createOrder = createOrder;
   }
 
-  buy(tick: any, quantity: number) {
-    const asset = new this.Asset(tick.get('last'), quantity, tick.get('timestamp'));
+  buy(tick: Tick, quantity: number) {
+    const asset = new this.Asset(tick.last, quantity, tick.timestamp);
 
     // How to clean this up?
     asset.handleSell = (price) => {
@@ -18,7 +19,7 @@ class Market {
     };
 
     this.createOrder({
-      date: tick.get('timestamp'),
+      date: tick.timestamp,
       type: 'buy',
       price: asset.cost,
       asset,

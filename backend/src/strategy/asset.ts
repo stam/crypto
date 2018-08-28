@@ -14,7 +14,7 @@ class Asset {
   }
 
   handleTick(tick) {
-    const price: number = tick.get('last');
+    const price: number = tick.last;
 
     if (this.determineSell(price)) {
       this.handleSell(price);
