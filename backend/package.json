@@ -6,8 +6,12 @@
   "scripts": {
     "watch-build": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
+    "ts": "tsc",
     "start": "concurrently --kill-others \"npm run watch-ts\" \"npm run watch-build\"",
+
     "test": "jest --watch",
+
+    "db-migrate": "NODE_ENV=development sequelize db:migrate",
     "create-candles": "node src/commands/createCandles.js"
   },
   "author": "JasperStam",

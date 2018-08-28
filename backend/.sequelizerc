@@ -1,6 +1,7 @@
-import * as path from 'path';
+const path = require('path');
+require('dotenv').config();
 
-export default {
-  'config': path.resolve('config.ts'),
+module.exports = {
+  'config': path.resolve('./build/config.js'),
   'models-path': path.resolve('src', 'models'),
 }

@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 export default {
   development: {
     username: process.env.DB_USER,
