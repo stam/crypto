@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Candle {
+export default class Candle {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -28,7 +28,7 @@ export class Candle {
     low: number;
 
     @Column('datetime')
-    datetime: string;
+    datetime: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;

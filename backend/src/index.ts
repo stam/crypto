@@ -1,8 +1,10 @@
 import { GraphQLServer } from 'graphql-yoga';
-import db from './models';
+import { createConnection } from 'typeorm';
+// import db from './db';
 import Strategy from './strategy/forking';
 import Simulation from './simulation';
 
+const db = {};
 const typeDefs = `
   scalar Date
   type Query {

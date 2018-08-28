@@ -5,7 +5,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Tick {
+export default class Tick {
 
     @PrimaryGeneratedColumn()
     id: number;
