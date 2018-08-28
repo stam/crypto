@@ -1,11 +1,39 @@
-'use strict';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
+  Column
+} from 'typeorm';
 
-import Sequelize from 'sequelize';
+@Entity()
+export class Candle {
 
-export default (sequelize) => {
-  var candle = sequelize.define('candle', { timespan: Sequelize.STRING, open: Sequelize.INTEGER, close: Sequelize.INTEGER, high: Sequelize.INTEGER, low: Sequelize.INTEGER, datetime: Sequelize.DATE }, { tableName: 'candle' });
-  candle.associate = function(models) {
-    // associations can be defined here
-  };
-  return candle;
-};
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    timespan: string;
+
+    @Column('int')
+    open: number;
+
+    @Column('int')
+    close: number;
+
+    @Column('int')
+    high: number;
+
+    @Column('int')
+    low: number;
+
+    @Column('datetime')
+    datetime: string;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+}

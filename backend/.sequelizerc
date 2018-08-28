@@ -1,7 +1,0 @@
-const path = require('path');
-require('dotenv').config();
-
-module.exports = {
-  'config': path.resolve('./build/config.js'),
-  'models-path': path.resolve('src', 'models'),
-}
