@@ -1,7 +1,14 @@
+require('dotenv').config();
+
+module.exports =
 {
-  "type": "sqlite",
-  "database": "database.sqlite",
-  "synchronize": true,
+  "type": process.env.DB_TYPE,
+  "host": process.env.DB_HOST,
+  "port": process.env.DB_POST,
+  "username": process.env.DB_USER,
+  "password": process.env.DB_PASSWORD,
+  "database": process.env.DB_NAME,
+  "synchronize": false,
   "logging": false,
   "entities": [
      "src/models/**/*.ts"
