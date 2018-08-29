@@ -1,5 +1,7 @@
 import { GraphQLServer } from 'graphql-yoga';
-import db from './models';
+import { createConnection, getRepository } from 'typeorm';
+import Tick from './models/tick';
+import Candle from './models/candle';
 import Strategy from './strategy/forking';
 import Simulation from './simulation';
 
@@ -47,16 +49,18 @@ const typeDefs = `
 const resolvers = {
   Query: {
     tick: (_, { id }) => {
-      return db.tick.findById(id)
+      return getRepository(Tick).findOne(id);
     },
     candles: (_) => {
-      return db.candle.findAll();
+      return getRepository(Candle).find();
     }
   },
   Mutation: {
     runSimulation: async (_, { startDate, endDate, startValue }) => {
-      const ticks = await db.tick.findAll({
-        order: ['timestamp'],
+      const ticks = await getRepository(Tick).find({
+        order: {
+          timestamp: 'ASC',
+        },
       });
 
       const simulation = new Simulation({ ticks, Strategy });
@@ -82,11 +86,6 @@ const options = {
   playground: '/playground',
 };
 
-db.sequelize
-  .authenticate()
-  .then(async function() {
-    server.start(options, () => console.log('Server is running on localhost:4000'));
-  })
-  .catch(function(e) {
-      throw new Error(e);
-  });
+createConnection().then(() => {
+  server.start(options, () => console.log('Server is running on localhost:4000'));
+});

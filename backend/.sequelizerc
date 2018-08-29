@@ -1,6 +1,0 @@
-import * as path from 'path';
-
-export default {
-  'config': path.resolve('config.ts'),
-  'models-path': path.resolve('src', 'models'),
-}

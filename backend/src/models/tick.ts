@@ -1,22 +1,33 @@
-import Sequelize from 'sequelize';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column
+} from 'typeorm';
 
-export default(sequelize) => {
-  const Tick = sequelize.define(
-    'tick',
-    {
-      symbol: Sequelize.STRING(25),
-      ask: Sequelize.INTEGER,
-      bid: Sequelize.INTEGER,
-      last: Sequelize.INTEGER,
-      volume: Sequelize.INTEGER,
-      main_volume: Sequelize.BIGINT,
-      timestamp: Sequelize.DATE,
-    },
-    {
-      timestamps: false,
-      tableName: 'tick',
-    }
-  );
+@Entity()
+export default class Tick {
 
-  return Tick;
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    symbol: string;
+
+    @Column('int')
+    ask: number;
+
+    @Column('int')
+    bid: number;
+
+    @Column('int')
+    last: number;
+
+    @Column('int')
+    volume: number;
+
+    @Column('bigint')
+    main_volume: number;
+
+    @Column('datetime')
+    timestamp: Date;
 }

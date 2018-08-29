@@ -14,8 +14,8 @@ class ForkingStrategy extends BaseStrategy {
   }
   // In this strategy we just hodl anyway
   // In the future we want to have some kind of enter strat
-  determineBuy() {
-    return true;
+  determineBuy(value) {
+    return value <= 7500;
   }
 }
 
