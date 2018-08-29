@@ -8,7 +8,11 @@ const Container = styled.div`
   grid-column: 1 / -1;
 `;
 
-const Table = styled.table``;
+const Table = styled.table`
+  td {
+    padding: 8px 16px;
+  }
+`;
 
 @observer
 class SimulationResult extends Component {
@@ -29,7 +33,7 @@ class SimulationResult extends Component {
       <tr key={trade.costBasis + trade.marketValue}>
         <td>{i}.</td>
         <td>{trade.costBasis}</td>
-        <td>{trade.result}</td>
+        <td>{trade.result}%</td>
         <td>{trade.marketValue}</td>
       </tr>
     );

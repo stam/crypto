@@ -1,5 +1,6 @@
 // import Asset from '../strategy/asset';
 import { Order } from '../simulation';
+import Tick from '../models/tick';
 
 class Market {
   saveOrder?(order: Order): () => void;
@@ -10,8 +11,8 @@ class Market {
     this.saveOrder = saveOrder;
   }
 
-  buy(tick: any, quantity: number) {
-    // const asset = new this.Asset(tick.get('last'), quantity, tick.get('timestamp'));
+  buy(tick: Tick, quantity: number) {
+    // const asset = new this.Asset(tick.last, quantity, tick.timestamp);
 
     // How to clean this up?
     // asset.handleSell = (price) => {
@@ -19,8 +20,8 @@ class Market {
     // };
 
     return this.createOrder({
-      date: tick.get('timestamp'),
-      price: tick.get('last'),
+      date: tick.timestamp,
+      price: tick.last,
       type: 'buy',
       quantity,
     });
@@ -28,14 +29,14 @@ class Market {
 
   sell(tick: any, quantity: number) {
     return this.createOrder({
-      date: tick.get('timestamp'),
-      price: tick.get('last'),
+      date: tick.timestamp,
+      price: tick.last,
       type: 'sell',
       quantity,
     });
   }
 
-  createOrder({ date, type, price, quantity }: { date: string; type: string; price: number; quantity: number }) {
+  createOrder({ date, type, price, quantity }: { date: Date; type: string; price: number; quantity: number }) {
     console.info(`> Creating ${type} order: quantity ${quantity}, price: ${price}`)
     const order = new Order({
       date,

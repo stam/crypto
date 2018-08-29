@@ -21,7 +21,7 @@ class BaseStrategy {
   }
 
   handleTick(tick) {
-    const value = round(tick.get('last') / 100);
+    const value = round(tick.last / 100);
 
     // const shouldBuy = this.determineBuy(value);
     if (value <= 7000) {

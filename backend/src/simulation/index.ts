@@ -6,13 +6,13 @@ import Strategy from '../strategy';
 
 export class Order {
   id: string;
-  date: string;
+  date: Date;
   quantity: number;
   price: number;
   type: string;
 
   constructor({ date, quantity, price, type }: {
-    date: string;
+    date: Date;
     quantity: number;
     price: number;
     type: string;
