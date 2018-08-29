@@ -13,9 +13,10 @@ Bootstrapping the database and running the backend:
 ```
 cp .env.example .env
 cd backend
+yarn
 node_modules/.bin/sequelize db:migrate
 sqlite3 database.sqlite ".mode csv" ".import ../tick_2018_08_25.csv tick"
-yarn && yarn create-candles
+yarn create-candles
 yarn start
 ```
 
