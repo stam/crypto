@@ -1,30 +1,8 @@
 import { round, each, values, uniqueId } from 'lodash';
-import Market from '../market';
-// import Asset from '../strategy/asset';
+import Market, { Order } from '../market';
 import Strategy from '../strategy';
 import Tick from '../models/tick';
 
-
-export class Order {
-  id: string;
-  date: Date;
-  quantity: number;
-  price: number;
-  type: string;
-
-  constructor({ date, quantity, price, type }: {
-    date: Date;
-    quantity: number;
-    price: number;
-    type: string;
-  }) {
-    this.id = uniqueId();
-    this.date = date;
-    this.quantity = quantity;
-    this.price = price;
-    this.type = type;
-  }
-}
 
 class Trade {
   marketValue: number;
@@ -40,6 +18,14 @@ class Trade {
   }
 }
 
+/*
+* A backtest simulation for a crypto strategy
+*
+* Feeds ticks to a strategy.
+* Supplies the strategy with a Market interface
+* Keeps track of the orders placed in the market
+* and tries to bundle them into trades.
+*/
 class Simulation {
   ticks: Tick[];
   market: Market;
@@ -84,6 +70,8 @@ class Simulation {
     const trade = this.openTrades[order.quantity];
 
     // It could be that we don't fully sell the bitcoin we have.
+    // TODO: keep buy orders open, sorted by date
+    // when selling, fill open orders from start to end
     if (trade) {
       trade.sell(order);
       // remove trade from index
