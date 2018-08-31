@@ -2,6 +2,7 @@ import { round, each, values, uniqueId } from 'lodash';
 import Market from '../market';
 // import Asset from '../strategy/asset';
 import Strategy from '../strategy';
+import Tick from '../models/tick';
 
 
 export class Order {
@@ -40,7 +41,7 @@ class Trade {
 }
 
 class Simulation {
-  ticks: any;
+  ticks: Tick[];
   market: Market;
   trades: Trade[];
   openTrades: {
@@ -49,7 +50,7 @@ class Simulation {
   strategy: Strategy;
   orders: Order[];
 
-  constructor({ ticks, Strategy }: { ticks: any[], Strategy: any}) {
+  constructor({ ticks, Strategy }: { ticks: Tick[], Strategy: any}) {
     this.ticks = ticks;
 
     this.market = new Market({
