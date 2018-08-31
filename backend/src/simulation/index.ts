@@ -30,9 +30,7 @@ class Simulation {
   ticks: Tick[];
   market: Market;
   trades: Trade[];
-  openTrades: {
-    [key: number]: Trade,
-  }
+  openTrades: Trade[];
   strategy: Strategy;
   orders: Order[];
 
@@ -44,7 +42,7 @@ class Simulation {
     })
 
     this.trades = [];
-    this.openTrades = {};
+    this.openTrades = [];
     this.orders = [];
     this.strategy = new Strategy(this.market);
   }
@@ -63,20 +61,20 @@ class Simulation {
     if (order.type === 'buy') {
       const trade = new Trade(order);
       this.trades.push(trade);
-      this.openTrades[order.quantity] = trade;
+      this.openTrades.push(trade);
       return;
     }
 
-    const trade = this.openTrades[order.quantity];
+    const trade = this.openTrades[0];
 
     // It could be that we don't fully sell the bitcoin we have.
-    // TODO: keep buy orders open, sorted by date
-    // when selling, fill open orders from start to end
     if (trade) {
       trade.sell(order);
+      // TODO: keep buy orders open, sorted by date
+      // when selling, fill open orders from start to end
       // remove trade from index
+      this.openTrades.splice(0, 1);
     }
-
   }
 }
 

@@ -12,7 +12,7 @@ class BaseStrategy {
   constructor(market: Market) {
     // To be refactored to currency
     // It currently represents the amount of assets we can buy
-    this.quantity = 1;
+    this.quantity = 0;
 
     // this.assets = [];
     this.market = market;

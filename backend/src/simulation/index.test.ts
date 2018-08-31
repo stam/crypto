@@ -1,26 +1,18 @@
 import Simulation from '.';
 import Strategy from '../strategy';
-import { forIn } from 'lodash';
-
-
-// Todo move ticks to some kind fixture
-export class Tick {
-  constructor(data) {
-    forIn(data, (value, key) => {
-      this[key] = value;
-    });
-  }
-  get(key) {
-    return this[key];
-  }
-}
+import Tick from '../models/tick';
 
 const tickData = [
   { timestamp: '2018-08-24T19:21:38.170Z', last: 690000 },
   { timestamp: '2018-08-24T19:22:38.170Z', last: 960000 },
 ];
 
-const ticks = tickData.map(data => new Tick(data));
+const ticks = tickData.map(data => {
+  const t = new Tick();
+  t.timestamp = new Date(data.timestamp);
+  t.last = data.last;
+  return t;
+});
 
 describe('A Simulation', () => {
   let simulation;
