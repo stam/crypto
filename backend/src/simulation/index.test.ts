@@ -7,7 +7,7 @@ const tickData = [
   { timestamp: '2018-08-24T19:22:38.170Z', last: 960000 },
 ];
 
-const ticks = tickData.map(data => {
+export const ticks = tickData.map(data => {
   const t = new Tick();
   t.timestamp = new Date(data.timestamp);
   t.last = data.last;

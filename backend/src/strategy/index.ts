@@ -1,6 +1,7 @@
 import { each, round } from 'lodash';
 // import Asset from './asset';
 import Market from '../market';
+import Tick from '../models/tick';
 
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
@@ -20,7 +21,7 @@ class BaseStrategy {
     // market.onAssetSell = this.handleAssetSell.bind(this);
   }
 
-  handleTick(tick) {
+  handleTick(tick: Tick) {
     const value = round(tick.last / 100);
 
     // const shouldBuy = this.determineBuy(value);
@@ -40,7 +41,7 @@ class BaseStrategy {
   // }
 
   // Buy if we have no active order
-  signalBuy(tick) {
+  signalBuy(tick: Tick) {
     if (this.quantity === 0) {
       this.market.buy(tick, this.quantity);
       this.quantity = 1;
@@ -48,7 +49,7 @@ class BaseStrategy {
     }
   }
 
-  signalSell(tick) {
+  signalSell(tick: Tick) {
     if (this.quantity === 1) {
       this.market.sell(tick, this.quantity);
       this.quantity = 0;
