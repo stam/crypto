@@ -2,7 +2,7 @@ import { GraphQLServer } from 'graphql-yoga';
 import { createConnection, getRepository } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
-import Strategy from './strategy/forking';
+import Strategy from './strategy/base';
 import Simulation from './simulation';
 
 const typeDefs = `

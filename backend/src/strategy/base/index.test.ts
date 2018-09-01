@@ -1,6 +1,6 @@
 import Strategy from '.';
-import Market from '../market';
-import { ticks } from '../simulation/index.test';
+import Market from '../../market';
+import { ticks } from '../../simulation/index.test';
 
 const market = new Market({ saveOrder: null});
 

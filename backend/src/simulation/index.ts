@@ -1,6 +1,6 @@
 import { round, each, values, uniqueId } from 'lodash';
 import Market, { Order } from '../market';
-import Strategy from '../strategy';
+import Strategy from '../strategy/base';
 import Tick from '../models/tick';
 
 
