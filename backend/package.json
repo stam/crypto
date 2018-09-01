@@ -8,7 +8,7 @@
     "watch-build": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
     "start": "nodemon -e ts -x ts-node src/index.ts",
-    "test": "jest",
+    "test": "jest --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "create-candles": "ts-node src/commands/createCandles"
   },

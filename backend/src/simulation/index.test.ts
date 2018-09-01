@@ -1,7 +1,7 @@
 import { forIn } from 'lodash';
 
 import Simulation from '.';
-import Strategy from '../strategy/base';
+import Strategy from '../strategy/example/simple';
 import Tick from '../models/tick';
 import { Order } from '../market';
 
