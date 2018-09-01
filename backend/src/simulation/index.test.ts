@@ -1,26 +1,27 @@
-import Simulation from '.';
-import Strategy from '../strategy';
 import { forIn } from 'lodash';
 
-
-// Todo move ticks to some kind fixture
-export class Tick {
-  constructor(data) {
-    forIn(data, (value, key) => {
-      this[key] = value;
-    });
-  }
-  get(key) {
-    return this[key];
-  }
-}
+import Simulation from '.';
+import Strategy from '../strategy';
+import Tick from '../models/tick';
+import { Order } from '../market';
 
 const tickData = [
-  { timestamp: '2018-08-24T19:21:38.170Z', last: 690000 },
-  { timestamp: '2018-08-24T19:22:38.170Z', last: 960000 },
+  { timestamp: new Date('2018-08-24T19:21:38.170Z'), last: 690000 },
+  { timestamp: new Date('2018-08-24T19:22:38.170Z'), last: 960000 },
 ];
 
-const ticks = tickData.map(data => new Tick(data));
+// Todo move to fixtures of some kind
+const bulkCreate = (Model, data) => {
+  return data.map(entry => {
+    const m = new Model();
+    forIn(entry, (value, key) => {
+      m[key] = value;
+    })
+    return m;
+  })
+}
+
+export const ticks = bulkCreate(Tick, tickData);
 
 describe('A Simulation', () => {
   let simulation;
@@ -45,4 +46,22 @@ describe('A Simulation', () => {
     expect(trade.marketValue).toBe(960000);
     expect(trade.result).toBe(139.1);
   })
+
+  xit('bundles orders into trades', () => {
+    const s = new Simulation({ ticks, Strategy });
+
+    const orders = bulkCreate(Order, [
+      { date: new Date(), quantity: 2, price: 1000, buy: 'buy' },
+      { date: new Date(), quantity: 2, price: 1000, buy: 'buy' },
+      { date: new Date(), quantity: 1, price: 1000, buy: 'sell' },
+      { date: new Date(), quantity: 2, price: 1000, buy: 'sell' },
+      { date: new Date(), quantity: 1, price: 1000, buy: 'sell' },
+    ]);
+
+    expect(s.trades.length).toBe(2);
+
+    // Trade 1 should contain 1 buy and 2 sell orders,
+
+    // Trade 1 should contain 1 buy and 2 sell orders (sell trade #2 is split over 2 trades)
+  });
 })
