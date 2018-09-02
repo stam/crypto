@@ -11,7 +11,7 @@ const tickData = [
 ];
 
 // Todo move to fixtures of some kind
-const bulkCreate = (Model, data) => {
+export const bulkCreate = (Model, data) => {
   return data.map(entry => {
     const m = new Model();
     forIn(entry, (value, key) => {
