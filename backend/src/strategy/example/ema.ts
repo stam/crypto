@@ -8,13 +8,12 @@ import Indicator from '../../indicator';
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
 class EmaStrategy extends BaseStrategy {
-  _tickBufferLength: number = 5;
   indicators: Indicator[] = [];
 
   constructor(market: Market) {
     super(market);
 
-    this.addIndicator('EMA', 50);
+    this.addIndicator('EMA', 5000);
   }
 
   addIndicator(name: string, period: number) {

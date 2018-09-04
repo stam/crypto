@@ -1,7 +1,7 @@
 import { uniqueId, reduce } from 'lodash';
-import * as talib from 'talib';
-
+const talib = require('talib');
 import Tick from '../models/tick';
+import Candle from '../models/candle';
 
 
 const Talib = (options) => {
@@ -20,7 +20,8 @@ class Indicator {
   name: string;
   period: number;
   result: number;
-  previousTicks: Tick[] = [];
+  currentCandle: Candle = null;
+  candles: Candle[] = [];
 
   constructor(name: string, period: number) {
     this.name = name;
@@ -45,26 +46,49 @@ class Indicator {
   }
 
   async handleTick(tick: Tick) {
-    this.previousTicks.push(tick);
+    const date = new Date(tick.timestamp.toISOString().substring(0, 10));
+    const value = tick.last;
 
-    if (this.previousTicks.length > this.period) {
-      this.previousTicks.shift();
+    if (!this.currentCandle || this.currentCandle.datetime < date) {
+      const candle = new Candle();
+      candle.open = value;
+      candle.high = value;
+      candle.low = value;
+      candle.close = value;
+      candle.timespan = '1D';
+      candle.datetime = date;
+      this.currentCandle = candle;
+      this.candles.push(candle);
     }
 
-    if (this.previousTicks.length === this.period) {
-      const marketData = this.translateTicks(this.previousTicks);
+    // Update the currentCandle
+    this.currentCandle.close = value;
 
-      const emaResult: number = <number> await Talib({
-        name: 'EMA',
-        startIdx: 0,
-        endIdx: this.period,
-        inReal: marketData.close,
-        optInTimePeriod: this.period,
-      });
-
-      this.result = emaResult;
-    }
+    this.currentCandle.high = Math.max(this.currentCandle.high, value);
+    this.currentCandle.low = Math.min(this.currentCandle.low, value);
   }
+
+  // handleTickOld(tick: Tick) {
+  //   this.previousTicks.push(tick);
+
+  //   if (this.previousTicks.length > this.period) {
+  //     this.previousTicks.shift();
+  //   }
+
+  //   if (this.previousTicks.length === this.period) {
+  //     const marketData = this.translateTicks(this.previousTicks);
+
+  //     const emaResult: number = <number> await Talib({
+  //       name: 'EMA',
+  //       startIdx: 0,
+  //       endIdx: this.period,
+  //       inReal: marketData.close,
+  //       optInTimePeriod: this.period,
+  //     });
+
+  //     this.result = emaResult;
+  //   }
+  // }
 }
 
 export default Indicator;
