@@ -22,7 +22,7 @@ const typeDefs = `
   }
   type Order {
     type: String
-    timestamp: Date
+    date: Date
     quantity: Int
     price: Int
   }

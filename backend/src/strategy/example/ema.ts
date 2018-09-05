@@ -6,6 +6,8 @@ import Market from '../../market';
 import Indicator from '../../indicator';
 import Asset from '../base/asset';
 
+let bla = 0;
+
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
 class EmaStrategy extends BaseStrategy {
@@ -15,7 +17,7 @@ class EmaStrategy extends BaseStrategy {
   constructor(market: Market) {
     super(market);
 
-    this.addIndicator('EMA', 15);
+    this.addIndicator('EMA', 5);
   }
 
   addIndicator(name: string, period: number) {
@@ -30,18 +32,21 @@ class EmaStrategy extends BaseStrategy {
 
   async handleTick(tick: Tick) {
     await this.updateIndicators(tick);
-    const value = round(tick.last / 100);
 
     const emaIndicator = this.indicators[0];
     if (emaIndicator.result && tick.last < emaIndicator.result) {
       this.signalBuy(tick);
+      // if (bla === 0) {
+      //   console.log('z>', emaIndicator.result, tick.last);
+      //   bla++;
+      // }
     }
 
     // Shallow clone because deleting items while iterating is bad
     const assets = [...this.assets];
     assets.forEach((asset) => {
       // const value = round(price / 100);
-      if ((value / asset.cost) > 1.05) {
+      if ((tick.last / asset.cost) > 1.05) {
         this.market.sell(tick, asset.quantity);
         // Remove it from the OG array, not from the clone
         const index = this.assets.indexOf(asset);
@@ -56,6 +61,10 @@ class EmaStrategy extends BaseStrategy {
       this.market.buy(tick, this.quantity);
       const asset = new Asset(tick.last, 1);
       this.assets.push(asset);
+
+      const emaIndicator = this.indicators[0];
+      console.log(`> EMA ${emaIndicator.result}`);
+      console.log(emaIndicator.candles);
     }
   }
 

@@ -1,4 +1,4 @@
-import { uniqueId, reduce } from 'lodash';
+import { min, reduce, initial } from 'lodash';
 const talib = require('talib');
 import Tick from '../models/tick';
 import Candle from '../models/candle';
@@ -49,17 +49,24 @@ class Indicator {
     this.updateCandles(tick);
 
     if (this.candles.length === this.period) {
-      const marketData = this.translateCandles(this.candles);
+      // If we also use the current candle to calculate a minimum,
+      // we also use the current price for checking the minimum,
+      // meaning we can't simple check if the new price is below the minimum
+      const initialCandles = initial(this.candles);
 
-      const emaResult: number = <number> await Talib({
-        name: 'EMA',
-        startIdx: 0,
-        endIdx: this.period,
-        inReal: marketData.close,
-        optInTimePeriod: this.period,
-      });
+      const minimum = min(initialCandles.map(candle => candle.low));
 
-      this.result = emaResult;
+
+      // const marketData = this.translateCandles(this.candles);
+      // const emaResult: number = <number> await Talib({
+      //   name: 'EMA',
+      //   startIdx: 0,
+      //   endIdx: this.period,
+      //   inReal: marketData.low,
+      //   optInTimePeriod: this.period,
+      // });
+
+      this.result = minimum;
     }
   }
 

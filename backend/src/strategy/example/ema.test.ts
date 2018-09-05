@@ -18,12 +18,12 @@ const tickData = [
 ]
 
 const tickDataDistinct = [
-{ last: 0, timestamp: new Date('2018-03-01 10:00:00.000') },
-{ last: 1, timestamp: new Date('2018-03-02 10:00:00.000') },
-{ last: 2, timestamp: new Date('2018-03-03 10:00:00.000') },
-{ last: 3, timestamp: new Date('2018-03-04 10:00:00.000') },
-{ last: 4, timestamp: new Date('2018-03-05 10:00:00.000') },
-{ last: 5, timestamp: new Date('2018-03-06 10:00:00.000') },
+{ last: 5, low: 5, timestamp: new Date('2018-03-01 10:00:00.000') },
+{ last: 4, low: 4, timestamp: new Date('2018-03-02 10:00:00.000') },
+{ last: 3, low: 3, timestamp: new Date('2018-03-03 10:00:00.000') },
+{ last: 2, low: 2, timestamp: new Date('2018-03-04 10:00:00.000') },
+{ last: 1, low: 1, timestamp: new Date('2018-03-05 10:00:00.000') },
+{ last: 0, low: 0, timestamp: new Date('2018-03-06 10:00:00.000') },
 ]
 
 const ticks = bulkCreate(Tick, tickData);
@@ -91,6 +91,6 @@ describe('The EMA Strategy', () => {
     await strategy.handleTick(ticksDistinct[3]);
     await strategy.handleTick(ticksDistinct[4]);
     await strategy.handleTick(ticksDistinct[5]);
-    expect(indicator.result).toBe(3);
+    expect(indicator.result).toBe(1);
   });
 });
