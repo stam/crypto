@@ -48,13 +48,13 @@ class Simulation {
   }
 
   async run() {
-    const promises = [];
-    each(this.ticks, (tick) => {
-      const p = this.strategy.handleTick(tick);
-      promises.push(p);
+    // const promises = [];
+    each(this.ticks, async (tick) => {
+      await this.strategy.handleTick(tick);
+      // promises.push(p);
     });
 
-    await Promise.all(promises);
+    // await Promise.all(promises);
 
     this.trades = values(this.trades);
   }

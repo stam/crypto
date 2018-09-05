@@ -34,12 +34,15 @@ class EmaStrategy extends BaseStrategy {
     await this.updateIndicators(tick);
 
     const emaIndicator = this.indicators[0];
+
+    if (tick.timestamp.toISOString().substring(0, 10) === '2018-03-17') {
+      if (bla === 0) {
+        console.log(tick.timestamp,  tick.last, emaIndicator.candles);
+        bla++;
+      }
+    }
     if (emaIndicator.result && tick.last < emaIndicator.result) {
       this.signalBuy(tick);
-      // if (bla === 0) {
-      //   console.log('z>', emaIndicator.result, tick.last);
-      //   bla++;
-      // }
     }
 
     // Shallow clone because deleting items while iterating is bad
@@ -61,10 +64,6 @@ class EmaStrategy extends BaseStrategy {
       this.market.buy(tick, this.quantity);
       const asset = new Asset(tick.last, 1);
       this.assets.push(asset);
-
-      const emaIndicator = this.indicators[0];
-      console.log(`> EMA ${emaIndicator.result}`);
-      console.log(emaIndicator.candles);
     }
   }
 
