@@ -47,10 +47,14 @@ class Simulation {
     this.strategy = new Strategy(this.market);
   }
 
-  run() {
+  async run() {
+    const promises = [];
     each(this.ticks, (tick) => {
-      this.strategy.handleTick(tick);
+      const p = this.strategy.handleTick(tick);
+      promises.push(p);
     });
+
+    await Promise.all(promises);
 
     this.trades = values(this.trades);
   }

@@ -25,7 +25,6 @@ export default class CandleStickChart extends React.Component {
     ratio: PropTypes.number.isRequired,
   };
   render() {
-    // console.log('fitDimensinos', this.props);
     const { width, height, data, ratio } = this.props;
     const xAccessor = d => d.date;
     const xExtents = [xAccessor(last(data)), xAccessor(data[0])];

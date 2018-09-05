@@ -65,7 +65,7 @@ const resolvers = {
 
       const simulation = new Simulation({ ticks, Strategy });
 
-      simulation.run();
+      await simulation.run();
 
       const sim = {
         from: startDate,
