@@ -19,7 +19,7 @@ const Talib = (options) => {
 class Indicator {
   name: string;
   period: number;
-  result: number;
+  result: number = null;
   currentCandle: Candle = null;
   candles: Candle[] = [];
 
@@ -28,24 +28,42 @@ class Indicator {
     this.period = period;
   }
 
-  translateTicks(ticks: Tick[]) {
-    return reduce(ticks, (data, tick) => {
-      data.open.push(tick.last);
-      data.close.push(tick.last);
-      data.high.push(tick.last);
-      data.low.push(tick.last);
-      data.volume.push(tick.main_volume);
+  translateCandles(candles: Candle[]) {
+    return reduce(candles, (data, candle) => {
+      data.open.push(candle.open);
+      data.close.push(candle.close);
+      data.high.push(candle.high);
+      data.low.push(candle.low);
+      // data.volume.push(candle.volume);
       return data;
     }, {
       open: [],
       close: [],
       high: [],
       low: [],
-      volume: [],
+      // volume: [],
     });
   }
 
   async handleTick(tick: Tick) {
+    this.updateCandles(tick);
+
+    if (this.candles.length === this.period) {
+      const marketData = this.translateCandles(this.candles);
+
+      const emaResult: number = <number> await Talib({
+        name: 'EMA',
+        startIdx: 0,
+        endIdx: this.period,
+        inReal: marketData.close,
+        optInTimePeriod: this.period,
+      });
+
+      this.result = emaResult;
+    }
+  }
+
+  updateCandles(tick: Tick) {
     const date = new Date(tick.timestamp.toISOString().substring(0, 10));
     const value = tick.last;
 
@@ -61,13 +79,16 @@ class Indicator {
       this.candles.push(candle);
     }
 
+    if (this.candles.length > this.period) {
+      this.candles.shift();
+    }
+
     // Update the currentCandle
     this.currentCandle.close = value;
 
     this.currentCandle.high = Math.max(this.currentCandle.high, value);
     this.currentCandle.low = Math.min(this.currentCandle.low, value);
   }
-
   // handleTickOld(tick: Tick) {
   //   this.previousTicks.push(tick);
 
