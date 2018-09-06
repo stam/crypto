@@ -33,9 +33,18 @@ class CoinValue extends Component {
         query: '{ candles { id open close low high datetime} }',
       }),
     })
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) {
+          const response = await res.text();
+          throw Error(response);
+        }
+        return res.json();
+      })
       .then(res => {
         this.data = parseData(res.data);
+      })
+      .catch(e => {
+        console.log('Error', e);
       });
   }
   render() {
