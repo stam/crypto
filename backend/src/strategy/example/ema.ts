@@ -6,8 +6,6 @@ import Market from '../../market';
 import Indicator from '../../indicator';
 import Asset from '../base/asset';
 
-let bla = 0;
-
 // Dummy strategy, buys at 7000, sells at 9500
 // Without state: doesn't check how much fund is available or active orders
 class EmaStrategy extends BaseStrategy {
@@ -35,12 +33,6 @@ class EmaStrategy extends BaseStrategy {
 
     const emaIndicator = this.indicators[0];
 
-    if (tick.timestamp.toISOString().substring(0, 10) === '2018-03-17') {
-      if (bla === 0) {
-        console.log(tick.timestamp,  tick.last, emaIndicator.candles);
-        bla++;
-      }
-    }
     if (emaIndicator.result && tick.last < emaIndicator.result) {
       this.signalBuy(tick);
     }

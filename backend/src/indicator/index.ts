@@ -16,14 +16,6 @@ const Talib = (options) => {
   });
 };
 
-let bla = 0;
-function logOnce(...options) {
-  if (bla === 0) {
-    console.log(...options);
-    bla++;
-  }
-}
-
 class Indicator {
   name: string;
   period: number;
@@ -81,10 +73,6 @@ class Indicator {
   updateCandles(tick: Tick) {
     const date = new Date(tick.timestamp.toISOString().substring(0, 10));
     const value = tick.last;
-
-    if (tick.timestamp.toISOString().substring(0, 10) === '2018-03-17') {
-      logOnce('date reached bois', tick.timestamp, this.currentCandle.datetime);
-    }
 
     if (!this.currentCandle || this.currentCandle.datetime < date) {
       const candle = new Candle();
