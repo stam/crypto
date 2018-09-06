@@ -8,7 +8,7 @@
     "watch-build": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
     "start": "nodemon -e ts -x ts-node src/index.ts",
-    "test": "jest",
+    "test": "jest --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "create-candles": "ts-node src/commands/createCandles"
   },
@@ -22,6 +22,7 @@
     "pg-hstore": "^2.3.2",
     "reflect-metadata": "^0.1.12",
     "sqlite3": "^4.0.2",
+    "talib": "^1.0.5",
     "typeorm": "^0.2.7"
   },
   "devDependencies": {

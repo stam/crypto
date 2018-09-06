@@ -1,6 +1,6 @@
 import { round, each, values, uniqueId } from 'lodash';
 import Market, { Order } from '../market';
-import Strategy from '../strategy';
+import Strategy from '../strategy/example/simple';
 import Tick from '../models/tick';
 
 
@@ -47,10 +47,10 @@ class Simulation {
     this.strategy = new Strategy(this.market);
   }
 
-  run() {
-    each(this.ticks, (tick) => {
-      this.strategy.handleTick(tick);
-    });
+  async run() {
+    for (const tick of this.ticks) {
+      await this.strategy.handleTick(tick);
+    };
 
     this.trades = values(this.trades);
   }

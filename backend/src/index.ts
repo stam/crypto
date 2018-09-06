@@ -1,8 +1,8 @@
 import { GraphQLServer } from 'graphql-yoga';
-import { createConnection, getRepository } from 'typeorm';
+import { createConnection, getRepository, LessThan } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
-import Strategy from './strategy/forking';
+import Strategy from './strategy/example/ema';
 import Simulation from './simulation';
 
 const typeDefs = `
@@ -22,7 +22,7 @@ const typeDefs = `
   }
   type Order {
     type: String
-    timestamp: Date
+    date: Date
     quantity: Int
     price: Int
   }
@@ -65,7 +65,7 @@ const resolvers = {
 
       const simulation = new Simulation({ ticks, Strategy });
 
-      simulation.run();
+      await simulation.run();
 
       const sim = {
         from: startDate,

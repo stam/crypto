@@ -1,7 +1,7 @@
 import { forIn } from 'lodash';
 
 import Simulation from '.';
-import Strategy from '../strategy';
+import Strategy from '../strategy/example/simple';
 import Tick from '../models/tick';
 import { Order } from '../market';
 
@@ -11,7 +11,7 @@ const tickData = [
 ];
 
 // Todo move to fixtures of some kind
-const bulkCreate = (Model, data) => {
+export const bulkCreate = (Model, data) => {
   return data.map(entry => {
     const m = new Model();
     forIn(entry, (value, key) => {

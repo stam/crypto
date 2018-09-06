@@ -24,7 +24,7 @@ export default class Simulation extends BaseModel {
             from
             to
             orders {
-              timestamp
+              date
               type
               quantity
               price
