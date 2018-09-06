@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Button from '../component/Button';
 
 const Form = styled.form`
-  grid-row: 2 / 9;
+  grid-row: 10 / -1;
   grid-column: 1 / 2;
 
   display: flex;

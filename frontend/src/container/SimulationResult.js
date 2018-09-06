@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   grid-row: 10 / -1;
-  grid-column: 1 / -1;
+  grid-column: 2 / -1;
 `;
 
 const Table = styled.table`
@@ -30,7 +30,7 @@ class SimulationResult extends Component {
 
   renderTrade(trade, i) {
     return (
-      <tr key={trade.costBasis + trade.marketValue}>
+      <tr key={trade.buyDate + trade.sellPrice}>
         <td>{i}.</td>
         <td>{trade.buyDate}</td>
         <td>{trade.buyPrice}</td>
