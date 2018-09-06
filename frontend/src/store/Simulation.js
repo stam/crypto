@@ -30,8 +30,10 @@ export default class Simulation extends BaseModel {
               price
             }
             trades {
-              costBasis
-              marketValue
+              buyPrice
+              buyDate
+              sellPrice
+              sellDate
               result
             }
           }

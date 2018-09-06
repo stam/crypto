@@ -5,16 +5,21 @@ import Tick from '../models/tick';
 
 
 class Trade {
-  marketValue: number;
+  buyPrice: number;
+  sellPrice: number;
   result: number;
-  costBasis: number;
+  buyDate: Date;
+  sellDate: Date;
+
   constructor(order: Order) {
-    this.costBasis = order.price;
+    this.buyPrice = order.price;
+    this.buyDate = order.date;
   }
 
   sell(order: Order) {
-    this.marketValue = order.price;
-    this.result = round(100 * order.price / this.costBasis, 1);
+    this.sellPrice = order.price;
+    this.sellDate = order.date;
+    this.result = round(100 * order.price / this.buyPrice, 1);
   }
 }
 

@@ -32,9 +32,11 @@ class SimulationResult extends Component {
     return (
       <tr key={trade.costBasis + trade.marketValue}>
         <td>{i}.</td>
-        <td>{trade.costBasis}</td>
+        <td>{trade.buyDate}</td>
+        <td>{trade.buyPrice}</td>
         <td>{trade.result}%</td>
-        <td>{trade.marketValue}</td>
+        <td>{trade.sellPrice}</td>
+        <td>{trade.sellDate}</td>
       </tr>
     );
   }
@@ -66,9 +68,11 @@ class SimulationResult extends Component {
           <thead>
             <tr>
               <th />
-              <th>Cost Basis</th>
-              <th>Gain/Loss</th>
-              <th>Market Value</th>
+              <th>Buy Date</th>
+              <th>Buy Price</th>
+              <th>Result</th>
+              <th>Sell Price</th>
+              <th>Sell Date</th>
             </tr>
           </thead>
           <tbody>{simulation.trades.map(this.renderTrade)}</tbody>

@@ -32,8 +32,10 @@ const typeDefs = `
     timestamp: Date
   }
   type Trade {
-    costBasis: Int
-    marketValue: Int
+    buyPrice: Int
+    sellPrice: Int
+    buyDate: Date
+    sellDate: Date
     result: Float
   }
   type Candle {
