@@ -52,21 +52,22 @@ class Indicator {
       // If we also use the current candle to calculate a minimum,
       // we also use the current price for checking the minimum,
       // meaning we can't simple check if the new price is below the minimum
-      const initialCandles = initial(this.candles);
+      // const initialCandles = initial(this.candles);
 
-      const minimum = min(initialCandles.map(candle => candle.low));
+      // const minimum = min(initialCandles.map(candle => candle.low));
+      // this.result = minimum;
 
 
-      // const marketData = this.translateCandles(this.candles);
-      // const emaResult: number = <number> await Talib({
-      //   name: 'EMA',
-      //   startIdx: 0,
-      //   endIdx: this.period,
-      //   inReal: marketData.low,
-      //   optInTimePeriod: this.period,
-      // });
+      const marketData = this.translateCandles(this.candles);
+      const emaResult: number = <number> await Talib({
+        name: 'EMA',
+        startIdx: 0,
+        endIdx: this.period,
+        inReal: marketData.close,
+        optInTimePeriod: this.period,
+      });
 
-      this.result = minimum;
+      this.result = emaResult;
     }
   }
 
@@ -96,27 +97,6 @@ class Indicator {
     this.currentCandle.high = Math.max(this.currentCandle.high, value);
     this.currentCandle.low = Math.min(this.currentCandle.low, value);
   }
-  // handleTickOld(tick: Tick) {
-  //   this.previousTicks.push(tick);
-
-  //   if (this.previousTicks.length > this.period) {
-  //     this.previousTicks.shift();
-  //   }
-
-  //   if (this.previousTicks.length === this.period) {
-  //     const marketData = this.translateTicks(this.previousTicks);
-
-  //     const emaResult: number = <number> await Talib({
-  //       name: 'EMA',
-  //       startIdx: 0,
-  //       endIdx: this.period,
-  //       inReal: marketData.close,
-  //       optInTimePeriod: this.period,
-  //     });
-
-  //     this.result = emaResult;
-  //   }
-  // }
 }
 
 export default Indicator;
