@@ -48,10 +48,11 @@ class CoinValue extends Component {
       });
   }
   render() {
+    const { simulation } = this.props;
     return (
       <Container>
         {!this.data && <p>Loading</p>}
-        {this.data && <CandleChart data={this.data} />}
+        {this.data && <CandleChart data={this.data} simulation={simulation} />}
       </Container>
     );
   }

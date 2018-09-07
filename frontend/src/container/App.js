@@ -32,7 +32,7 @@ class App extends Component {
       <Main>
         <Header>Crypto</Header>
         <SimulationForm simulation={this.simulation} />
-        <CoinValue />
+        <CoinValue simulation={this.simulation} />
         <SimulationResult simulation={this.simulation} />
       </Main>
     );

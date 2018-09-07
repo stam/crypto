@@ -15,7 +15,7 @@ class EmaStrategy extends BaseStrategy {
   constructor(market: Market) {
     super(market);
 
-    this.addIndicator('EMA', 15);
+    this.addIndicator('EMA', 5);
   }
 
   addIndicator(name: string, period: number) {
