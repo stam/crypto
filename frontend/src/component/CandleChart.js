@@ -20,12 +20,11 @@ import { last, timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
 import { observer } from 'mobx-react';
 import OrderAnnotations from './OrderAnnotations';
 
-@fitDimensions
-@observer
-export default class CandleStickChart extends React.Component {
+class CandleStickChart extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
     ratio: PropTypes.number.isRequired,
     simulation: PropTypes.object.isRequired,
   };
@@ -48,7 +47,7 @@ export default class CandleStickChart extends React.Component {
         xScale={scaleTime()}
         xExtents={xExtents}
       >
-        <Chart id={1} yExtents={d => [6000, 11000]}>
+        <Chart id={1} yExtents={() => [6000, 11000]}>
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
           <MouseCoordinateX
@@ -69,3 +68,5 @@ export default class CandleStickChart extends React.Component {
     );
   }
 }
+
+export default fitDimensions(observer(CandleStickChart));

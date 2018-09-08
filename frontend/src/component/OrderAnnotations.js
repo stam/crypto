@@ -23,8 +23,7 @@ const buyProps = {
 
 const toDateString = d => d.date.toISOString().substring(0, 10);
 
-@observer
-export default class OrderAnnotations extends React.Component {
+class OrderAnnotations extends React.Component {
   static propTypes = {
     orders: PropTypes.object.isRequired,
   };
@@ -77,3 +76,5 @@ export default class OrderAnnotations extends React.Component {
     );
   }
 }
+
+export default observer(OrderAnnotations);

@@ -1,13 +1,30 @@
-
 {
   "parser": "babel-eslint",
-  "extends": ["airbnb", "prettier"],
+  "extends": [
+    "airbnb",
+    "prettier"
+  ],
   "env": {
     "browser": true,
     "jest": true,
     "node": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true, "optionalDependencies": false, "peerDependencies": false }]
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true,
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/forbid-prop-types": [1, { "forbid": ["any"] }],
+    "react/prefer-stateless-function": [0],
+    "class-methods-use-this": [0],
+    "no-underscore-dangle": [0],
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "react/jsx-one-expression-per-line": [0],
+    "radix": [0]
   }
 }

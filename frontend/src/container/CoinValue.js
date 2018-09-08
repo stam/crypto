@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { observer, PropTypes } from 'mobx-react';
 import { observable } from 'mobx';
 import styled from 'styled-components';
 
@@ -21,9 +21,10 @@ function parseData(data) {
   }));
 }
 
-@observer
 class CoinValue extends Component {
-  @observable.ref data;
+  static propTypes = {
+    simulation: PropTypes.object.isRequired,
+  };
 
   componentWillMount() {
     fetch('/api', {
@@ -47,6 +48,9 @@ class CoinValue extends Component {
         console.log('Error', e);
       });
   }
+
+  @observable.ref data;
+
   render() {
     const { simulation } = this.props;
     return (
@@ -58,4 +62,4 @@ class CoinValue extends Component {
   }
 }
 
-export default CoinValue;
+export default observer(CoinValue);

@@ -21,7 +21,8 @@ class SimulationForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.simulation.fetch();
+    const { simulation } = this.props;
+    simulation.fetch();
   };
 
   render() {

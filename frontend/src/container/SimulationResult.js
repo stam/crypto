@@ -14,13 +14,12 @@ const Table = styled.table`
   }
 `;
 
-@observer
 class SimulationResult extends Component {
   static propTypes = {
-    simulation: PropTypes.object,
+    simulation: PropTypes.object.isRequired,
   };
 
-  renderOrder(order, i) {
+  renderOrder(order) {
     return (
       <div key={order.timestamp + order.type}>
         {order.timestamp} {order.type} {order.price}
@@ -82,4 +81,4 @@ class SimulationResult extends Component {
   }
 }
 
-export default SimulationResult;
+export default observer(SimulationResult);
