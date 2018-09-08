@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -19,6 +20,8 @@ class SimulationResult extends Component {
     simulation: PropTypes.object.isRequired,
   };
 
+  formatDate = date => moment(date).format('YYYY-MM-DD hh:mm:ss');
+
   renderOrder(order) {
     return (
       <div key={order.timestamp + order.type}>
@@ -27,18 +30,16 @@ class SimulationResult extends Component {
     );
   }
 
-  renderTrade(trade, i) {
-    return (
-      <tr key={trade.buyDate + trade.sellPrice}>
-        <td>{i}.</td>
-        <td>{trade.buyDate}</td>
-        <td>{trade.buyPrice}</td>
-        <td>{trade.result}%</td>
-        <td>{trade.sellPrice}</td>
-        <td>{trade.sellDate}</td>
-      </tr>
-    );
-  }
+  renderTrade = (trade, i) => (
+    <tr key={trade.buyDate + trade.sellPrice}>
+      <td>{i}.</td>
+      <td>{this.formatDate(trade.buyDate)}</td>
+      <td>{trade.buyPrice}</td>
+      <td>{trade.result}%</td>
+      <td>{trade.sellPrice}</td>
+      <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
+    </tr>
+  );
 
   render() {
     const { simulation } = this.props;
@@ -59,7 +60,7 @@ class SimulationResult extends Component {
     }
     return (
       <Container>
-        <h3>Simulation result: Trades</h3>
+        <h3>Simulated trades:</h3>
         {/* <OrderContainer>
           {data && data.orders.map(this.renderOrder)}
         </OrderContainer> */}

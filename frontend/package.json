@@ -23,6 +23,7 @@
     "lodash": "^4.17.10",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
+    "moment": "^2.22.2",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-app-rewire-mobx": "^1.0.8",
