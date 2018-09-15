@@ -46,32 +46,23 @@ class Indicator {
   }
 
   async handleTick(tick: Tick) {
-    this.updateCandles(tick);
-
-    if (this.candles.length === this.period) {
-      // If we also use the current candle to calculate a minimum,
-      // we also use the current price for checking the minimum,
-      // meaning we can't simple check if the new price is below the minimum
-      // const initialCandles = initial(this.candles);
-
-      // const minimum = min(initialCandles.map(candle => candle.low));
-      // this.result = minimum;
-
-
-      const marketData = this.translateCandles(this.candles);
-      const emaResult: number = <number> await Talib({
-        name: 'EMA',
-        startIdx: 0,
-        endIdx: this.period,
-        inReal: marketData.close,
-        optInTimePeriod: this.period,
-      });
-
-      this.result = emaResult;
-    }
+    await this.updateCandles(tick);
   }
 
-  updateCandles(tick: Tick) {
+  async updateValue() {
+    const marketData = this.translateCandles(this.candles);
+    const emaResult: number = <number> await Talib({
+      name: this.name,
+      startIdx: 0,
+      endIdx: this.period,
+      inReal: marketData.close,
+      optInTimePeriod: this.period,
+    });
+
+    this.result = emaResult;
+  }
+
+  async updateCandles(tick: Tick) {
     const date = new Date(tick.timestamp.toISOString().substring(0, 10));
     const value = tick.last;
 
@@ -88,6 +79,7 @@ class Indicator {
     }
 
     if (this.candles.length > this.period) {
+      await this.updateValue();
       this.candles.shift();
     }
 
