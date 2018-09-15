@@ -1,4 +1,4 @@
-import { round, reduce } from 'lodash';
+import { values } from 'lodash';
 
 import Tick from '../../models/tick';
 import BaseStrategy from '../base';
@@ -6,48 +6,42 @@ import Market from '../../market';
 import Indicator from '../../indicator';
 import Asset from '../base/asset';
 
-// Dummy strategy, buys at 7000, sells at 9500
-// Without state: doesn't check how much fund is available or active orders
 class EmaStrategy extends BaseStrategy {
-  indicators: Indicator[] = [];
+  indicators: { [key: string]: Indicator } = {};
   assets: Asset[] = [];
 
   constructor(market: Market) {
     super(market);
 
-    this.addIndicator('EMA', 15);
+    this.addIndicator('EMA', 7);
+    this.addIndicator('EMA', 14);
   }
 
   addIndicator(name: string, period: number) {
     const indicator = new Indicator(name, period);
-    this.indicators.push(indicator)
+    this.indicators[`${name}${period}`] = indicator;
   }
 
   updateIndicators(tick: Tick) {
-    const promises = this.indicators.map(indicator => indicator.handleTick(tick));
+    const promises = values(this.indicators).map(indicator => indicator.handleTick(tick));
     return Promise.all(promises);
   }
 
   async handleTick(tick: Tick) {
     await this.updateIndicators(tick);
 
-    const emaIndicator = this.indicators[0];
+    const emaShort = this.indicators.EMA7;
+    const emaLong = this.indicators.EMA14;
 
-    if (emaIndicator.result && tick.last < emaIndicator.result) {
-      this.signalBuy(tick);
+    if (emaShort.result === null || emaLong.result === null) {
+      return;
     }
 
-    // Shallow clone because deleting items while iterating is bad
-    const assets = [...this.assets];
-    assets.forEach((asset) => {
-      // const value = round(price / 100);
-      if ((tick.last / asset.cost) > 1.05) {
-        this.market.sell(tick, asset.quantity);
-        // Remove it from the OG array, not from the clone
-        const index = this.assets.indexOf(asset);
-        this.assets.splice(index, 1);
-      }
-    });
+    if (emaShort.result > emaLong.result) {
+      this.signalBuy(tick);
+    } else if (emaShort.result < emaLong.result) {
+      this.signalSell(tick);
+    }
   }
 
   // Buy if we have no crypto
@@ -59,12 +53,17 @@ class EmaStrategy extends BaseStrategy {
     }
   }
 
-  // signalSell(tick: Tick) {
-  //   if (this.assets.length === 0) {
-  //     this.market.sell(tick, this.quantity);
-  //     this.quantity = 0;
-  //   }
-  // }
+  signalSell(tick: Tick) {
+    // Shallow clone because deleting items while iterating is bad
+    const assets = [...this.assets];
+
+    assets.forEach((asset) => {
+      this.market.sell(tick, asset.quantity);
+      // Remove it from the OG array, not from the clone
+      const index = this.assets.indexOf(asset);
+      this.assets.splice(index, 1);
+    });
+  }
 }
 
 export default EmaStrategy;
