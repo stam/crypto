@@ -10,9 +10,12 @@ import { ChartCanvas, Chart } from 'react-stockcharts';
 import {
   CrossHairCursor,
   MouseCoordinateX,
+  CurrentCoordinate,
   MouseCoordinateY,
 } from 'react-stockcharts/lib/coordinates';
-import { CandlestickSeries } from 'react-stockcharts/lib/series';
+import { ema, wma, sma, tma } from 'react-stockcharts/lib/indicator';
+import { CandlestickSeries, LineSeries } from 'react-stockcharts/lib/series';
+import { MovingAverageTooltip } from 'react-stockcharts/lib/tooltip';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 import { fitDimensions } from 'react-stockcharts/lib/helper';
 import { last, timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
@@ -34,6 +37,26 @@ class CandleStickChart extends React.Component {
     const xAccessor = d => d.date;
     const xExtents = [xAccessor(last(data)), xAccessor(data[0])];
 
+    const emaA = ema()
+      .options({
+        windowSize: 14,
+      })
+      .merge((d, c) => {
+        d.emaA = c;
+      })
+      .accessor(d => d.emaA);
+
+    const emaB = ema()
+      .options({
+        windowSize: 7,
+      })
+      .merge((d, c) => {
+        d.emaB = c;
+      })
+      .accessor(d => d.emaB);
+
+    const calculatedData = emaA(emaB(data));
+
     return (
       <ChartCanvas
         height={height}
@@ -42,7 +65,7 @@ class CandleStickChart extends React.Component {
         margin={{ left: 50, right: 50, top: 10, bottom: 30 }}
         type="svg"
         seriesName="MSFT"
-        data={data}
+        data={calculatedData}
         xAccessor={xAccessor}
         xScale={scaleTime()}
         xExtents={xExtents}
@@ -60,6 +83,27 @@ class CandleStickChart extends React.Component {
             at="left"
             orient="left"
             displayFormat={format('.0f')}
+          />
+          <LineSeries yAccessor={emaA.accessor()} stroke={emaA.stroke()} />
+          <LineSeries yAccessor={emaB.accessor()} stroke={emaB.stroke()} />
+          <CurrentCoordinate yAccessor={emaA.accessor()} fill={emaA.stroke()} />
+          <MovingAverageTooltip
+            onClick={e => console.log(e)}
+            origin={[20, 0]}
+            options={[
+              {
+                yAccessor: emaA.accessor(),
+                type: 'EMA',
+                stroke: emaA.stroke(),
+                windowSize: emaA.options().windowSize,
+              },
+              {
+                yAccessor: emaB.accessor(),
+                type: 'EMA',
+                stroke: emaB.stroke(),
+                windowSize: emaB.options().windowSize,
+              },
+            ]}
           />
           <CandlestickSeries width={timeIntervalBarWidth(utcDay)} />
         </Chart>
