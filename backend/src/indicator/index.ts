@@ -43,6 +43,7 @@ class Indicator {
   }
 
   async updateValue(candle: Candle) {
+    this.candles.push(candle);
     // const marketData = this.translateCandles(this.candles);
 
     // this.ta = new TA.EMA({
@@ -70,6 +71,23 @@ class Indicator {
 
     // console.log('bla', bla);
 
+  }
+
+  async updateIntermediateValue(candle: Candle) {
+
+    // clone this.ta
+    const clonedTa = new TA[this.name.toUpperCase()]({
+      period: this.period,
+      values: [],
+    });
+
+    this.candles.forEach(prevCandle => {
+      clonedTa.nextValue(prevCandle.close);
+    });
+    // Object.assign(clonedTa, this.ta);
+    // console.log('this.ta', this.ta, this.ta.result);
+    this.result = clonedTa.nextValue(candle.close) || null;
+    return this.result;
   }
 
   async updateCandles(tick: Tick) {
@@ -104,6 +122,7 @@ class Indicator {
 
     this.currentCandle.high = Math.max(this.currentCandle.high, value);
     this.currentCandle.low = Math.min(this.currentCandle.low, value);
+    this.updateIntermediateValue(this.currentCandle);
   }
 }
 
