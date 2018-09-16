@@ -23,7 +23,7 @@
     "pg-hstore": "^2.3.2",
     "reflect-metadata": "^0.1.12",
     "sqlite3": "^4.0.2",
-    "talib": "^1.0.5",
+    "technicalindicators": "^1.1.13",
     "typeorm": "^0.2.7"
   },
   "devDependencies": {

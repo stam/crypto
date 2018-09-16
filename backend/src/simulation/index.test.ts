@@ -30,20 +30,20 @@ describe('A Simulation', () => {
     simulation = new Simulation({ ticks, Strategy });
   });
 
-  it('receives orders from its strategy', () => {
-    simulation.run();
+  it('receives orders from its strategy', async () => {
+    await simulation.run();
 
     expect(simulation.orders.length).toBe(2);
   });
 
-  it('calculates metrics for each asset sold', () => {
-    simulation.run();
+  it('calculates metrics for each asset sold', async () => {
+    await simulation.run();
 
     expect(simulation.trades.length).toBe(1);
 
     const trade = simulation.trades[0];
-    expect(trade.costBasis).toBe(690000);
-    expect(trade.marketValue).toBe(960000);
+    expect(trade.buyPrice).toBe(690000);
+    expect(trade.sellPrice).toBe(960000);
     expect(trade.result).toBe(139.1);
   })
 

@@ -1,72 +1,88 @@
 import { min, reduce, initial } from 'lodash';
-const talib = require('talib');
+import * as TA from 'technicalindicators';
 import Tick from '../models/tick';
 import Candle from '../models/candle';
 
-
-const Talib = (options) => {
-  return new Promise(function(resolve, reject) {
-    return talib.execute(options, (err, result) => {
-      if (err) {
-        reject(err);
-      }
-      const output: number = result.result.outReal[0];
-      resolve(output);
-    })
-  });
-};
 
 class Indicator {
   name: string;
   period: number;
   result: number = null;
   currentCandle: Candle = null;
+  ta = null;
   candles: Candle[] = [];
 
   constructor(name: string, period: number) {
     this.name = name;
     this.period = period;
-  }
-
-  translateCandles(candles: Candle[]) {
-    return reduce(candles, (data, candle) => {
-      data.open.push(candle.open);
-      data.close.push(candle.close);
-      data.high.push(candle.high);
-      data.low.push(candle.low);
-      // data.volume.push(candle.volume);
-      return data;
-    }, {
-      open: [],
-      close: [],
-      high: [],
-      low: [],
-      // volume: [],
+    this.ta = new TA[name.toUpperCase()]({
+      period: period,
+      values: [],
     });
   }
+
+  // translateCandles(candles: Candle[]) {
+  //   return reduce(candles, (data, candle) => {
+  //     data.open.push(candle.open);
+  //     data.close.push(candle.close);
+  //     data.high.push(candle.high);
+  //     data.low.push(candle.low);
+  //     // data.volume.push(candle.volume);
+  //     return data;
+  //   }, {
+  //     open: [],
+  //     close: [],
+  //     high: [],
+  //     low: [],
+  //     // volume: [],
+  //   });
+  // }
 
   async handleTick(tick: Tick) {
     await this.updateCandles(tick);
   }
 
-  async updateValue() {
-    const marketData = this.translateCandles(this.candles);
-    const emaResult: number = <number> await Talib({
-      name: this.name,
-      startIdx: 0,
-      endIdx: this.period,
-      inReal: marketData.close,
-      optInTimePeriod: this.period,
-    });
+  async updateValue(candle: Candle) {
+    // const marketData = this.translateCandles(this.candles);
 
-    this.result = emaResult;
+    // this.ta = new TA.EMA({
+    //   period: this.period,
+    //   values: marketData.close,
+    // })
+
+    this.result = this.ta.nextValue(candle.close) || null;
+    return this.result;
+
+    // if (result) {
+    //   this.result = result;
+    // }
+
+    // console.log('this.ta', this.ta, this.candles);
+    // const bla = TA.EMA.calculate({
+    // })
+    // const emaResult: number = <number> await Talib({
+    //   name: this.name,
+    //   startIdx: 0,
+    //   endIdx: this.period,
+    //   inReal: marketData.close,
+    //   optInTimePeriod: this.period,
+    // });
+
+    // console.log('bla', bla);
+
   }
 
   async updateCandles(tick: Tick) {
     const date = new Date(tick.timestamp.toISOString().substring(0, 10));
     const value = tick.last;
 
-    if (!this.currentCandle || this.currentCandle.datetime < date) {
+    if (this.currentCandle && this.currentCandle.datetime < date) {
+      await this.updateValue(this.currentCandle);
+      // CurrentCandle is complete, updated with all the ticks of that date.
+      this.currentCandle = null;
+    }
+
+    if (!this.currentCandle) {
       const candle = new Candle();
       candle.open = value;
       candle.high = value;
@@ -75,13 +91,13 @@ class Indicator {
       candle.timespan = '1D';
       candle.datetime = date;
       this.currentCandle = candle;
-      this.candles.push(candle);
+      // this.candles.push(candle);
     }
 
-    if (this.candles.length > this.period) {
-      await this.updateValue();
-      this.candles.shift();
-    }
+    // if (this.candles.length > this.period) {
+    //   await this.updateValue();
+    //   this.candles.shift();
+    // }
 
     // Update the currentCandle
     this.currentCandle.close = value;

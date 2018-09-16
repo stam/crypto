@@ -56,6 +56,7 @@ class CandleStickChart extends React.Component {
       .accessor(d => d.emaB);
 
     const calculatedData = emaA(emaB(data));
+    console.log('calculatedData', calculatedData);
 
     return (
       <ChartCanvas
