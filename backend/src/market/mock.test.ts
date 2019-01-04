@@ -1,4 +1,4 @@
-import Market from './mock';
+import Market, { InsufficientFiatError, InsufficientCryptoError } from './mock';
 
 describe('The market', () => {
 
@@ -29,21 +29,21 @@ describe('The market', () => {
       market.accountFiat = 1000;
       market.accountValue = 0;
 
-      expect(() => {
-        market.createOrder({
-          price: 501,
-          quantity: 2,
-          type: 'buy',
-        });
-      }).toThrow();
+      const invalidDoubleOrder = market.createOrder({
+        price: 501,
+        quantity: 2,
+        type: 'buy',
+      });
 
-      expect(() => {
-        market.createOrder({
-          price: 1100,
-          quantity: 1,
-          type: 'buy',
-        });
-      }).toThrow();
+      await expect(invalidDoubleOrder).rejects.toThrow(InsufficientFiatError);
+
+      const invalidSingleOrder = market.createOrder({
+        price: 1100,
+        quantity: 1,
+        type: 'buy',
+      });
+
+      await expect(invalidSingleOrder).rejects.toThrow(InsufficientFiatError);
     });
 
     it('updates the account after a successful buy', async () => {
@@ -61,4 +61,51 @@ describe('The market', () => {
       expect(market.accountFiat).toBe(800)
     });
   });
+
+  describe('when sellings', () => {
+    it('returns a promise which resolves in an order of that price and quantity', async () => {
+      const market = new Market();
+      market.accountFiat = 1000;
+      market.accountValue = 1;
+      const order = await market.createOrder({
+        price: 1000,
+        quantity: 1,
+        type: 'sell',
+      });
+
+      expect(order.price).toBe(1000)
+      expect(order.quantity).toBe(1)
+      expect(order.type).toBe('sell')
+    });
+
+    it('fails when the crypto value is insufficient', async () => {
+      const market = new Market();
+      market.accountFiat = 0;
+      market.accountValue = 1;
+
+      const invalidOrder = market.createOrder({
+        price: 501,
+        quantity: 1.1,
+        type: 'sell',
+      });
+
+      await expect(invalidOrder).rejects.toThrow(InsufficientCryptoError);
+    });
+
+    it('updates the account after a successful sell', async () => {
+      const market = new Market();
+      market.accountFiat = 1000;
+      market.accountValue = 2;
+
+      await market.createOrder({
+        price: 1000,
+        quantity: 1,
+        type: 'sell',
+      });
+
+      expect(market.accountValue).toBe(1)
+      expect(market.accountFiat).toBe(2000)
+    });
+  });
+
 });

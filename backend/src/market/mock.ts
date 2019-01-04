@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 
 export class InsufficientFiatError extends Error {};
+export class InsufficientCryptoError extends Error {};
 
 export class Order {
   id: string;
@@ -28,10 +29,14 @@ export default class Market {
   accountFiat: number = 0;
 
   // For now just allow any price
-  createOrder({ price, quantity, type }: { price: number, quantity: number, type: string}) {
+  async createOrder({ price, quantity, type }: { price: number, quantity: number, type: string}) {
     if (type === 'buy') {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
+      }
+    } else if (type === 'sell') {
+      if (quantity > this.accountValue) {
+        throw new InsufficientCryptoError();
       }
     }
     const order = new Order({
@@ -44,8 +49,11 @@ export default class Market {
     if (type === 'buy') {
       this.accountValue += quantity;
       this.accountFiat -= price * quantity;
+    } else if (type === 'sell') {
+      this.accountValue -= quantity;
+      this.accountFiat += price * quantity;
     }
 
-    return Promise.resolve(order);
+    return order;
   }
 }
