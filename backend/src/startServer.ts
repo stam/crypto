@@ -1,51 +1,12 @@
 import { GraphQLServer } from 'graphql-yoga';
-import { resolvers } from './resolvers';
 import { createConnection } from 'typeorm';
+import { importSchema } from 'graphql-import';
+import * as path from 'path';
 
-const typeDefs = `
-  scalar Date
-  type Query {
-    tick(id: ID!): Tick
-    candles: [Candle]
-  }
-  type Mutation {
-    runSimulation(startDate: Date!, endDate: Date!, startValue: String!): Simulation
-  }
-  type Simulation {
-    from: Date
-    to: Date
-    orders: [Order]
-    trades: [Trade]
-  }
-  type Order {
-    type: String
-    date: Date
-    quantity: Int
-    price: Int
-  }
-  type Tick {
-    id: Int!
-    last: Int
-    timestamp: Date
-  }
-  type Trade {
-    buyPrice: Int
-    sellPrice: Int
-    buyDate: Date
-    sellDate: Date
-    result: Float
-  }
-  type Candle {
-    id: Int
-    open: Int
-    close: Int
-    high: Int
-    low: Int
-    datetime: Date
-  }
-`;
+import { resolvers } from './resolvers';
 
 export const startServer = async () => {
+  const typeDefs = importSchema(path.join(__dirname, './schema.graphql'));
   const server = new GraphQLServer({ typeDefs, resolvers });
 
   const options = {
