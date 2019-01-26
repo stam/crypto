@@ -1,7 +1,8 @@
 import { round, each, values, uniqueId } from 'lodash';
-import Market, { Order } from '../market';
-import Strategy from '../strategy/example/simple';
+import { Order } from '../market/base';
 import Tick from '../models/tick';
+import MockMarket from '../market/mock';
+import BaseStrategy from '../strategy/base';
 
 
 class Trade {
@@ -32,28 +33,23 @@ class Trade {
 * and tries to bundle them into trades.
 */
 class Simulation {
-  ticks: Tick[];
-  market: Market;
+  market: MockMarket;
   trades: Trade[];
   openTrades: Trade[];
-  strategy: Strategy;
+  strategy: BaseStrategy;
   orders: Order[];
 
-  constructor({ ticks, Strategy }: { ticks: Tick[], Strategy: any}) {
-    this.ticks = ticks;
-
-    this.market = new Market({
-      saveOrder: this.handleOrder.bind(this),
-    })
+  constructor({ strategy, market }: { strategy: BaseStrategy, market: MockMarket}) {
+    this.market = market;
 
     this.trades = [];
     this.openTrades = [];
     this.orders = [];
-    this.strategy = new Strategy(this.market);
+    this.strategy = strategy;
   }
 
   async run() {
-    for (const tick of this.ticks) {
+    for (const tick of this.market.ticks) {
       await this.strategy.handleTick(tick);
     };
 

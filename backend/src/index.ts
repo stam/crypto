@@ -2,7 +2,8 @@ import { GraphQLServer } from 'graphql-yoga';
 import { createConnection, getRepository } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
-import Strategy from './strategy/example/ema';
+import MockMarket from './market/mock';
+import Strategy from './strategy/example/simple';
 import Simulation from './simulation';
 
 const typeDefs = `
@@ -59,13 +60,9 @@ const resolvers = {
   },
   Mutation: {
     runSimulation: async (_, { startDate, endDate, startValue }) => {
-      const ticks = await getRepository(Tick).find({
-        order: {
-          timestamp: 'ASC',
-        },
-      });
-
-      const simulation = new Simulation({ ticks, Strategy });
+      const market = new MockMarket();
+      const strategy = new Strategy(market);
+      const simulation = new Simulation({ market, strategy });
 
       await simulation.run();
 
@@ -75,6 +72,7 @@ const resolvers = {
         orders: simulation.orders,
         trades: simulation.trades,
       }
+
       return sim;
     },
   }

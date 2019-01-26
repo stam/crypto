@@ -1,5 +1,5 @@
 import { round } from 'lodash';
-import Market from '../../market';
+import Market from '../../market/base';
 import Tick from '../../models/tick';
 
 // Dummy strategy, buys at 7000, sells at 9500
@@ -14,6 +14,8 @@ class BaseStrategy {
 
     this.market = market;
   }
+
+  handleTick(tick: Tick) {}
 }
 
 export default BaseStrategy;

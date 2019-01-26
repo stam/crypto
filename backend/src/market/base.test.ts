@@ -1,4 +1,4 @@
-import Market, { InsufficientFiatError, InsufficientCryptoError } from './mock';
+import Market, { InsufficientFiatError, InsufficientCryptoError } from './base';
 
 describe('The market', () => {
 
@@ -107,5 +107,4 @@ describe('The market', () => {
       expect(market.accountFiat).toBe(2000)
     });
   });
-
 });
