@@ -25,8 +25,16 @@ export class Order {
 }
 
 export default class BaseMarket {
-  accountValue: number = 0;
-  accountFiat: number = 0;
+  accountValue: number;
+  accountFiat: number;
+
+  constructor({ accountFiat = 0, accountValue = 0}: {
+    accountFiat: number,
+    accountValue: number
+  }) {
+    this.accountFiat = accountFiat;
+    this.accountValue = accountValue;
+  }
 
   // For now just allow any price
   async createOrder({ price, quantity, type }: { price: number, quantity: number, type: string}) {

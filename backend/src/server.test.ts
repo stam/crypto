@@ -1,8 +1,17 @@
 import { request } from 'graphql-request';
-import { map } from 'lodash';
 
 import { startServer } from './server';
 import Simulation from './simulation';
+
+const mockMarketConstructor = jest.fn();
+
+jest.mock('./market/mock', () => ({
+  default: class Market {
+    constructor(...args) {
+      mockMarketConstructor(...args);
+    }
+  }
+}))
 
 describe('The server', () => {
   let getHost;
@@ -16,21 +25,30 @@ describe('The server', () => {
     Simulation.prototype.run = jest.fn();
   });
 
-  describe('when running a simulation', async () => {
-    it('it creates a simulation class and feeds it the startValues', async () => {
-      const params = `mutation {
-  runSimulation(startFiat: 2000, startValue: 0) {
-    orders {
-      date
-      type
-      quantity
-      price
-    }
-  }
-}`;
-      await request(getHost(), params);
+  beforeEach(() => {
+    const params = `mutation {
+      runSimulation(startFiat: 2000, startValue: 0) {
+        orders {
+          date
+          type
+          quantity
+          price
+        }
+      }
+    }`;
+    return request(getHost(), params);
+  })
 
+
+  describe('when running a simulation', () => {
+    it('creates a simulation class and feeds it the startValues', async () => {
       expect(Simulation.prototype.run).toHaveBeenCalled();
+    });
+
+    it('creates a market with the given fiat and value', () => {
+      expect(mockMarketConstructor).toHaveBeenCalledWith(
+        { startFiat: 1500, startValue: 0 }
+      );
     });
   });
 });
