@@ -15,16 +15,15 @@ export const resolvers = {
     }
   },
   Mutation: {
-    runSimulation: async (_, { startDate, endDate, startValue }) => {
+    runSimulation: async (_, { startValue, startFiat }) => {
       const market = new MockMarket();
       const strategy = new Strategy(market);
+
       const simulation = new Simulation({ market, strategy });
 
       await simulation.run();
 
       const sim = {
-        from: startDate,
-        to: endDate,
         orders: simulation.orders,
         trades: simulation.trades,
       }

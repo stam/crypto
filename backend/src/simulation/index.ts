@@ -4,7 +4,6 @@ import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
 
-
 class Trade {
   buyPrice: number;
   sellPrice: number;
@@ -20,18 +19,18 @@ class Trade {
   sell(order: Order) {
     this.sellPrice = order.price;
     this.sellDate = order.date;
-    this.result = round(100 * order.price / this.buyPrice, 1);
+    this.result = round((100 * order.price) / this.buyPrice, 1);
   }
 }
 
 /*
-* A backtest simulation for a crypto strategy
-*
-* Feeds ticks to a strategy.
-* Supplies the strategy with a Market interface
-* Keeps track of the orders placed in the market
-* and tries to bundle them into trades.
-*/
+ * A backtest simulation for a crypto strategy
+ *
+ * Feeds ticks to a strategy.
+ * Supplies the strategy with a Market interface
+ * Keeps track of the orders placed in the market
+ * and tries to bundle them into trades.
+ */
 class Simulation {
   market: MockMarket;
   trades: Trade[];
@@ -39,7 +38,17 @@ class Simulation {
   strategy: BaseStrategy;
   orders: Order[];
 
-  constructor({ strategy, market }: { strategy: BaseStrategy, market: MockMarket}) {
+  constructor({
+    strategy,
+    market,
+    startFiat = 0,
+    startValue = 0,
+  }: {
+    strategy: BaseStrategy;
+    market: MockMarket;
+    startFiat?: number;
+    startValue?: number;
+  }) {
     this.market = market;
 
     this.trades = [];
@@ -51,7 +60,7 @@ class Simulation {
   async run() {
     for (const tick of this.market.ticks) {
       await this.strategy.handleTick(tick);
-    };
+    }
 
     this.trades = values(this.trades);
   }

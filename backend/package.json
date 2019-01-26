@@ -18,11 +18,13 @@
   "dependencies": {
     "dotenv": "^6.0.0",
     "graphql-import": "^0.7.1",
+    "graphql-request": "^1.8.2",
     "graphql-yoga": "^1.13.1",
     "lodash": "^4.17.10",
     "pg": "^7.4.2",
     "pg-hstore": "^2.3.2",
     "reflect-metadata": "^0.1.12",
+    "request": "^2.88.0",
     "sqlite3": "^4.0.4",
     "technicalindicators": "^1.1.13",
     "typeorm": "^0.2.7"

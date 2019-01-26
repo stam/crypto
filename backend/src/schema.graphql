@@ -4,11 +4,9 @@
     candles: [Candle]
   }
   type Mutation {
-    runSimulation(startDate: Date!, endDate: Date!, startValue: String!): Simulation
+    runSimulation(startValue: Float!, startFiat: Int!): Simulation
   }
   type Simulation {
-    from: Date
-    to: Date
     orders: [Order]
     trades: [Trade]
   }
