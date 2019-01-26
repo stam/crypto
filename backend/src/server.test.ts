@@ -47,7 +47,7 @@ describe('The server', () => {
 
     it('creates a market with the given fiat and value', () => {
       expect(mockMarketConstructor).toHaveBeenCalledWith(
-        { startFiat: 1500, startValue: 0 }
+        { accountFiat: 2000, accountValue: 0 }
       );
     });
   });

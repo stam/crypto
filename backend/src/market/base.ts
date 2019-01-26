@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
 
-export class InsufficientFiatError extends Error {};
-export class InsufficientCryptoError extends Error {};
+export class InsufficientFiatError extends Error {}
+export class InsufficientCryptoError extends Error {}
 
 export class Order {
   id: string;
@@ -10,7 +10,12 @@ export class Order {
   price: number;
   type: string;
 
-  constructor({ date, quantity, price, type }: {
+  constructor({
+    date,
+    quantity,
+    price,
+    type,
+  }: {
     date: Date;
     quantity: number;
     price: number;
@@ -28,16 +33,21 @@ export default class BaseMarket {
   accountValue: number;
   accountFiat: number;
 
-  constructor({ accountFiat = 0, accountValue = 0}: {
-    accountFiat: number,
-    accountValue: number
-  }) {
+  constructor(
+    {
+      accountFiat,
+      accountValue,
+    }: {
+      accountFiat: number;
+      accountValue: number;
+    } = { accountFiat: 0, accountValue: 0 },
+  ) {
     this.accountFiat = accountFiat;
     this.accountValue = accountValue;
   }
 
   // For now just allow any price
-  async createOrder({ price, quantity, type }: { price: number, quantity: number, type: string}) {
+  async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
     if (type === 'buy') {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
@@ -84,5 +94,4 @@ export default class BaseMarket {
       price,
     });
   }
-
 }

@@ -16,7 +16,7 @@ export const resolvers = {
   },
   Mutation: {
     runSimulation: async (_, { startValue, startFiat }) => {
-      const market = new MockMarket();
+      const market = new MockMarket({ accountValue: startValue, accountFiat: startFiat });
       const strategy = new Strategy(market);
 
       const simulation = new Simulation({ market, strategy });
