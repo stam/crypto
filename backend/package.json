@@ -7,7 +7,7 @@
     "ts": "tsc",
     "watch-build": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
-    "start": "nodemon -e ts -x ts-node src/index.ts",
+    "start": "ts-node-dev src/index.ts",
     "debug": "node --inspect -r ts-node/register src/index.ts",
     "test": "jest --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
@@ -36,7 +36,8 @@
     "jest": "^23.5.0",
     "nodemon": "^1.18.7",
     "ts-jest": "^23.10.5",
-    "ts-node": "^7.0.1",
+    "ts-node": "^8.0.2",
+    "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^3.0.1"
   }
 }
