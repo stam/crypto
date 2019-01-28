@@ -3,6 +3,7 @@ import { Order } from '../market/base';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
+import { getRepository } from 'typeorm';
 
 class Trade {
   buyPrice: number;
@@ -33,59 +34,60 @@ class Trade {
  */
 class Simulation {
   market: MockMarket;
-  trades: Trade[];
-  openTrades: Trade[];
+  // trades: Trade[];
+  // openTrades: Trade[];
   strategy: BaseStrategy;
-  orders: Order[];
+  // orders: Order[];
 
   constructor({
     strategy,
     market,
-    startFiat = 0,
-    startValue = 0,
   }: {
     strategy: BaseStrategy;
     market: MockMarket;
-    startFiat?: number;
-    startValue?: number;
   }) {
     this.market = market;
 
-    this.trades = [];
-    this.openTrades = [];
-    this.orders = [];
+    // this.trades = [];
+    // this.openTrades = [];
+    // this.orders = [];
     this.strategy = strategy;
   }
 
   async run() {
-    for (const tick of this.market.ticks) {
-      await this.strategy.handleTick(tick);
-    }
+    const ticks = await getRepository(Tick).find({
+      order: {
+        timestamp: 'ASC',
+      },
+    });
+    // for (const tick of this.market.ticks) {
+    //   await this.strategy.handleTick(tick);
+    // }
 
-    this.trades = values(this.trades);
+    // this.trades = values(this.trades);
   }
 
-  handleOrder(order: Order) {
-    this.orders.push(order);
+  // handleOrder(order: Order) {
+  //   this.orders.push(order);
 
-    if (order.type === 'buy') {
-      const trade = new Trade(order);
-      this.trades.push(trade);
-      this.openTrades.push(trade);
-      return;
-    }
+  //   if (order.type === 'buy') {
+  //     const trade = new Trade(order);
+  //     this.trades.push(trade);
+  //     this.openTrades.push(trade);
+  //     return;
+  //   }
 
-    const trade = this.openTrades[0];
+  //   const trade = this.openTrades[0];
 
-    // It could be that we don't fully sell the bitcoin we have.
-    if (trade) {
-      trade.sell(order);
-      // TODO: keep buy orders open, sorted by date
-      // when selling, fill open orders from start to end
-      // remove trade from index
-      this.openTrades.splice(0, 1);
-    }
-  }
+  //   // It could be that we don't fully sell the bitcoin we have.
+  //   if (trade) {
+  //     trade.sell(order);
+  //     // TODO: keep buy orders open, sorted by date
+  //     // when selling, fill open orders from start to end
+  //     // remove trade from index
+  //     this.openTrades.splice(0, 1);
+  //   }
+  // }
 }
 
 export default Simulation;

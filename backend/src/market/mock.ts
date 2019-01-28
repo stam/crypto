@@ -7,10 +7,10 @@ export default class MockMarket extends BaseMarket {
   ticks: Tick[];
 
   async initialize () {
-    this.ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
+    // this.ticks = await getRepository(Tick).find({
+    //   order: {
+    //     timestamp: 'ASC',
+    //   },
+    // });
   }
 }

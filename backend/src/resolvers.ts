@@ -24,8 +24,8 @@ export const resolvers = {
       await simulation.run();
 
       const sim = {
-        orders: simulation.orders,
-        trades: simulation.trades,
+        orders: [],
+        trades: [],
       }
 
       return sim;
