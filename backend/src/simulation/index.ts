@@ -61,7 +61,6 @@ class Simulation {
       },
     });
 
-    console.log('ticks', this.ticks)
     // for (const tick of this.market.ticks) {
     //   await this.strategy.handleTick(tick);
     // }

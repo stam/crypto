@@ -3,13 +3,10 @@ import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
 import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
-import { createConnection, getRepository } from 'typeorm';
+import { createConnection, ConnectionOptions } from 'typeorm';
 import Tick from '../models/tick';
 
-export const generateTicks = fixtureCreator<Tick>(Tick, function(
-  entity,
-  index
-) {
+export const generateTicks = fixtureCreator<Tick>(Tick, function(entity, index) {
   return {
     symbol: 'BTCUSD',
     ask: 100,
@@ -22,46 +19,30 @@ export const generateTicks = fixtureCreator<Tick>(Tick, function(
   };
 });
 
-const tickFixture = generateTicks([{
-  last: 50,
-}, {
-  last: 51,
-}, {
-  last: 69
-}
+const tickFixture = generateTicks([
+  {
+    last: 50,
+  },
+  {
+    last: 51,
+  },
 ]);
 
-
-const h = new TypeormFixtures()
-  .addFixture(tickFixture)
-
+const TestDb = new TypeormFixtures().addFixture(tickFixture);
 
 describe('A Simulation', () => {
   let simulation;
 
   beforeAll(async () => {
+    const config = require(`${process.cwd()}/ormconfig.js`);
     await createConnection({
-      type: 'sqlite',
-      database: 'test.sqlite',
-      logging: false,
-      synchronize: true,
-      entities: ['src/models/**/*.ts'],
-      migrations: ['migrations/**/*.ts'],
-      subscribers: ['src/subscribers/**/*.ts'],
+      ...(config as ConnectionOptions),
     });
 
-    await h.loadFixtures();
-
-    const z = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
-
-    console.log('z', z);
+    await TestDb.loadFixtures();
   });
 
-  afterAll(h.dropFixtures);
+  afterAll(TestDb.dropFixtures);
 
   beforeEach(() => {
     const market = new MockMarket({ accountValue: 1000, accountFiat: 0 });
