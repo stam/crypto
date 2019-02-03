@@ -27,7 +27,8 @@
     "request": "^2.88.0",
     "sqlite3": "^4.0.4",
     "technicalindicators": "^1.1.13",
-    "typeorm": "^0.2.7"
+    "typeorm": "^0.2.7",
+    "typeorm-fixtures": "^0.8.5"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",

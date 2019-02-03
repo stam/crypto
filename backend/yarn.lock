@@ -5138,6 +5138,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
+typeorm-fixtures@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/typeorm-fixtures/-/typeorm-fixtures-0.8.5.tgz#0e15dd174a2b7e57cf4d292030aa9612004dfead"
+  integrity sha512-V90PY6nw1+CpoEsR6uqXmN0CtmbQAPgaX5+sA629IryodUQIXBjSGabAul4jBvuVkdJZXWf12QuXGl6ti429Xg==
+
 typeorm@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.2.7.tgz#4bbbace80dc91b1303be13f42d44ebf01d1b2558"

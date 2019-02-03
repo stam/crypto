@@ -1,18 +1,40 @@
+import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
+
 import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
-import { createConnection } from 'typeorm';
+import { createConnection, getRepository } from 'typeorm';
+import Tick from '../models/tick';
 
-const mockQuery = jest.fn();
+export const generateTicks = fixtureCreator<Tick>(Tick, function(
+  entity,
+  index
+) {
+  return {
+    symbol: 'BTCUSD',
+    ask: 100,
+    bid: 100,
+    last: 100 + index,
+    volume: 1200,
+    main_volume: 5000,
+    timestamp: new Date(`2019-01-01 15:00:${index}`),
+    ...entity,
+  };
+});
 
-// jest.mock('typeorm', () => ({
-//   ...jest.requireActual('typeorm'),
-//   getRepository: (model) => {
-//     console.log('import getRepo');
-//     return 'bar';
-//     // find: mockQuery,
-//   }
-// }));
+const tickFixture = generateTicks([{
+  last: 50,
+}, {
+  last: 51,
+}, {
+  last: 69
+}
+]);
+
+
+const h = new TypeormFixtures()
+  .addFixture(tickFixture)
+
 
 describe('A Simulation', () => {
   let simulation;
@@ -27,7 +49,19 @@ describe('A Simulation', () => {
       migrations: ['migrations/**/*.ts'],
       subscribers: ['src/subscribers/**/*.ts'],
     });
+
+    await h.loadFixtures();
+
+    const z = await getRepository(Tick).find({
+      order: {
+        timestamp: 'ASC',
+      },
+    });
+
+    console.log('z', z);
   });
+
+  afterAll(h.dropFixtures);
 
   beforeEach(() => {
     const market = new MockMarket({ accountValue: 1000, accountFiat: 0 });
@@ -39,7 +73,7 @@ describe('A Simulation', () => {
   it('fetches ticks', async () => {
     await simulation.run();
 
-    expect(mockQuery).toHaveBeenCalled();
+    expect(simulation.ticks.length).toBe(2);
   });
 
   xit('feeds the ticks into the market', async () => {});

@@ -34,7 +34,7 @@ class Trade {
  */
 class Simulation {
   market: MockMarket;
-  // trades: Trade[];
+  ticks: Tick[];
   // openTrades: Trade[];
   strategy: BaseStrategy;
   // orders: Order[];
@@ -55,11 +55,13 @@ class Simulation {
   }
 
   async run() {
-    const ticks = await getRepository(Tick).find({
+    this.ticks = await getRepository(Tick).find({
       order: {
         timestamp: 'ASC',
       },
     });
+
+    console.log('ticks', this.ticks)
     // for (const tick of this.market.ticks) {
     //   await this.strategy.handleTick(tick);
     // }
