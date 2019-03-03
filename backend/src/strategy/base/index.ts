@@ -1,5 +1,5 @@
 import { round } from 'lodash';
-import Market from '../../market/base';
+import Market from '../../market';
 import Tick from '../../models/tick';
 
 // Dummy strategy, buys at 7000, sells at 9500

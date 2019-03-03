@@ -1,4 +1,5 @@
-import Market, { InsufficientFiatError, InsufficientCryptoError } from './base';
+import Market from './mock';
+import { InsufficientFiatError, InsufficientCryptoError } from '.';
 
 describe('The market', () => {
 
@@ -13,11 +14,7 @@ describe('The market', () => {
       const market = new Market();
       market.accountFiat = 1000;
       market.accountValue = 0;
-      const order = await market.createOrder({
-        price: 1000,
-        quantity: 1,
-        type: 'buy',
-      });
+      const order = await market.buy(1000, 1);
 
       expect(order.price).toBe(1000)
       expect(order.quantity).toBe(1)
@@ -29,19 +26,11 @@ describe('The market', () => {
       market.accountFiat = 1000;
       market.accountValue = 0;
 
-      const invalidDoubleOrder = market.createOrder({
-        price: 501,
-        quantity: 2,
-        type: 'buy',
-      });
+      const invalidDoubleOrder = market.buy(501, 2);
 
       await expect(invalidDoubleOrder).rejects.toThrow(InsufficientFiatError);
 
-      const invalidSingleOrder = market.createOrder({
-        price: 1100,
-        quantity: 1,
-        type: 'buy',
-      });
+      const invalidSingleOrder = market.buy(1100, 1);
 
       await expect(invalidSingleOrder).rejects.toThrow(InsufficientFiatError);
     });
@@ -51,11 +40,7 @@ describe('The market', () => {
       market.accountFiat = 1000;
       market.accountValue = 0;
 
-      await market.createOrder({
-        price: 100,
-        quantity: 2,
-        type: 'buy',
-      });
+      await market.buy(100, 2);
 
       expect(market.accountValue).toBe(2)
       expect(market.accountFiat).toBe(800)
@@ -67,11 +52,7 @@ describe('The market', () => {
       const market = new Market();
       market.accountFiat = 1000;
       market.accountValue = 1;
-      const order = await market.createOrder({
-        price: 1000,
-        quantity: 1,
-        type: 'sell',
-      });
+      const order = await market.sell(1000, 1);
 
       expect(order.price).toBe(1000)
       expect(order.quantity).toBe(1)
@@ -83,11 +64,7 @@ describe('The market', () => {
       market.accountFiat = 0;
       market.accountValue = 1;
 
-      const invalidOrder = market.createOrder({
-        price: 501,
-        quantity: 1.1,
-        type: 'sell',
-      });
+      const invalidOrder = market.sell(501, 1.1);
 
       await expect(invalidOrder).rejects.toThrow(InsufficientCryptoError);
     });
@@ -97,11 +74,7 @@ describe('The market', () => {
       market.accountFiat = 1000;
       market.accountValue = 2;
 
-      await market.createOrder({
-        price: 1000,
-        quantity: 1,
-        type: 'sell',
-      });
+      await market.sell(1000, 1);
 
       expect(market.accountValue).toBe(1)
       expect(market.accountFiat).toBe(2000)

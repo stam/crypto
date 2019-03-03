@@ -1,6 +1,9 @@
 import { uniqueId } from 'lodash';
 import Tick from '../models/tick';
 
+export class InsufficientFiatError extends Error {}
+export class InsufficientCryptoError extends Error {}
+
 export class Order {
   id: string;
   date: Date;
@@ -8,7 +11,12 @@ export class Order {
   price: number;
   type: string;
 
-  constructor({ date, quantity, price, type }: {
+  constructor({
+    date,
+    quantity,
+    price,
+    type,
+  }: {
     date: Date;
     quantity: number;
     price: number;
@@ -22,44 +30,92 @@ export class Order {
   }
 }
 
-class Market {
-  saveOrder?(order: Order): () => void;
+interface TickListener {
+  handleTick(t: Tick);
+}
 
-  constructor({ saveOrder }) {
-    this.saveOrder = saveOrder;
+export default abstract class BaseMarket {
+  accountValue: number;
+  accountFiat: number;
+  listeners: TickListener[] = [];
+
+  constructor(
+    {
+      accountFiat,
+      accountValue,
+    }: {
+      accountFiat: number;
+      accountValue: number;
+    } = { accountFiat: 0, accountValue: 0 },
+  ) {
+    console.log('construct', accountFiat, accountValue);
+    this.accountFiat = accountFiat;
+    this.accountValue = accountValue;
   }
 
-  buy(tick: Tick, quantity: number) {
-    return this.createOrder({
-      date: tick.timestamp,
-      price: tick.last,
-      type: 'buy',
-      quantity,
-    });
-  }
-
-  sell(tick: any, quantity: number) {
-    return this.createOrder({
-      date: tick.timestamp,
-      price: tick.last,
-      type: 'sell',
-      quantity,
-    });
-  }
-
-  createOrder({ date, type, price, quantity }: { date: Date; type: string; price: number; quantity: number }) {
-    console.info(`> Creating ${type} order: quantity ${quantity}, price: ${price}`)
+  // For now just allow any price
+  protected async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
+    console.log('createOrder', price, quantity, type, this.accountFiat, this.accountValue);
+    if (type === 'buy') {
+      if (price * quantity > this.accountFiat) {
+        throw new InsufficientFiatError();
+      }
+    } else if (type === 'sell') {
+      if (quantity > this.accountValue) {
+        throw new InsufficientCryptoError();
+      }
+    }
     const order = new Order({
-      date,
-      type,
-      price,
+      date: new Date('2018-03-07T00:00:00.000Z'),
       quantity,
+      price,
+      type,
     });
 
-    this.saveOrder(order);
+    if (type === 'buy') {
+      this.accountValue += quantity;
+      this.accountFiat -= price * quantity;
+    } else if (type === 'sell') {
+      this.accountValue -= quantity;
+      this.accountFiat += price * quantity;
+    }
 
     return order;
   }
-}
 
-export default Market;
+  get timestamp() {
+    return Date.now();
+  }
+
+  addTickListener(listener: TickListener) {
+    this.listeners.push(listener);
+  }
+
+  protected abstract queryTick() : Tick;
+
+  tick() {
+    const tick = this.queryTick();
+
+    for (let listener of this.listeners) {
+      listener.handleTick(tick);
+    }
+
+    return tick;
+  }
+
+  buy(price: number, quantity: number) {
+    return this.createOrder({
+      type: 'buy',
+      quantity,
+      price,
+    });
+  }
+
+  sell(price: number, quantity: number) {
+    return this.createOrder({
+      type: 'sell',
+      quantity,
+      price,
+    });
+  }
+}

@@ -1,5 +1,5 @@
-import { round, each, values, uniqueId } from 'lodash';
-import { Order } from '../market/base';
+import { round } from 'lodash';
+import { Order } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
@@ -63,6 +63,8 @@ class Simulation {
 
     this.market.setTicks(this.ticks);
     this.market.addTickListener(this.strategy);
+
+    console.log('runsimulation', this.ticks.length);
 
     while(this.market.hasTicks) {
       this.market.tick();

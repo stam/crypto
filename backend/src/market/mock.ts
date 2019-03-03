@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash';
 import Tick from '../models/tick';
-import BaseMarket from './base';
+import BaseMarket from '.';
 import { getRepository } from 'typeorm';
 
 export default class MockMarket extends BaseMarket {
