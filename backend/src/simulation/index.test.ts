@@ -5,6 +5,7 @@ import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
 import { createConnection, ConnectionOptions } from 'typeorm';
 import Tick from '../models/tick';
+import BaseStrategy from '../strategy/base';
 
 export const generateTicks = fixtureCreator<Tick>(Tick, function(entity, index) {
   return {
@@ -31,7 +32,9 @@ const tickFixture = generateTicks([
 const TestDb = new TypeormFixtures().addFixture(tickFixture);
 
 describe('A Simulation', () => {
-  let simulation;
+  let simulation: Simulation;
+  let market: MockMarket;
+  let strategy: BaseStrategy;
 
   beforeAll(async () => {
     const config = require(`${process.cwd()}/ormconfig.js`);
@@ -45,19 +48,22 @@ describe('A Simulation', () => {
   afterAll(TestDb.dropFixtures);
 
   beforeEach(() => {
-    const market = new MockMarket({ accountValue: 1000, accountFiat: 0 });
-    const strategy = new Strategy(market);
-
+    market = new MockMarket({ accountValue: 1000, accountFiat: 0 });
+    strategy = new Strategy(market);
     simulation = new Simulation({ market, strategy });
   });
 
-  it('fetches ticks', async () => {
+  it('feeds the ticks into the market', async () => {
     await simulation.run();
 
-    expect(simulation.ticks.length).toBe(2);
+    expect(market.ticks.length).toBe(2);
   });
 
-  xit('feeds the ticks into the market', async () => {});
+  it('tells the market to broadcast its ticks', async () => {
+    strategy.handleTick = jest.fn();
 
-  xit('tells the market to query', async () => {});
+    await simulation.run();
+
+    expect(strategy.handleTick).toHaveBeenCalledTimes(2);
+  });
 });

@@ -61,11 +61,12 @@ class Simulation {
       },
     });
 
-    // for (const tick of this.market.ticks) {
-    //   await this.strategy.handleTick(tick);
-    // }
+    this.market.setTicks(this.ticks);
+    this.market.addTickListener(this.strategy);
 
-    // this.trades = values(this.trades);
+    while(this.market.hasTicks) {
+      this.market.tick();
+    }
   }
 
   // handleOrder(order: Order) {

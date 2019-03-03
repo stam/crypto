@@ -4,13 +4,20 @@ import BaseMarket from './base';
 import { getRepository } from 'typeorm';
 
 export default class MockMarket extends BaseMarket {
-  ticks: Tick[];
+  ticks: Tick[] = [];
+  tickIndex: number = 0;
 
-  async initialize () {
-    // this.ticks = await getRepository(Tick).find({
-    //   order: {
-    //     timestamp: 'ASC',
-    //   },
-    // });
+  async setTicks (ticks: Tick[]) {
+    this.ticks = ticks;
+  }
+
+  get hasTicks() {
+    return this.tickIndex < this.ticks.length;
+  }
+
+  protected queryTick() {
+    const tick = this.ticks[this.tickIndex];
+    this.tickIndex += 1;
+    return tick;
   }
 }

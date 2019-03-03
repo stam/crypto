@@ -1,4 +1,5 @@
 import { uniqueId } from 'lodash';
+import Tick from '../models/tick';
 
 export class InsufficientFiatError extends Error {}
 export class InsufficientCryptoError extends Error {}
@@ -29,9 +30,14 @@ export class Order {
   }
 }
 
-export default class BaseMarket {
+interface TickListener {
+  handleTick(t: Tick);
+}
+
+export default abstract class BaseMarket {
   accountValue: number;
   accountFiat: number;
+  listeners: TickListener[] = [];
 
   constructor(
     {
@@ -47,7 +53,7 @@ export default class BaseMarket {
   }
 
   // For now just allow any price
-  async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
+  protected async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
     if (type === 'buy') {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
@@ -77,6 +83,22 @@ export default class BaseMarket {
 
   get timestamp() {
     return Date.now();
+  }
+
+  addTickListener(listener: TickListener) {
+    this.listeners.push(listener);
+  }
+
+  protected abstract queryTick() : Tick;
+
+  tick() {
+    const tick = this.queryTick();
+
+    for (let listener of this.listeners) {
+      listener.handleTick(tick);
+    }
+
+    return tick;
   }
 
   buy(price: number, quantity: number) {
