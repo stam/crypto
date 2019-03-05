@@ -48,14 +48,12 @@ export default abstract class BaseMarket {
       accountValue: number;
     } = { accountFiat: 0, accountValue: 0 },
   ) {
-    console.log('construct', accountFiat, accountValue);
     this.accountFiat = accountFiat;
     this.accountValue = accountValue;
   }
 
   // For now just allow any price
   protected async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
-    console.log('createOrder', price, quantity, type, this.accountFiat, this.accountValue);
     if (type === 'buy') {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
@@ -65,12 +63,8 @@ export default abstract class BaseMarket {
         throw new InsufficientCryptoError();
       }
     }
-    const order = new Order({
-      date: new Date('2018-03-07T00:00:00.000Z'),
-      quantity,
-      price,
-      type,
-    });
+
+    const order = await this.placeOrder(price, quantity, type);;
 
     if (type === 'buy') {
       this.accountValue += quantity;
@@ -91,10 +85,18 @@ export default abstract class BaseMarket {
     this.listeners.push(listener);
   }
 
-  protected abstract queryTick() : Tick;
+  protected abstract async queryTick() : Promise<Tick>;
+  protected async placeOrder(price: number, quantity: number, type: string) {
+    return new Order({
+      date: new Date('2018-03-07T00:00:00.000Z'),
+      quantity,
+      price,
+      type,
+    });
+  }
 
-  tick() {
-    const tick = this.queryTick();
+  async tick() {
+    const tick = await this.queryTick();
 
     for (let listener of this.listeners) {
       listener.handleTick(tick);

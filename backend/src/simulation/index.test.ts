@@ -3,7 +3,8 @@ import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
 import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
-import { createConnection, ConnectionOptions } from 'typeorm';
+import { ensureConnection } from '../../testUtils';
+// import { createConnection, ConnectionOptions } from 'typeorm';
 import Tick from '../models/tick';
 import BaseStrategy from '../strategy/base';
 
@@ -37,10 +38,7 @@ describe('A Simulation', () => {
   let strategy: BaseStrategy;
 
   beforeAll(async () => {
-    const config = require(`${process.cwd()}/ormconfig.js`);
-    await createConnection({
-      ...(config as ConnectionOptions),
-    });
+    await ensureConnection();
 
     await TestDb.loadFixtures();
   });
@@ -48,7 +46,7 @@ describe('A Simulation', () => {
   afterAll(TestDb.dropFixtures);
 
   beforeEach(() => {
-    market = new MockMarket({ accountValue: 1000, accountFiat: 0 });
+    market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     strategy = new Strategy(market);
     simulation = new Simulation({ market, strategy });
   });

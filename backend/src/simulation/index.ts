@@ -64,10 +64,8 @@ class Simulation {
     this.market.setTicks(this.ticks);
     this.market.addTickListener(this.strategy);
 
-    console.log('runsimulation', this.ticks.length);
-
     while(this.market.hasTicks) {
-      this.market.tick();
+      await this.market.tick();
     }
   }
 

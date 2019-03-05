@@ -1,83 +1,80 @@
-import Market from './mock';
-import { InsufficientFiatError, InsufficientCryptoError } from '.';
+import MockMarket from './mock';
 
-describe('The market', () => {
+import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
+import { createConnection, ConnectionOptions, getRepository } from 'typeorm';
+import { generateTicks } from '../simulation/index.test';
+import Tick from '../models/tick';
+import { ensureConnection } from '../../testUtils';
 
-  it('holds an account value for both fiat and crypto', () => {
-    const market = new Market();
-    expect(market.accountValue).toBe(0);
-    expect(market.accountFiat).toBe(0);
+const tickFixture = generateTicks([
+  {
+    last: 6001,
+  },
+  {
+    last: 6000,
+  },
+]);
+
+const TestDb = new TypeormFixtures().addFixture(tickFixture);
+
+// describe('A Simulation', () => {
+//   let simulation: Simulation;
+//   let market: MockMarket;
+//   let strategy: BaseStrategy;
+
+
+//   beforeEach(() => {
+//     market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+//     strategy = new Strategy(market);
+//     simulation = new Simulation({ market, strategy });
+//   });
+
+//   it('feeds the ticks into the market', async () => {
+//     await simulation.run();
+
+//     expect(market.ticks.length).toBe(2);
+//   });
+
+//   it('tells the market to broadcast its ticks', async () => {
+//     strategy.handleTick = jest.fn();
+
+//     await simulation.run();
+
+//     expect(strategy.handleTick).toHaveBeenCalledTimes(2);
+//   });
+// });
+
+
+describe('The MockMarket', () => {
+  beforeAll(async () => {
+    await ensureConnection();
+
+    await TestDb.loadFixtures();
   });
 
-  describe('when buying', () => {
-    it('returns a promise which resolves in an order of that price and quantity', async () => {
-      const market = new Market();
-      market.accountFiat = 1000;
-      market.accountValue = 0;
-      const order = await market.buy(1000, 1);
+  afterAll(TestDb.dropFixtures);
 
-      expect(order.price).toBe(1000)
-      expect(order.quantity).toBe(1)
-      expect(order.type).toBe('buy')
+  it('executes a buy order when it encounters a lower tick', async () => {
+    const ticks = await getRepository(Tick).find({
+      order: {
+        timestamp: 'ASC',
+      },
     });
 
-    it('fails when the balance is insufficient', async () => {
-      const market = new Market();
-      market.accountFiat = 1000;
-      market.accountValue = 0;
+    const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    market.setTicks(ticks);
 
-      const invalidDoubleOrder = market.buy(501, 2);
+    const buyPromise = market.buy(60, 1);
+    expect(buyPromise).toBeInstanceOf(Promise);
 
-      await expect(invalidDoubleOrder).rejects.toThrow(InsufficientFiatError);
+    let tick = await market.tick();
 
-      const invalidSingleOrder = market.buy(1100, 1);
+    expect(tick.last / 100).toBeGreaterThan(60);
+    expect(buyPromise).toBeInstanceOf(Promise);
 
-      await expect(invalidSingleOrder).rejects.toThrow(InsufficientFiatError);
-    });
+    tick = await market.tick();
 
-    it('updates the account after a successful buy', async () => {
-      const market = new Market();
-      market.accountFiat = 1000;
-      market.accountValue = 0;
-
-      await market.buy(100, 2);
-
-      expect(market.accountValue).toBe(2)
-      expect(market.accountFiat).toBe(800)
-    });
-  });
-
-  describe('when sellings', () => {
-    it('returns a promise which resolves in an order of that price and quantity', async () => {
-      const market = new Market();
-      market.accountFiat = 1000;
-      market.accountValue = 1;
-      const order = await market.sell(1000, 1);
-
-      expect(order.price).toBe(1000)
-      expect(order.quantity).toBe(1)
-      expect(order.type).toBe('sell')
-    });
-
-    it('fails when the crypto value is insufficient', async () => {
-      const market = new Market();
-      market.accountFiat = 0;
-      market.accountValue = 1;
-
-      const invalidOrder = market.sell(501, 1.1);
-
-      await expect(invalidOrder).rejects.toThrow(InsufficientCryptoError);
-    });
-
-    it('updates the account after a successful sell', async () => {
-      const market = new Market();
-      market.accountFiat = 1000;
-      market.accountValue = 2;
-
-      await market.sell(1000, 1);
-
-      expect(market.accountValue).toBe(1)
-      expect(market.accountFiat).toBe(2000)
-    });
-  });
-});
+    expect(tick.last / 100).toBeLessThanOrEqual(60);
+    expect(buyPromise).toBe(true);
+  })
+})

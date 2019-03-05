@@ -16,7 +16,7 @@ export const startServer = async () => {
     port: process.env.NODE_ENV === 'test' ? 0 : 4000,
   };
 
-  await createConnection();
+  const connection = await createConnection();
   const app = await server.start(options);
 
   console.log('Server is running on localhost:4000')
