@@ -20,14 +20,14 @@ class SimpleStrategy extends BaseStrategy {
   // Buy if we have no crypto
   signalBuy(tick: Tick) {
     if (this.quantity === 0) {
-      this.market.buy(tick, this.quantity);
+      this.market.buy(round(tick.last / 100), 1);
       this.quantity = 1;
     }
   }
 
   signalSell(tick: Tick) {
     if (this.quantity === 1) {
-      this.market.sell(tick, this.quantity);
+      this.market.sell(round(tick.last / 100), 1);
       this.quantity = 0;
     }
   }

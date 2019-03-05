@@ -1,67 +1,67 @@
-import { forIn } from 'lodash';
+import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
 
 import Simulation from '.';
 import Strategy from '../strategy/example/simple';
+import MockMarket from '../market/mock';
+import { ensureConnection } from '../../testUtils';
+// import { createConnection, ConnectionOptions } from 'typeorm';
 import Tick from '../models/tick';
-import { Order } from '../market';
+import BaseStrategy from '../strategy/base';
 
-const tickData = [
-  { timestamp: new Date('2018-08-24T19:21:38.170Z'), last: 690000 },
-  { timestamp: new Date('2018-08-24T19:22:38.170Z'), last: 960000 },
-];
+export const generateTicks = fixtureCreator<Tick>(Tick, function(entity, index) {
+  return {
+    symbol: 'BTCUSD',
+    ask: 100,
+    bid: 100,
+    last: 100 + index,
+    volume: 1200,
+    main_volume: 5000,
+    timestamp: new Date(`2019-01-01 15:00:${index}`),
+    ...entity,
+  };
+});
 
-// Todo move to fixtures of some kind
-export const bulkCreate = (Model, data) => {
-  return data.map(entry => {
-    const m = new Model();
-    forIn(entry, (value, key) => {
-      m[key] = value;
-    })
-    return m;
-  })
-}
+const tickFixture = generateTicks([
+  {
+    last: 50,
+  },
+  {
+    last: 51,
+  },
+]);
 
-export const ticks = bulkCreate(Tick, tickData);
+const TestDb = new TypeormFixtures().addFixture(tickFixture);
 
 describe('A Simulation', () => {
-  let simulation;
+  let simulation: Simulation;
+  let market: MockMarket;
+  let strategy: BaseStrategy;
+
+  beforeAll(async () => {
+    await ensureConnection();
+
+    await TestDb.loadFixtures();
+  });
+
+  afterAll(TestDb.dropFixtures);
 
   beforeEach(() => {
-    simulation = new Simulation({ ticks, Strategy });
+    market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    strategy = new Strategy(market);
+    simulation = new Simulation({ market, strategy });
   });
 
-  it('receives orders from its strategy', async () => {
+  it('feeds the ticks into the market', async () => {
     await simulation.run();
 
-    expect(simulation.orders.length).toBe(2);
+    expect(market.ticks.length).toBe(2);
   });
 
-  it('calculates metrics for each asset sold', async () => {
+  it('tells the market to broadcast its ticks', async () => {
+    strategy.handleTick = jest.fn();
+
     await simulation.run();
 
-    expect(simulation.trades.length).toBe(1);
-
-    const trade = simulation.trades[0];
-    expect(trade.buyPrice).toBe(690000);
-    expect(trade.sellPrice).toBe(960000);
-    expect(trade.result).toBe(139.1);
-  })
-
-  xit('bundles orders into trades', () => {
-    const s = new Simulation({ ticks, Strategy });
-
-    const orders = bulkCreate(Order, [
-      { date: new Date(), quantity: 2, price: 1000, buy: 'buy' },
-      { date: new Date(), quantity: 2, price: 1000, buy: 'buy' },
-      { date: new Date(), quantity: 1, price: 1000, buy: 'sell' },
-      { date: new Date(), quantity: 2, price: 1000, buy: 'sell' },
-      { date: new Date(), quantity: 1, price: 1000, buy: 'sell' },
-    ]);
-
-    expect(s.trades.length).toBe(2);
-
-    // Trade 1 should contain 1 buy and 2 sell orders,
-
-    // Trade 1 should contain 1 buy and 2 sell orders (sell trade #2 is split over 2 trades)
+    expect(strategy.handleTick).toHaveBeenCalledTimes(2);
   });
-})
+});

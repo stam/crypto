@@ -14,6 +14,8 @@ class BaseStrategy {
 
     this.market = market;
   }
+
+  handleTick(tick: Tick) {}
 }
 
 export default BaseStrategy;

@@ -17,12 +17,9 @@ export default class Simulation extends BaseModel {
       body: JSON.stringify({
         query: `mutation {
           runSimulation(
-            startDate: "2018-01-01",
-            endDate: "2018-12-31",
-            startValue: "7000USD"
+            startValue: 7000
+            startFiat: 7000
           ) {
-            from
-            to
             orders {
               date
               type

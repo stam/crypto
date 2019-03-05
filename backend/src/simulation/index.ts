@@ -1,8 +1,9 @@
-import { round, each, values, uniqueId } from 'lodash';
-import Market, { Order } from '../market';
-import Strategy from '../strategy/example/simple';
+import { round } from 'lodash';
+import { Order } from '../market';
 import Tick from '../models/tick';
-
+import MockMarket from '../market/mock';
+import BaseStrategy from '../strategy/base';
+import { getRepository } from 'typeorm';
 
 class Trade {
   buyPrice: number;
@@ -19,68 +20,76 @@ class Trade {
   sell(order: Order) {
     this.sellPrice = order.price;
     this.sellDate = order.date;
-    this.result = round(100 * order.price / this.buyPrice, 1);
+    this.result = round((100 * order.price) / this.buyPrice, 1);
   }
 }
 
 /*
-* A backtest simulation for a crypto strategy
-*
-* Feeds ticks to a strategy.
-* Supplies the strategy with a Market interface
-* Keeps track of the orders placed in the market
-* and tries to bundle them into trades.
-*/
+ * A backtest simulation for a crypto strategy
+ *
+ * Feeds ticks to a strategy.
+ * Supplies the strategy with a Market interface
+ * Keeps track of the orders placed in the market
+ * and tries to bundle them into trades.
+ */
 class Simulation {
+  market: MockMarket;
   ticks: Tick[];
-  market: Market;
-  trades: Trade[];
-  openTrades: Trade[];
-  strategy: Strategy;
-  orders: Order[];
+  // openTrades: Trade[];
+  strategy: BaseStrategy;
+  // orders: Order[];
 
-  constructor({ ticks, Strategy }: { ticks: Tick[], Strategy: any}) {
-    this.ticks = ticks;
+  constructor({
+    strategy,
+    market,
+  }: {
+    strategy: BaseStrategy;
+    market: MockMarket;
+  }) {
+    this.market = market;
 
-    this.market = new Market({
-      saveOrder: this.handleOrder.bind(this),
-    })
-
-    this.trades = [];
-    this.openTrades = [];
-    this.orders = [];
-    this.strategy = new Strategy(this.market);
+    // this.trades = [];
+    // this.openTrades = [];
+    // this.orders = [];
+    this.strategy = strategy;
   }
 
   async run() {
-    for (const tick of this.ticks) {
-      await this.strategy.handleTick(tick);
-    };
+    this.ticks = await getRepository(Tick).find({
+      order: {
+        timestamp: 'ASC',
+      },
+    });
 
-    this.trades = values(this.trades);
-  }
+    this.market.setTicks(this.ticks);
+    this.market.addTickListener(this.strategy);
 
-  handleOrder(order: Order) {
-    this.orders.push(order);
-
-    if (order.type === 'buy') {
-      const trade = new Trade(order);
-      this.trades.push(trade);
-      this.openTrades.push(trade);
-      return;
-    }
-
-    const trade = this.openTrades[0];
-
-    // It could be that we don't fully sell the bitcoin we have.
-    if (trade) {
-      trade.sell(order);
-      // TODO: keep buy orders open, sorted by date
-      // when selling, fill open orders from start to end
-      // remove trade from index
-      this.openTrades.splice(0, 1);
+    while(this.market.hasTicks) {
+      await this.market.tick();
     }
   }
+
+  // handleOrder(order: Order) {
+  //   this.orders.push(order);
+
+  //   if (order.type === 'buy') {
+  //     const trade = new Trade(order);
+  //     this.trades.push(trade);
+  //     this.openTrades.push(trade);
+  //     return;
+  //   }
+
+  //   const trade = this.openTrades[0];
+
+  //   // It could be that we don't fully sell the bitcoin we have.
+  //   if (trade) {
+  //     trade.sell(order);
+  //     // TODO: keep buy orders open, sorted by date
+  //     // when selling, fill open orders from start to end
+  //     // remove trade from index
+  //     this.openTrades.splice(0, 1);
+  //   }
+  // }
 }
 
 export default Simulation;
