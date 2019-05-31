@@ -1,8 +1,8 @@
 language: node_js
 cache: yarn
 node_js:
-- 11
-before_install: cd backend
-before
+  - 11
+before_install:
+  - cd backend
 script:
-- yarn test
+  - yarn test
