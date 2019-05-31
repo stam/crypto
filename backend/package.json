@@ -9,8 +9,8 @@
     "watch-ts": "tsc -w",
     "start": "ts-node-dev src/index.ts",
     "debug": "node --inspect -r ts-node/register src/index.ts",
-    "test": "jest",
-    "test-dev": "jest --watch",
+    "test": "jest -i",
+    "test-dev": "jest -i --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "create-candles": "ts-node src/commands/createCandles"
   },
@@ -28,16 +28,15 @@
     "request": "^2.88.0",
     "sqlite3": "^4.0.4",
     "technicalindicators": "^1.1.13",
-    "typeorm": "^0.2.7",
-    "typeorm-fixtures": "^0.8.5"
+    "typeorm": "^0.2.7"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/lodash": "^4.14.116",
     "concurrently": "^4.0.1",
-    "jest": "^24.1.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.18.7",
-    "ts-jest": "^24.0.0",
+    "ts-jest": "^24.0.2",
     "ts-node": "^8.0.2",
     "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^3.0.1"

@@ -15,15 +15,20 @@ jest.mock('./market/mock', () => ({
 
 describe('The server', () => {
   let getHost;
+  let app;
 
   beforeAll(async () => {
-    const app = await startServer();
+    app = await startServer();
     const { port } = app.address();
 
     getHost = () => `http://127.0.0.1:${port}/api`;
 
     Simulation.prototype.run = jest.fn();
   });
+
+  afterAll(async () => {
+    await app.close();
+  })
 
   beforeEach(() => {
     const params = `mutation {
