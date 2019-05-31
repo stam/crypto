@@ -26,7 +26,6 @@ export default class MockMarket extends BaseMarket {
 
   checkIfOrdersResolve(tick: Tick) {
     remove(this.unfullfilledOrders, (order) => {
-
       const price = order.price * 100;
 
       if (order.type === 'buy' && tick.last <= price ) {
@@ -40,7 +39,14 @@ export default class MockMarket extends BaseMarket {
         return true;
       }
       if (order.type === 'sell' && tick.last >= price) {
-        // TODO sell
+        const o = new Order({
+          date: new Date('2018-03-07T00:00:00.000Z'),
+          quantity: order.quantity,
+          type: order.type,
+          price: tick.last,
+        });
+        order.resolve(o);
+        return true;
       }
       return false;
     })

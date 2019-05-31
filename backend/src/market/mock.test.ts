@@ -20,9 +20,11 @@ describe('The MockMarket', () => {
       last: 5300,
     });
     await createTick({
-      last: 5500,
+      last: 6200,
     });
-
+    await createTick({
+      last: 6100,
+    });
   });
 
   afterAll(async () => {
@@ -84,6 +86,31 @@ describe('The MockMarket', () => {
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
 
-  xit('encounters a sell order when it encounters a higher tick', () => {
+  it('executes a sell order when it encounters a higher tick', async () => {
+    let sellOrder : Order = null;
+
+    const ticks = await getRepository(Tick).find({
+      order: {
+        timestamp: 'ASC',
+      },
+    });
+
+    const market = new MockMarket({ accountValue: 1, accountFiat: 0 });
+    market.setTicks(ticks);
+
+    market.sell(61, 1).then((order) => {
+      sellOrder = order;
+    });
+
+    await market.tick();
+    expect(market.unfullfilledOrders).toHaveLength(1);
+    await market.tick();
+    await market.tick();
+    await market.tick();
+    await market.tick();
+
+    await delay(0);
+    expect(sellOrder.price).toBe(6200);
+    expect(market.unfullfilledOrders).toHaveLength(0);
   });
 })
