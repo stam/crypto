@@ -1,14 +1,46 @@
 import Tick from '../models/tick';
-import { round } from 'lodash';
+import { round, each, remove } from 'lodash';
 import BaseMarket, { Order } from '.';
+
+class PendingOrder {
+
+}
 
 export default class MockMarket extends BaseMarket {
   ticks: Tick[] = [];
   tickIndex: number = 0;
-  tickCallBacks = [];
+
+  unfullfilledOrders: any[] = [];
+
+  constructor(accountStartValues) {
+    super(accountStartValues);
+
+    this.addTickListener({
+      handleTick: (tick) => this.checkIfOrdersResolve(tick),
+    })
+  }
 
   async setTicks (ticks: Tick[]) {
     this.ticks = ticks;
+  }
+
+  checkIfOrdersResolve(tick: Tick) {
+    each(this.unfullfilledOrders, (order) => {
+
+      const price = order.price * 100;
+
+      if (order.type === 'buy' && tick.last <= price ) {
+        const o = new Order({
+          date: new Date('2018-03-07T00:00:00.000Z'),
+          quantity: order.quantity,
+          type: order.type,
+          price: tick.last,
+        });
+        order.resolve(o);
+      } else if (order.type === 'sell' && tick.last >= price) {
+        // TODO sell
+      }
+    })
   }
 
   get hasTicks() {
@@ -22,31 +54,15 @@ export default class MockMarket extends BaseMarket {
     return tick;
   }
 
-  // todo fix this shit
   async placeOrder(price: number, quantity: number, type: string) {
     const p = new Promise<Order>((resolve, reject) => {
-      this.tickCallBacks.push((tick) => {
-        const value = round(tick.last / 100);
-        console.log('checkconstraints', type, value, price);
-
-        if (type === 'buy' && value <= price) {
-          const o = new Order({
-            date: new Date('2018-03-07T00:00:00.000Z'),
-            quantity,
-            type,
-            price: value,
-          });
-          resolve(o);
-        } else if (type === 'sell' && value >= price) {
-          const o = new Order({
-            date: new Date('2018-03-07T00:00:00.000Z'),
-            quantity,
-            type,
-            price: value,
-          });
-          resolve(o);
-        }
-      })
+      const pendingOrder = {
+        price,
+        quantity,
+        type,
+        resolve,
+      }
+      this.unfullfilledOrders.push(pendingOrder);
     });
 
     return p;

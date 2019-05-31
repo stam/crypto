@@ -36,6 +36,9 @@ export async function createTick(tickData) {
   return tickRepo.save(tick);
 }
 
+export const delay = delayTime => new Promise(resolve => setTimeout(resolve, delayTime))
+
+
 export async function cleanup() {
   const tickRepo = getRepository(Tick);
 
