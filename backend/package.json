@@ -9,7 +9,8 @@
     "watch-ts": "tsc -w",
     "start": "ts-node-dev src/index.ts",
     "debug": "node --inspect -r ts-node/register src/index.ts",
-    "test": "jest --watch",
+    "test": "jest",
+    "test-dev": "jest --watch",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "create-candles": "ts-node src/commands/createCandles"
   },
