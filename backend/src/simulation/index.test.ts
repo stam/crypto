@@ -3,10 +3,10 @@ import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
 import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
-import { ensureConnection } from '../../testUtils';
 // import { createConnection, ConnectionOptions } from 'typeorm';
 import Tick from '../models/tick';
 import BaseStrategy from '../strategy/base';
+import { ensureConnection } from '../testUtils';
 
 export const generateTicks = fixtureCreator<Tick>(Tick, function(entity, index) {
   return {

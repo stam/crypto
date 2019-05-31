@@ -4,7 +4,7 @@ import { fixtureCreator, TypeormFixtures } from 'typeorm-fixtures';
 import { createConnection, ConnectionOptions, getRepository } from 'typeorm';
 import { generateTicks } from '../simulation/index.test';
 import Tick from '../models/tick';
-import { ensureConnection } from '../../testUtils';
+import { ensureConnection } from '../testUtils';
 
 const tickFixture = generateTicks([
   {
