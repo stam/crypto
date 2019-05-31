@@ -1,10 +1,6 @@
 import Tick from '../models/tick';
-import { round, each, remove } from 'lodash';
+import { remove } from 'lodash';
 import BaseMarket, { Order } from '.';
-
-class PendingOrder {
-
-}
 
 export default class MockMarket extends BaseMarket {
   ticks: Tick[] = [];

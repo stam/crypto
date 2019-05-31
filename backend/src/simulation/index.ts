@@ -35,9 +35,7 @@ class Trade {
 class Simulation {
   market: MockMarket;
   ticks: Tick[];
-  // openTrades: Trade[];
   strategy: BaseStrategy;
-  // orders: Order[];
 
   constructor({
     strategy,
@@ -47,10 +45,6 @@ class Simulation {
     market: MockMarket;
   }) {
     this.market = market;
-
-    // this.trades = [];
-    // this.openTrades = [];
-    // this.orders = [];
     this.strategy = strategy;
   }
 
@@ -68,28 +62,6 @@ class Simulation {
       await this.market.tick();
     }
   }
-
-  // handleOrder(order: Order) {
-  //   this.orders.push(order);
-
-  //   if (order.type === 'buy') {
-  //     const trade = new Trade(order);
-  //     this.trades.push(trade);
-  //     this.openTrades.push(trade);
-  //     return;
-  //   }
-
-  //   const trade = this.openTrades[0];
-
-  //   // It could be that we don't fully sell the bitcoin we have.
-  //   if (trade) {
-  //     trade.sell(order);
-  //     // TODO: keep buy orders open, sorted by date
-  //     // when selling, fill open orders from start to end
-  //     // remove trade from index
-  //     this.openTrades.splice(0, 1);
-  //   }
-  // }
 }
 
 export default Simulation;

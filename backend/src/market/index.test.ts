@@ -1,4 +1,3 @@
-// import Market from './mock';
 import BaseMarket, { InsufficientFiatError, InsufficientCryptoError } from '.';
 import Tick from '../models/tick';
 
