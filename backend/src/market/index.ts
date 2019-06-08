@@ -99,6 +99,8 @@ export default abstract class BaseMarket {
     const tick = await this.queryTick();
 
     for (let listener of this.listeners) {
+      // TODO, listener should not be an object,
+      // it should just be the callback
       listener.handleTick(tick);
     }
 

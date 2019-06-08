@@ -13,6 +13,7 @@ class BaseStrategy {
     this.quantity = 0;
 
     this.market = market;
+    this.market.addTickListener(this);
   }
 
   handleTick(tick: Tick) {}

@@ -45,4 +45,8 @@ describe('A Simulation', () => {
 
     expect(strategy.handleTick).toHaveBeenCalledTimes(2);
   });
+
+  it('should track orders', async () => {
+
+  });
 });
