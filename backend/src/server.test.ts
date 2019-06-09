@@ -2,13 +2,20 @@ import { request } from 'graphql-request';
 
 import { startServer } from './server';
 import Simulation from './simulation';
+import { ensureConnection, createTick, cleanup } from './testUtils';
 
 const mockMarketConstructor = jest.fn();
+const mockTickSetter = jest.fn();
 
 jest.mock('./market/mock', () => ({
   default: class Market {
     constructor(...args) {
       mockMarketConstructor(...args);
+    }
+
+    addTickListener() {}
+    setTicks(...args) {
+      mockTickSetter(...args);
     }
   }
 }))
@@ -19,6 +26,15 @@ describe('The server', () => {
 
   beforeAll(async () => {
     app = await startServer();
+
+    await createTick({
+      last: 6001,
+    });
+    await createTick({
+      last: 5200,
+    });
+
+
     const { port } = app.address();
 
     getHost = () => `http://127.0.0.1:${port}/api`;
@@ -28,7 +44,8 @@ describe('The server', () => {
 
   afterAll(async () => {
     await app.close();
-  })
+    await cleanup();
+  });
 
   beforeEach(() => {
     const params = `mutation {
@@ -54,6 +71,16 @@ describe('The server', () => {
       expect(mockMarketConstructor).toHaveBeenCalledWith(
         { accountFiat: 2000, accountValue: 0 }
       );
+    });
+
+    it('should query ticks and feed them into the market', async () => {
+      expect(mockTickSetter).toHaveBeenCalledTimes(1);
+
+      const ticks = mockTickSetter.mock.calls[0][0];
+
+      expect(ticks).toHaveLength(2);
+      expect(ticks[0].last).toBe(6001);
+      expect(ticks[1].last).toBe(5200);
     });
   });
 });

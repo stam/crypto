@@ -16,10 +16,16 @@ export const resolvers = {
   },
   Mutation: {
     runSimulation: async (_, { startValue, startFiat }) => {
+      const ticks = await getRepository(Tick).find({
+        order: {
+          timestamp: 'ASC',
+        },
+      });
       const market = new MockMarket({ accountValue: startValue, accountFiat: startFiat });
       const strategy = new Strategy(market);
-
       const simulation = new Simulation({ market, strategy });
+
+      market.setTicks(ticks);
 
       await simulation.run();
 

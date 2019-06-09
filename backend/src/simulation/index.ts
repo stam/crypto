@@ -3,7 +3,6 @@ import { Order } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
-import { getRepository } from 'typeorm';
 
 class Trade {
   buyPrice: number;
@@ -49,13 +48,6 @@ class Simulation {
   }
 
   async run() {
-    this.ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
-
-    this.market.setTicks(this.ticks);
     this.market.addTickListener(this.strategy);
 
     while(this.market.hasTicks) {

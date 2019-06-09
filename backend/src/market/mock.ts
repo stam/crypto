@@ -17,10 +17,6 @@ export default class MockMarket extends BaseMarket {
 
   constructor(accountStartValues) {
     super(accountStartValues);
-
-    // this.addTickListener({
-    //   handleTick: (tick) => this.checkIfOrdersResolve(tick),
-    // })
   }
 
   async setTicks (ticks: Tick[]) {
