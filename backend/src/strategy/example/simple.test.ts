@@ -20,6 +20,12 @@ describe('The simple strategy', () => {
     await createTick({
       last: 6999,
     });
+    await createTick({
+      last: 7010,
+    });
+    await createTick({
+      last: 9500,
+    });
   });
 
   afterAll(async () => {
@@ -38,11 +44,24 @@ describe('The simple strategy', () => {
   });
 
   it('should buy when the price dips under 7000', async () => {
-    market.tick();
-    market.tick();
+    await market.tick();
+    await market.tick();
 
     await delay(0);
 
     expect(market.unfullfilledOrders).toHaveLength(1);
+    expect(market.unfullfilledOrders[0].type).toBe('buy');
   });
+
+  it('should sell when the price peaks above 9500', async () => {
+    await market.tick();
+    await market.tick();
+    await market.tick();
+    await market.tick();
+
+    await delay(0);
+
+    expect(market.unfullfilledOrders).toHaveLength(1);
+    expect(market.unfullfilledOrders[0].type).toBe('sell');
+  })
 });

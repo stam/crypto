@@ -26,8 +26,8 @@ class SimpleStrategy extends BaseStrategy {
   }
 
   signalSell(tick: Tick) {
-    if (this.quantity === 1) {
-      this.market.sell(tick.last, 1);
+    if (this.quantity > 0) {
+      this.market.sell(tick.last, 0.1);
       this.quantity = 0;
     }
   }

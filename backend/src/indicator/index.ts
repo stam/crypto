@@ -58,7 +58,6 @@ class Indicator {
     //   this.result = result;
     // }
 
-    // console.log('this.ta', this.ta, this.candles);
     // const bla = TA.EMA.calculate({
     // })
     // const emaResult: number = <number> await Talib({
@@ -69,7 +68,6 @@ class Indicator {
     //   optInTimePeriod: this.period,
     // });
 
-    // console.log('bla', bla);
 
   }
 
@@ -85,7 +83,6 @@ class Indicator {
       clonedTa.nextValue(prevCandle.close);
     });
     // Object.assign(clonedTa, this.ta);
-    // console.log('this.ta', this.ta, this.ta.result);
     this.result = clonedTa.nextValue(candle.close) || null;
     return this.result;
   }
