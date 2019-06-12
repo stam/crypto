@@ -1,6 +1,6 @@
 
 import MockMarket from '../../market/mock';
-import { ensureConnection, createTick, cleanup, delay } from '../../testUtils';
+import { cleanup, delay, createTicks } from '../../testUtils';
 import SimpleStrategy from './simple';
 import { getRepository } from 'typeorm';
 import Tick from '../../models/tick';
@@ -12,20 +12,12 @@ describe('The simple strategy', () => {
   let ticks: Tick[];
 
   beforeAll(async () => {
-    await ensureConnection();
-
-    await createTick({
-      last: 7500,
-    });
-    await createTick({
-      last: 6999,
-    });
-    await createTick({
-      last: 7010,
-    });
-    await createTick({
-      last: 9500,
-    });
+    ticks = createTicks([
+      { last: 7500, },
+      { last: 6999, },
+      { last: 7010, },
+      { last: 9500, },
+    ])
   });
 
   afterAll(async () => {
@@ -33,11 +25,6 @@ describe('The simple strategy', () => {
   });
 
   beforeEach(async () => {
-    ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
     market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     market.setTicks(ticks);
     strategy = new SimpleStrategy(market);

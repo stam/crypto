@@ -3,39 +3,28 @@ import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
-import { ensureConnection, createTick, cleanup } from '../testUtils';
+import { createTicks } from '../testUtils';
+import Tick from '../models/tick';
 
 
 describe('A Simulation', () => {
   let simulation: Simulation;
   let market: MockMarket;
   let strategy: BaseStrategy;
-
-  beforeAll(async () => {
-    await ensureConnection();
-
-    await createTick({
-      last: 50,
-    });
-    await createTick({
-      last: 51,
-    });
-  });
-
-  afterAll(async () => {
-    await cleanup();
-  });
+  let ticks: Tick[];
 
   beforeEach(() => {
+    ticks = createTicks([{
+      last: 50,
+
+    }, {
+      last: 51,
+    }
+    ])
     market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    market.setTicks(ticks);
     strategy = new Strategy(market);
     simulation = new Simulation({ market, strategy });
-  });
-
-  it('feeds the ticks into the market', async () => {
-    await simulation.run();
-
-    expect(market.ticks.length).toBe(2);
   });
 
   it('tells the market to broadcast its ticks', async () => {

@@ -2,7 +2,7 @@ import { request } from 'graphql-request';
 
 import { startServer } from './server';
 import Simulation from './simulation';
-import { ensureConnection, createTick, cleanup } from './testUtils';
+import { createAndInsertTick, cleanup } from './testUtils';
 
 const mockMarketConstructor = jest.fn();
 const mockTickSetter = jest.fn();
@@ -27,10 +27,10 @@ describe('The server', () => {
   beforeAll(async () => {
     app = await startServer();
 
-    await createTick({
+    await createAndInsertTick({
       last: 6001,
     });
-    await createTick({
+    await createAndInsertTick({
       last: 5200,
     });
 
@@ -40,14 +40,7 @@ describe('The server', () => {
     getHost = () => `http://127.0.0.1:${port}/api`;
 
     Simulation.prototype.run = jest.fn();
-  });
 
-  afterAll(async () => {
-    await app.close();
-    await cleanup();
-  });
-
-  beforeEach(() => {
     const params = `mutation {
       runSimulation(startFiat: 2000, startValue: 0) {
         orders {
@@ -59,8 +52,12 @@ describe('The server', () => {
       }
     }`;
     return request(getHost(), params);
-  })
+  });
 
+  afterEach(async () => {
+    await app.close();
+    await cleanup();
+  });
 
   describe('when running a simulation', () => {
     it('creates a simulation class and feeds it the startValues', async () => {

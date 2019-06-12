@@ -2,42 +2,21 @@ import MockMarket from './mock';
 
 import { getRepository } from 'typeorm';
 import Tick from '../models/tick';
-import { ensureConnection, createTick, cleanup, delay } from '../testUtils';
+import { delay, createTicks } from '../testUtils';
 import { Order } from '.';
 
 
 describe('The MockMarket', () => {
+  let ticks: Tick[];
   beforeAll(async () => {
-    await ensureConnection();
-
-    await createTick({
+    ticks = createTicks([{
       last: 6001,
-    });
-    await createTick({
-      last: 5200,
-    });
-    await createTick({
-      last: 5300,
-    });
-    await createTick({
-      last: 6200,
-    });
-    await createTick({
-      last: 6100,
-    });
-  });
-
-  afterAll(async () => {
-    await cleanup();
+    }, { last: 5200 }, { last: 5300 }, { last: 6200 }, { last: 6100 }
+    ])
   });
 
   it('executes a buy order when it encounters a lower tick', async () => {
-    let buyOrder : Order = null;
-    const ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
+    let buyOrder: Order = null;
 
     const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     market.setTicks(ticks);
@@ -63,13 +42,7 @@ describe('The MockMarket', () => {
   })
 
   it('only executes a buy order once', async () => {
-    let buyOrder : Order = null;
-
-    const ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
+    let buyOrder: Order = null;
 
     const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     market.setTicks(ticks);
@@ -87,13 +60,7 @@ describe('The MockMarket', () => {
   });
 
   it('executes a sell order when it encounters a higher tick', async () => {
-    let sellOrder : Order = null;
-
-    const ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
+    let sellOrder: Order = null;
 
     const market = new MockMarket({ accountValue: 1, accountFiat: 0 });
     market.setTicks(ticks);

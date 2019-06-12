@@ -14,9 +14,14 @@ export async function ensureConnection () {
 
 let tickIndex = 0;
 
-export async function createTick(tickData) {
+export async function createAndInsertTick(tickData) {
   const tickRepo = getRepository(Tick);
+  const tick = createTick(tickData);
 
+  return tickRepo.save(tick);
+}
+
+function createTick(tickData): Tick {
   const data = {
     symbol: 'BTCUSD',
     ask: 100,
@@ -32,8 +37,11 @@ export async function createTick(tickData) {
 
   const tick = new Tick();
   Object.assign(tick, data);
+  return tick;
+}
 
-  return tickRepo.save(tick);
+export function createTicks(tickData) {
+  return tickData.map(data => createTick(data));
 }
 
 export const delay = delayTime => new Promise(resolve => setTimeout(resolve, delayTime))

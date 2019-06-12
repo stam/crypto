@@ -6,6 +6,10 @@ class DumbMarket extends BaseMarket {
   async queryTick() {
     return new Tick();
   }
+
+  async checkIfOrdersResolve() {
+    return;
+  }
 }
 
 describe('The market', () => {

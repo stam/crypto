@@ -48,8 +48,6 @@ class Simulation {
   }
 
   async run() {
-    this.market.addTickListener(this.strategy);
-
     while(this.market.hasTicks) {
       await this.market.tick();
     }

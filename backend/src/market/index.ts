@@ -82,7 +82,7 @@ export default abstract class BaseMarket {
     return order;
   }
 
-  abstract async checkIfOrdersResolve(tick: Tick)
+  abstract async checkIfOrdersResolve(tick: Tick) : Promise<void>
 
   get timestamp() {
     return Date.now();
