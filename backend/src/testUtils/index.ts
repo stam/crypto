@@ -1,5 +1,6 @@
 import { createConnection, getConnection, ConnectionOptions, getRepository } from 'typeorm';
 import Tick from '../models/tick';
+import { Order, OrderType } from '../market';
 
 export async function ensureConnection () {
   try {
@@ -52,3 +53,23 @@ export async function cleanup() {
 
   return tickRepo.clear();
 }
+
+
+let orderIndex = 0;
+
+
+function createOrder(orderData): Order {
+  const data = {
+    date: new Date(`2019-01-01 15:00:${orderIndex}`),
+    quantity: 1,
+    price: 1,
+    type: OrderType.BUY,
+    ...orderData
+  }
+  return new Order(data)
+}
+
+export function createOrders(orderData): Order[] {
+  return orderData.map(data => createOrder(data));
+}
+

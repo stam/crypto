@@ -21,6 +21,7 @@ export const resolvers = {
           timestamp: 'ASC',
         },
       });
+
       const market = new MockMarket({ accountValue: startValue, accountFiat: startFiat });
       const strategy = new Strategy(market);
       const simulation = new Simulation({ market, strategy });
@@ -30,8 +31,8 @@ export const resolvers = {
       await simulation.run();
 
       const sim = {
-        orders: [],
-        trades: [],
+        orders: simulation.orders,
+        trades: simulation.trades,
       }
 
       return sim;

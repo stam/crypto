@@ -6,7 +6,7 @@ import BaseStrategy from '../base';
 // Without state: doesn't check how much fund is available or active orders
 class SimpleStrategy extends BaseStrategy {
   handleTick(tick: Tick) {
-    const value = tick.last;
+    const value = Math.round(tick.last / 100);
 
     if (value <= 7000) {
       this.signalBuy(tick);

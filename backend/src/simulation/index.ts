@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import { round, remove } from 'lodash';
 import { Order } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
@@ -35,6 +35,8 @@ class Simulation {
   market: MockMarket;
   ticks: Tick[];
   orders: Order[] = [];
+  trades: Trade[] = [];
+  private openTrades: Trade[] = [];
   strategy: BaseStrategy;
 
   constructor({
@@ -57,6 +59,16 @@ class Simulation {
 
   handleOrder(order: Order) {
     this.orders.push(order);
+    this.openTrades.push(new Trade(order));
+  }
+
+  condenseOrders() {
+    const trade = this.openTrades[0]
+    trade.sell(this.orders[1]);
+    remove(this.openTrades, (trade: Trade) => {
+      return true;
+    })
+    this.trades.push(trade);
   }
 }
 
