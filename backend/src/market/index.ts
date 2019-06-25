@@ -39,10 +39,19 @@ interface TickListener {
   handleTick(t: Tick);
 }
 
+export interface PendingOrder {
+  price: number;
+  quantity: number;
+  type: OrderType;
+  resolve: (order: Order) => void;
+}
+
 export default abstract class BaseMarket {
   accountValue: number;
   accountFiat: number;
   listeners: TickListener[] = [];
+
+  unfullfilledOrders: PendingOrder[] = [];
 
   constructor(
     {
@@ -73,9 +82,7 @@ export default abstract class BaseMarket {
 
     if (type === OrderType.BUY) {
       this.accountValue += quantity;
-      this.accountFiat -= price * quantity;
     } else if (type === OrderType.SELL) {
-      this.accountValue -= quantity;
       this.accountFiat += price * quantity;
     }
 
@@ -94,6 +101,12 @@ export default abstract class BaseMarket {
 
   protected abstract async queryTick() : Promise<Tick>;
   protected async placeOrder(price: number, quantity: number, type: OrderType) {
+    if (type === OrderType.BUY) {
+      this.accountFiat -= price * quantity;
+    } else if (type === OrderType.SELL) {
+      this.accountValue -= quantity;
+    }
+
     return new Order({
       date: new Date('2018-03-07T00:00:00.000Z'),
       quantity,

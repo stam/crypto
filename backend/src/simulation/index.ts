@@ -34,6 +34,7 @@ class Trade {
 class Simulation {
   market: MockMarket;
   ticks: Tick[];
+  orders: Order[] = [];
   strategy: BaseStrategy;
 
   constructor({
@@ -44,6 +45,7 @@ class Simulation {
     market: MockMarket;
   }) {
     this.market = market;
+    this.market.onPlaceOrder = this.handleOrder.bind(this);
     this.strategy = strategy;
   }
 
@@ -51,6 +53,10 @@ class Simulation {
     while(this.market.hasTicks) {
       await this.market.tick();
     }
+  }
+
+  handleOrder(order: Order) {
+    this.orders.push(order);
   }
 }
 

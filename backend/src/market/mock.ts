@@ -1,17 +1,11 @@
 import Tick from '../models/tick';
 import { remove } from 'lodash';
-import BaseMarket, { Order, OrderType } from '.';
-
-interface PendingOrder {
-  price: number;
-  quantity: number;
-  type: OrderType;
-  resolve: (order: Order) => void;
-}
+import BaseMarket, { Order, OrderType, PendingOrder } from '.';
 
 export default class MockMarket extends BaseMarket {
   ticks: Tick[] = [];
   tickIndex: number = 0;
+  onPlaceOrder: (order: Order) => void = null;
 
   unfullfilledOrders: PendingOrder[] = [];
 
@@ -25,25 +19,30 @@ export default class MockMarket extends BaseMarket {
 
   async checkIfOrdersResolve(tick: Tick) {
     remove(this.unfullfilledOrders, (order) => {
-      const price = order.price * 100;
 
-      if (order.type === OrderType.BUY && tick.last <= price ) {
+      if (order.type === OrderType.BUY && tick.last <= order.price ) {
         const o = new Order({
           date: new Date('2018-03-07T00:00:00.000Z'),
           quantity: order.quantity,
           type: order.type,
           price: tick.last,
         });
+        if (this.onPlaceOrder) {
+          this.onPlaceOrder(o);
+        }
         order.resolve(o);
         return true;
       }
-      if (order.type === OrderType.SELL && tick.last >= price) {
+      if (order.type === OrderType.SELL && tick.last >= order.price) {
         const o = new Order({
           date: new Date('2018-03-07T00:00:00.000Z'),
           quantity: order.quantity,
           type: order.type,
           price: tick.last,
         });
+        if (this.onPlaceOrder) {
+          this.onPlaceOrder(o);
+        }
         order.resolve(o);
         return true;
       }
@@ -69,6 +68,12 @@ export default class MockMarket extends BaseMarket {
         quantity,
         type,
         resolve,
+      }
+
+      if (type === OrderType.BUY) {
+        this.accountFiat -= Math.round(price * quantity);
+      } else if (type === OrderType.SELL) {
+        this.accountValue -= quantity;
       }
       this.unfullfilledOrders.push(pendingOrder);
     });

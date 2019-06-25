@@ -19,7 +19,7 @@ export const startServer = async () => {
   const connection = await createConnection();
   const app = await server.start(options);
 
-  console.log('Server is running on localhost:4000')
+  console.info('Server is running on localhost:4000')
 
   return app;
 }

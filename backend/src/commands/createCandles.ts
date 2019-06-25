@@ -44,7 +44,7 @@ async function generateCandles() {
     return Promise.all(chunkPromises);
   });
 
-  console.log(`Candle generation success! ${values(result).length} candles created`);
+  console.info(`Candle generation success! ${values(result).length} candles created`);
 }
 
 generateCandles();

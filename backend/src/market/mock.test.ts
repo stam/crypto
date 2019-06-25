@@ -21,7 +21,7 @@ describe('The MockMarket', () => {
     const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     market.setTicks(ticks);
 
-    market.buy(60, 1).then((order) => {
+    market.buy(6000, 1).then((order) => {
       buyOrder = order;
     });
 
@@ -30,13 +30,13 @@ describe('The MockMarket', () => {
     let tick = await market.tick();
     await delay(0);
 
-    expect(tick.last / 100).toBeGreaterThan(60);
+    expect(tick.last).toBeGreaterThan(6000);
     expect(buyOrder).toBeNull();
 
     tick = await market.tick();
     await delay(0);
 
-    expect(tick.last / 100).toBeLessThanOrEqual(60);
+    expect(tick.last).toBeLessThanOrEqual(6000);
     expect(buyOrder).not.toBe(null);
     expect(buyOrder.price).toBe(5200);
   })
@@ -47,7 +47,7 @@ describe('The MockMarket', () => {
     const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
     market.setTicks(ticks);
 
-    market.buy(60, 1).then((order) => {
+    market.buy(6000, 1).then((order) => {
       buyOrder = order;
     });
     await market.tick();
@@ -65,7 +65,7 @@ describe('The MockMarket', () => {
     const market = new MockMarket({ accountValue: 1, accountFiat: 0 });
     market.setTicks(ticks);
 
-    market.sell(61, 1).then((order) => {
+    market.sell(6100, 1).then((order) => {
       sellOrder = order;
     });
 

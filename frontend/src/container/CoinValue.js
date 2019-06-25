@@ -46,7 +46,7 @@ class CoinValue extends Component {
         this.data = parseData(res.data);
       })
       .catch(e => {
-        console.log('Error', e);
+        console.error('Error', e);
       });
   }
 

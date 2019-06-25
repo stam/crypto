@@ -15,8 +15,8 @@ describe('The simple strategy', () => {
     ticks = createTicks([
       { last: 7500, },
       { last: 6999, },
-      { last: 7010, },
-      { last: 9500, },
+      { last: 7000, },
+      { last: 6998, },
     ])
   });
 
@@ -30,7 +30,7 @@ describe('The simple strategy', () => {
     strategy = new SimpleStrategy(market);
   });
 
-  it('should buy when the price dips under 7000', async () => {
+  it('should place a buy order when the price dips under 7000', async () => {
     await market.tick();
     await market.tick();
 
@@ -40,7 +40,24 @@ describe('The simple strategy', () => {
     expect(market.unfullfilledOrders[0].type).toBe('buy');
   });
 
-  it('should sell when the price peaks above 9500', async () => {
+  it('should not have orders resolve immediately, only after the next matching tick', async () => {
+    await market.tick();
+    await market.tick();
+    await market.tick();
+    await delay(0);
+
+
+    expect(market.unfullfilledOrders).toHaveLength(1);
+
+    await market.tick();
+    await delay(0);
+    expect(market.unfullfilledOrders).toHaveLength(0);
+    expect(market.accountFiat).toBe(1) // 6999 - 6998
+    expect(market.accountValue).toBe(1)
+
+  });
+
+  xit('should sell when the price peaks above 9500', async () => {
     await market.tick();
     await market.tick();
     await market.tick();

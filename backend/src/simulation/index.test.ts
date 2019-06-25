@@ -3,7 +3,7 @@ import Simulation from '.';
 import Strategy from '../strategy/example/simple';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
-import { createTicks } from '../testUtils';
+import { createTicks, delay } from '../testUtils';
 import Tick from '../models/tick';
 
 
@@ -14,20 +14,20 @@ describe('A Simulation', () => {
   let ticks: Tick[];
 
   beforeEach(() => {
+    market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    strategy = new Strategy(market);
+    simulation = new Simulation({ market, strategy });
+  });
+
+  it('tells the market to broadcast its ticks', async () => {
     ticks = createTicks([{
       last: 50,
 
     }, {
       last: 51,
     }
-    ])
-    market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+  ])
     market.setTicks(ticks);
-    strategy = new Strategy(market);
-    simulation = new Simulation({ market, strategy });
-  });
-
-  it('tells the market to broadcast its ticks', async () => {
     strategy.handleTick = jest.fn();
 
     await simulation.run();
@@ -36,6 +36,18 @@ describe('A Simulation', () => {
   });
 
   it('should track orders', async () => {
+    ticks = createTicks([
+      { last: 6900, },
+      { last: 6900, },
+      { last: 9600, },
+      { last: 9600, }
+  ])
+    market.setTicks(ticks);
 
+    await simulation.run();
+
+    await delay(0);
+
+    expect(simulation.orders).toHaveLength(2);
   });
 });
