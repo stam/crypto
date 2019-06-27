@@ -53,19 +53,37 @@ describe('A Simulation', () => {
   });
 
   describe('when condensing trades', () => {
-    xit('should calculate the result based on sell and buyPrice', () => {
-      simulation.orders = createOrders([
+    it('should calculate the result based on sell and buyPrice', () => {
+      const orders = createOrders([
         { quantity: 1, price: 100, type: OrderType.BUY },
         { quantity: 1, price: 150, type: OrderType.SELL },
       ]);
 
-      simulation.condenseOrders();
+      orders.forEach(order => simulation.handleOrder(order));
 
       expect(simulation.trades).toHaveLength(1);
       expect(simulation.trades[0].buyPrice).toBe(100);
       expect(simulation.trades[0].sellPrice).toBe(150);
-      expect(simulation.trades[0].result).toBe(2);
+      expect(simulation.trades[0].result).toBe(150);
 
+    });
+
+    it('should leave initial sell orders as open trades', () => {
+      const orders = createOrders([
+        { quantity: 1, price: 150, type: OrderType.SELL },
+        { quantity: 1, price: 100, type: OrderType.BUY },
+        { quantity: 1, price: 150, type: OrderType.SELL },
+      ]);
+
+      orders.forEach(order => simulation.handleOrder(order));
+
+      expect(simulation.trades).toHaveLength(2);
+      expect(simulation.trades[0].buyPrice).toBe(null);
+      expect(simulation.trades[0].sellPrice).toBe(150);
+      expect(simulation.trades[0].result).toBe(undefined);
+      expect(simulation.trades[1].buyPrice).toBe(100);
+      expect(simulation.trades[1].sellPrice).toBe(150);
+      expect(simulation.trades[1].result).toBe(150);
     })
   });
 
