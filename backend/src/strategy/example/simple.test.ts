@@ -13,13 +13,13 @@ describe('The simple strategy', () => {
 
   beforeAll(async () => {
     ticks = createTicks([
-      { last: 7500, },
-      { last: 6999, },
-      { last: 7000, },
-      { last: 6998, },
-      { last: 9500, },
-      { last: 9449, },
-      { last: 9501, },
+      { value: 7500, },
+      { value: 6999, },
+      { value: 7000, },
+      { value: 6998, },
+      { value: 9500, },
+      { value: 9449, },
+      { value: 9501, },
     ])
   });
 
@@ -28,7 +28,7 @@ describe('The simple strategy', () => {
   });
 
   beforeEach(async () => {
-    market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    market = new MockMarket({ accountValue: 0, accountFiat: 700000 });
     market.setTicks(ticks);
     strategy = new SimpleStrategy(market);
   });
@@ -55,7 +55,7 @@ describe('The simple strategy', () => {
     await market.tick();
     await delay(0);
     expect(market.unfullfilledOrders).toHaveLength(0);
-    expect(market.accountFiat).toBe(1) // 6999 - 6998
+    expect(market.accountFiat).toBe(100) // 6999 - 6998
     expect(market.accountValue).toBe(1)
 
   });
@@ -86,7 +86,7 @@ describe('The simple strategy', () => {
 
 
     expect(market.unfullfilledOrders).toHaveLength(0);
-    expect(market.accountFiat).toBe(9501) // 6999 - 6998 + 9500
+    expect(market.accountFiat).toBe(950100) // 6999 - 6998 + 9500
     expect(market.accountValue).toBe(0)
   });
 });

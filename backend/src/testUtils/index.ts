@@ -34,6 +34,10 @@ function createTick(tickData): Tick {
     ...tickData,
   }
 
+  if (tickData.value) {
+    data.last = tickData.value * 100;
+  }
+
   tickIndex += 1;
 
   const tick = new Tick();
