@@ -22,7 +22,7 @@ export default class MockMarket extends BaseMarket {
 
       if (order.type === OrderType.BUY && tick.last <= order.price ) {
         const o = new Order({
-          date: new Date('2018-03-07T00:00:00.000Z'),
+          date: tick.timestamp,
           quantity: order.quantity,
           type: order.type,
           price: tick.last,
@@ -35,7 +35,7 @@ export default class MockMarket extends BaseMarket {
       }
       if (order.type === OrderType.SELL && tick.last >= order.price) {
         const o = new Order({
-          date: new Date('2018-03-07T00:00:00.000Z'),
+          date: tick.timestamp,
           quantity: order.quantity,
           type: order.type,
           price: tick.last,

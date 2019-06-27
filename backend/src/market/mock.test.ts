@@ -59,6 +59,27 @@ describe('The MockMarket', () => {
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
 
+  it('should fill in the orderDate with the tickDate', async () => {
+    // When backtesting, the order should not gain the current timestamp,
+    // but the date of the given tick.
+    let buyOrder: Order = null;
+
+    const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+    market.setTicks(ticks);
+
+    market.buy(6000, 1).then((order) => {
+      buyOrder = order;
+    });
+    await market.tick();
+    expect(market.unfullfilledOrders).toHaveLength(1);
+    await market.tick();
+
+    const tick = ticks[1];
+
+    await delay(0);
+    expect(buyOrder.date).toBe(tick.timestamp);
+  });
+
   it('executes a sell order when it encounters a higher tick', async () => {
     let sellOrder: Order = null;
 
