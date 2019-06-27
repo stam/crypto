@@ -56,7 +56,6 @@ class CandleStickChart extends React.Component {
       .accessor(d => d.emaB);
 
     const calculatedData = emaA(emaB(data));
-    console.log('calculatedData', calculatedData);
 
     return (
       <ChartCanvas
@@ -74,22 +73,14 @@ class CandleStickChart extends React.Component {
         <Chart id={1} yExtents={() => [6000, 11000]}>
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
-          <MouseCoordinateX
-            at="bottom"
-            orient="bottom"
-            displayFormat={timeFormat('%Y-%m-%d')}
-          />
+          <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
           {simulation.orders && <OrderAnnotations orders={simulation.orders} />}
-          <MouseCoordinateY
-            at="left"
-            orient="left"
-            displayFormat={format('.0f')}
-          />
+          <MouseCoordinateY at="left" orient="left" displayFormat={format('.0f')} />
           <LineSeries yAccessor={emaA.accessor()} stroke={emaA.stroke()} />
           <LineSeries yAccessor={emaB.accessor()} stroke={emaB.stroke()} />
           <CurrentCoordinate yAccessor={emaA.accessor()} fill={emaA.stroke()} />
           <MovingAverageTooltip
-            onClick={e => console.log(e)}
+            onClick={e => console.error(e)}
             origin={[20, 0]}
             options={[
               {

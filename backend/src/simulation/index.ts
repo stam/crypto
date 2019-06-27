@@ -1,9 +1,8 @@
-import { round } from 'lodash';
-import { Order } from '../market';
+import { round, remove } from 'lodash';
+import { Order, OrderType } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
-import { getRepository } from 'typeorm';
 
 class Trade {
   buyPrice: number;
@@ -35,6 +34,9 @@ class Trade {
 class Simulation {
   market: MockMarket;
   ticks: Tick[];
+  orders: Order[] = [];
+  trades: Trade[] = [];
+  private openTrades: Trade[] = [];
   strategy: BaseStrategy;
 
   constructor({
@@ -45,22 +47,46 @@ class Simulation {
     market: MockMarket;
   }) {
     this.market = market;
+    this.market.onPlaceOrder = this.handleOrder.bind(this);
     this.strategy = strategy;
   }
 
   async run() {
-    this.ticks = await getRepository(Tick).find({
-      order: {
-        timestamp: 'ASC',
-      },
-    });
-
-    this.market.setTicks(this.ticks);
-    this.market.addTickListener(this.strategy);
-
-    while(this.market.hasTicks) {
+    while (this.market.hasTicks) {
       await this.market.tick();
     }
+  }
+
+  handleOrder(order: Order) {
+    this.orders.push(order);
+    // this.openTrades.push(new Trade(order));
+    this.matchOrderIntoTrades(order);
+  }
+
+  matchOrderIntoTrades(order: Order) {
+    if (order.type === OrderType.SELL && this.openTrades.length === 0) {
+      const startingTrade = new Trade(order);
+      startingTrade.buyPrice = null;
+      startingTrade.buyDate = null;
+      startingTrade.sellPrice = order.price;
+      startingTrade.sellDate = order.date;
+      this.trades.push(startingTrade)
+      return;
+    }
+
+    // TODO, iff sellTrades.length === 0;
+    if (this.openTrades.length === 0) {
+      this.openTrades.push(new Trade(order));
+      return;
+    }
+
+    // TODY, close off buy orders by checking quantity
+    const trade = this.openTrades[0];
+    trade.sell(order);
+    remove(this.openTrades, (trade: Trade) => {
+      return true;
+    })
+    this.trades.push(trade);
   }
 }
 

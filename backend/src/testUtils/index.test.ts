@@ -1,4 +1,4 @@
-import { createTick, cleanup } from '.';
+import { createAndInsertTick, cleanup } from '.';
 import { ensureConnection } from '../testUtils';
 import { getRepository } from 'typeorm';
 import Tick from '../models/tick';
@@ -7,7 +7,7 @@ describe('The test utils', () => {
   it('should be able to create ticks', async () => {
     await ensureConnection();
     await getRepository(Tick).clear();
-    await createTick({
+    await createAndInsertTick({
       last: 99,
     });
 
@@ -23,7 +23,7 @@ describe('The test utils', () => {
   it('should be able to cleanup all data', async() => {
     await ensureConnection();
 
-    await createTick({
+    await createAndInsertTick({
       last: 99,
     });
 

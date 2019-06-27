@@ -1,5 +1,6 @@
 import { createConnection, getConnection, ConnectionOptions, getRepository } from 'typeorm';
 import Tick from '../models/tick';
+import { Order, OrderType } from '../market';
 
 export async function ensureConnection () {
   try {
@@ -14,9 +15,14 @@ export async function ensureConnection () {
 
 let tickIndex = 0;
 
-export async function createTick(tickData) {
+export async function createAndInsertTick(tickData) {
   const tickRepo = getRepository(Tick);
+  const tick = createTick(tickData);
 
+  return tickRepo.save(tick);
+}
+
+function createTick(tickData): Tick {
   const data = {
     symbol: 'BTCUSD',
     ask: 100,
@@ -28,12 +34,19 @@ export async function createTick(tickData) {
     ...tickData,
   }
 
+  if (tickData.value) {
+    data.last = tickData.value * 100;
+  }
+
   tickIndex += 1;
 
   const tick = new Tick();
   Object.assign(tick, data);
+  return tick;
+}
 
-  return tickRepo.save(tick);
+export function createTicks(tickData) {
+  return tickData.map(data => createTick(data));
 }
 
 export const delay = delayTime => new Promise(resolve => setTimeout(resolve, delayTime))
@@ -44,3 +57,23 @@ export async function cleanup() {
 
   return tickRepo.clear();
 }
+
+
+let orderIndex = 0;
+
+
+function createOrder(orderData): Order {
+  const data = {
+    date: new Date(`2019-01-01 15:00:${orderIndex}`),
+    quantity: 1,
+    price: 1,
+    type: OrderType.BUY,
+    ...orderData
+  }
+  return new Order(data)
+}
+
+export function createOrders(orderData): Order[] {
+  return orderData.map(data => createOrder(data));
+}
+

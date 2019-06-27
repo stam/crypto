@@ -4,12 +4,17 @@ import Tick from '../models/tick';
 export class InsufficientFiatError extends Error {}
 export class InsufficientCryptoError extends Error {}
 
+export enum OrderType {
+  BUY = 'buy',
+  SELL = 'sell'
+}
+
 export class Order {
   id: string;
   date: Date;
   quantity: number;
   price: number;
-  type: string;
+  type: OrderType;
 
   constructor({
     date,
@@ -20,7 +25,7 @@ export class Order {
     date: Date;
     quantity: number;
     price: number;
-    type: string;
+    type: OrderType;
   }) {
     this.id = uniqueId();
     this.date = date;
@@ -34,10 +39,19 @@ interface TickListener {
   handleTick(t: Tick);
 }
 
+export interface PendingOrder {
+  price: number;
+  quantity: number;
+  type: OrderType;
+  resolve: (order: Order) => void;
+}
+
 export default abstract class BaseMarket {
   accountValue: number;
   accountFiat: number;
   listeners: TickListener[] = [];
+
+  unfullfilledOrders: PendingOrder[] = [];
 
   constructor(
     {
@@ -53,29 +67,29 @@ export default abstract class BaseMarket {
   }
 
   // For now just allow any price
-  protected async createOrder({ price, quantity, type }: { price: number; quantity: number; type: string }) {
-    if (type === 'buy') {
+  protected async createOrder({ price, quantity, type }: { price: number; quantity: number; type: OrderType }) {
+    if (type === OrderType.BUY) {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
       }
-    } else if (type === 'sell') {
+    } else if (type === OrderType.SELL) {
       if (quantity > this.accountValue) {
         throw new InsufficientCryptoError();
       }
     }
 
-    const order = await this.placeOrder(price, quantity, type);;
+    const order = await this.placeOrder(price, quantity, type);
 
-    if (type === 'buy') {
+    if (type === OrderType.BUY) {
       this.accountValue += quantity;
-      this.accountFiat -= price * quantity;
-    } else if (type === 'sell') {
-      this.accountValue -= quantity;
+    } else if (type === OrderType.SELL) {
       this.accountFiat += price * quantity;
     }
 
     return order;
   }
+
+  abstract async checkIfOrdersResolve(tick: Tick) : Promise<void>
 
   get timestamp() {
     return Date.now();
@@ -86,7 +100,13 @@ export default abstract class BaseMarket {
   }
 
   protected abstract async queryTick() : Promise<Tick>;
-  protected async placeOrder(price: number, quantity: number, type: string) {
+  protected async placeOrder(price: number, quantity: number, type: OrderType) {
+    if (type === OrderType.BUY) {
+      this.accountFiat -= price * quantity;
+    } else if (type === OrderType.SELL) {
+      this.accountValue -= quantity;
+    }
+
     return new Order({
       date: new Date('2018-03-07T00:00:00.000Z'),
       quantity,
@@ -98,16 +118,21 @@ export default abstract class BaseMarket {
   async tick() {
     const tick = await this.queryTick();
 
+    await this.checkIfOrdersResolve(tick);
+
     for (let listener of this.listeners) {
+      // TODO, listener should not be an object,
+      // it should just be the callback
       listener.handleTick(tick);
     }
+
 
     return tick;
   }
 
   buy(price: number, quantity: number) {
     return this.createOrder({
-      type: 'buy',
+      type: OrderType.BUY,
       quantity,
       price,
     });
@@ -115,7 +140,7 @@ export default abstract class BaseMarket {
 
   sell(price: number, quantity: number) {
     return this.createOrder({
-      type: 'sell',
+      type: OrderType.SELL,
       quantity,
       price,
     });
