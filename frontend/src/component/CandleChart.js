@@ -70,7 +70,7 @@ class CandleStickChart extends React.Component {
         xScale={scaleTime()}
         xExtents={xExtents}
       >
-        <Chart id={1} yExtents={() => [6000, 11000]}>
+        <Chart id={1} yExtents={d => [d.high, d.low]}>
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
           <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
