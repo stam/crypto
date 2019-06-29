@@ -17,7 +17,7 @@ cp .env.example .env
 cd backend
 yarn
 yarn typeorm migration:run
-sqlite3 database.sqlite ".mode csv" ".import ../tick_2018_08_25.csv tick"
+sqlite3 database.sqlite ".mode csv" ".import ../tick_2019_06_29.csv tick"
 yarn create-candles
 yarn start
 ```
