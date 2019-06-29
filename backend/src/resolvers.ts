@@ -11,7 +11,11 @@ export const resolvers = {
       return getRepository(Tick).findOne(id);
     },
     candles: (_) => {
-      return getRepository(Candle).find();
+      return getRepository(Candle).find({
+        order: {
+          datetime: 'ASC',
+        }
+      });
     }
   },
   Mutation: {
