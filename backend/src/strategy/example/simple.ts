@@ -6,7 +6,7 @@ import BaseStrategy from '../base';
 // Without state: doesn't check how much fund is available or active orders
 class SimpleStrategy extends BaseStrategy {
   handleTick(tick: Tick) {
-    const value = round(tick.last / 100);
+    const value = Math.round(tick.last / 100);
 
     if (value <= 7000) {
       this.signalBuy(tick);
@@ -19,16 +19,14 @@ class SimpleStrategy extends BaseStrategy {
 
   // Buy if we have no crypto
   signalBuy(tick: Tick) {
-    if (this.quantity === 0) {
-      this.market.buy(round(tick.last / 100), 1);
-      this.quantity = 1;
+    if (!this.market.unfullfilledOrders.length && this.market.accountValue === 0 && this.market.accountFiat >= 10) {
+      this.market.buy(tick.last, 1);
     }
   }
 
   signalSell(tick: Tick) {
-    if (this.quantity === 1) {
-      this.market.sell(round(tick.last / 100), 1);
-      this.quantity = 0;
+    if (!this.market.unfullfilledOrders.length && this.market.accountValue > 0) {
+      this.market.sell(tick.last, 1);
     }
   }
 }
