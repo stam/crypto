@@ -52,6 +52,32 @@ describe('A Simulation', () => {
     expect(simulation.orders).toHaveLength(2);
   });
 
+  it('should calculate profit', async () => {
+    market = new MockMarket({ accountValue: 0.5, accountFiat: 690000 });
+    strategy = new Strategy(market);
+    simulation = new Simulation({ market, strategy });
+
+    ticks = createTicks([
+      { value: 6900, },
+      { value: 6900, },
+      { value: 9600, },
+      { value: 9600, }
+    ])
+    market.setTicks(ticks);
+
+    await simulation.run();
+
+    await delay(0);
+
+    // Profit should be 137.8%
+
+    // Start value = 0.5 * 6900 + 7000 = 10450
+    expect(simulation.startBalance).toBe(0.5 * 6900 + 6900);
+    // End value = 0.5 * 9600 + 9600 = 14400
+    expect(simulation.endBalance).toBe(0.5 * 9600 + 9600);
+    expect(simulation.profit).toBe(139.1);
+  })
+
   describe('when condensing trades', () => {
     it('should calculate the result based on sell and buyPrice', () => {
       const orders = createOrders([

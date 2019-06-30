@@ -1,4 +1,4 @@
-import { round, remove } from 'lodash';
+import { round, remove, last} from 'lodash';
 import { Order, OrderType } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
@@ -37,6 +37,9 @@ class Simulation {
   orders: Order[] = [];
   trades: Trade[] = [];
   private openTrades: Trade[] = [];
+  startBalance: number;
+  endBalance?: number;
+  profit: number;
   strategy: BaseStrategy;
 
   constructor({
@@ -52,9 +55,19 @@ class Simulation {
   }
 
   async run() {
+    this.startBalance = this.calculateBalance(this.market.ticks[0]);
     while (this.market.hasTicks) {
       await this.market.tick();
     }
+    this.endBalance = this.calculateBalance(last(this.market.ticks));
+    this.profit = round(this.endBalance * 100/ this.startBalance, 1);
+  }
+
+  calculateBalance(tick: Tick) {
+    const fiatValue = this.market.accountFiat;
+    const cryptoValue = this.market.accountValue * tick.last;
+
+    return Math.round((fiatValue + cryptoValue) / 100);
   }
 
   handleOrder(order: Order) {
