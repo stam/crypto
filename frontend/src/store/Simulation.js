@@ -6,6 +6,9 @@ export default class Simulation extends BaseModel {
   @observable to;
   @observable orders;
   @observable trades;
+  @observable startBalance;
+  @observable endBalance;
+  @observable profit;
 
   @observable _loading = false;
 
@@ -33,6 +36,9 @@ export default class Simulation extends BaseModel {
               sellDate
               result
             }
+            startBalance
+            endBalance
+            profit
           }
       }`,
       }),

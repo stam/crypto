@@ -9,6 +9,9 @@
   type Simulation {
     orders: [Order]
     trades: [Trade]
+    startBalance: Int
+    endBalance: Int
+    profit: String
   }
   type Order {
     type: String

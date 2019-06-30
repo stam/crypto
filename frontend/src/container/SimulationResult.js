@@ -61,9 +61,11 @@ class SimulationResult extends Component {
     return (
       <Container>
         <h3>Simulated trades:</h3>
-        {/* <OrderContainer>
-          {data && data.orders.map(this.renderOrder)}
-        </OrderContainer> */}
+        <div>
+          <span>Start balance: {simulation.startBalance}</span>
+          <span>End balance: {simulation.endBalance}</span>
+          <span>Result: {simulation.profit}%</span>
+        </div>
         <Table>
           <thead>
             <tr>
