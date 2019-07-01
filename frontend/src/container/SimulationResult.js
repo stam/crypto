@@ -20,7 +20,7 @@ class SimulationResult extends Component {
     simulation: PropTypes.object.isRequired,
   };
 
-  formatDate = date => moment(date).format('YYYY-MM-DD hh:mm:ss');
+  formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
 
   renderOrder(order) {
     return (
@@ -35,6 +35,7 @@ class SimulationResult extends Component {
       <td>{i}.</td>
       <td>{this.formatDate(trade.buyDate)}</td>
       <td>{trade.buyPrice}</td>
+      <td>{trade.quantity}</td>
       <td>{trade.result}%</td>
       <td>{trade.sellPrice}</td>
       <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
@@ -61,15 +62,18 @@ class SimulationResult extends Component {
     return (
       <Container>
         <h3>Simulated trades:</h3>
-        {/* <OrderContainer>
-          {data && data.orders.map(this.renderOrder)}
-        </OrderContainer> */}
+        <div>
+          <span>Start balance: {simulation.startBalance}</span>
+          <span>End balance: {simulation.endBalance}</span>
+          <span>Result: {simulation.profit}%</span>
+        </div>
         <Table>
           <thead>
             <tr>
               <th />
               <th>Buy Date</th>
               <th>Buy Price</th>
+              <th>Quantity</th>
               <th>Result</th>
               <th>Sell Price</th>
               <th>Sell Date</th>

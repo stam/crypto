@@ -1,4 +1,4 @@
-import { round, remove } from 'lodash';
+import { round, remove, last} from 'lodash';
 import { Order, OrderType } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
@@ -8,18 +8,28 @@ class Trade {
   buyPrice: number;
   sellPrice: number;
   result: number;
+  quantity: number;
   buyDate: Date;
   sellDate: Date;
 
-  constructor(order: Order) {
-    this.buyPrice = order.price;
-    this.buyDate = order.date;
+  constructor(buyPrice: number, quantity: number, buyDate: Date) {
+    this.buyPrice = buyPrice;
+    this.quantity = quantity
+    this.buyDate = buyDate;
   }
 
-  sell(order: Order) {
-    this.sellPrice = order.price;
-    this.sellDate = order.date;
-    this.result = round((100 * order.price) / this.buyPrice, 1);
+  sell(sellOrder: Order): Trade | undefined {
+    this.sellPrice = sellOrder.price;
+    this.sellDate = sellOrder.date;
+    this.result = round((100 * sellOrder.price) / this.buyPrice, 1);
+
+    if (this.quantity > sellOrder.quantity) {
+      const remainingQuantity = round(this.quantity - sellOrder.quantity, 3);
+      this.quantity = sellOrder.quantity;
+      return new Trade(this.buyPrice, remainingQuantity, this.buyDate);
+    }
+
+    return;
   }
 }
 
@@ -37,6 +47,9 @@ class Simulation {
   orders: Order[] = [];
   trades: Trade[] = [];
   private openTrades: Trade[] = [];
+  startBalance: number;
+  endBalance?: number;
+  profit: number;
   strategy: BaseStrategy;
 
   constructor({
@@ -52,9 +65,19 @@ class Simulation {
   }
 
   async run() {
+    this.startBalance = this.calculateBalance(this.market.ticks[0]);
     while (this.market.hasTicks) {
       await this.market.tick();
     }
+    this.endBalance = this.calculateBalance(last(this.market.ticks));
+    this.profit = round(this.endBalance * 100/ this.startBalance, 1);
+  }
+
+  calculateBalance(tick: Tick) {
+    const fiatValue = this.market.accountFiat;
+    const cryptoValue = this.market.accountValue * tick.last;
+
+    return Math.round((fiatValue + cryptoValue) / 100);
   }
 
   handleOrder(order: Order) {
@@ -65,28 +88,41 @@ class Simulation {
 
   matchOrderIntoTrades(order: Order) {
     if (order.type === OrderType.SELL && this.openTrades.length === 0) {
-      const startingTrade = new Trade(order);
-      startingTrade.buyPrice = null;
-      startingTrade.buyDate = null;
+      const startingTrade = new Trade(null, order.quantity, null);
       startingTrade.sellPrice = order.price;
       startingTrade.sellDate = order.date;
       this.trades.push(startingTrade)
       return;
     }
 
-    // TODO, iff sellTrades.length === 0;
-    if (this.openTrades.length === 0) {
-      this.openTrades.push(new Trade(order));
+    if (order.type === OrderType.BUY) {
+      const newTrade = new Trade(order.price, order.quantity, order.date);
+      this.openTrades.push(newTrade);
       return;
     }
 
-    // TODY, close off buy orders by checking quantity
     const trade = this.openTrades[0];
-    trade.sell(order);
-    remove(this.openTrades, (trade: Trade) => {
-      return true;
+    let remainingTrade = trade.sell(order);
+    let overflowingQuantity = round(order.quantity - trade.quantity, 3);
+
+    remove(this.openTrades, (trade: Trade, i) => {
+      return i === 0;
     })
+
     this.trades.push(trade);
+
+    if (remainingTrade) {
+      this.openTrades.unshift(remainingTrade);
+    }
+    if (overflowingQuantity > 0) {
+      const overflowingSellOrder = {
+        ...order,
+        quantity: overflowingQuantity,
+      }
+
+      this.matchOrderIntoTrades(overflowingSellOrder)
+      return;
+    }
   }
 }
 
