@@ -35,6 +35,7 @@ class SimulationResult extends Component {
       <td>{i}.</td>
       <td>{this.formatDate(trade.buyDate)}</td>
       <td>{trade.buyPrice}</td>
+      <td>{trade.quantity}</td>
       <td>{trade.result}%</td>
       <td>{trade.sellPrice}</td>
       <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
@@ -72,6 +73,7 @@ class SimulationResult extends Component {
               <th />
               <th>Buy Date</th>
               <th>Buy Price</th>
+              <th>Quantity</th>
               <th>Result</th>
               <th>Sell Price</th>
               <th>Sell Date</th>
