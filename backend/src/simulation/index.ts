@@ -24,7 +24,7 @@ class Trade {
     this.result = round((100 * sellOrder.price) / this.buyPrice, 1);
 
     if (this.quantity > sellOrder.quantity) {
-      const remainingQuantity = this.quantity - sellOrder.quantity;
+      const remainingQuantity = round(this.quantity - sellOrder.quantity, 3);
       this.quantity = sellOrder.quantity;
       return new Trade(this.buyPrice, remainingQuantity, this.buyDate);
     }
@@ -103,6 +103,7 @@ class Simulation {
 
     const trade = this.openTrades[0];
     let remainingTrade = trade.sell(order);
+    let overflowingQuantity = round(order.quantity - trade.quantity, 3);
 
     remove(this.openTrades, (trade: Trade, i) => {
       return i === 0;
@@ -112,6 +113,15 @@ class Simulation {
 
     if (remainingTrade) {
       this.openTrades.unshift(remainingTrade);
+    }
+    if (overflowingQuantity > 0) {
+      const overflowingSellOrder = {
+        ...order,
+        quantity: overflowingQuantity,
+      }
+
+      this.matchOrderIntoTrades(overflowingSellOrder)
+      return;
     }
   }
 }

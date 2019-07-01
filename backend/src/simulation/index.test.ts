@@ -146,6 +146,58 @@ describe('A Simulation', () => {
       expect(simulation.trades[1].buyPrice).toBe(100);
       expect(simulation.trades[1].quantity).toBe(0.3);
       expect(simulation.trades[1].sellPrice).toBe(300);
+    });
+
+    it('should be able to handle sellOrders with more quantity than the initial buyOrders', () => {
+      const orders = createOrders([
+        { quantity: 0.5, price: 100, type: OrderType.BUY },
+        { quantity: 1, price: 200, type: OrderType.SELL },
+      ]);
+
+      orders.forEach(order => simulation.handleOrder(order));
+
+      expect(simulation.trades).toHaveLength(2);
+
+      expect(simulation.trades[0].buyPrice).toBe(100);
+      expect(simulation.trades[0].quantity).toBe(0.5);
+      expect(simulation.trades[0].sellPrice).toBe(200);
+      expect(simulation.trades[1].buyPrice).toBe(null);
+      expect(simulation.trades[1].quantity).toBe(0.5);
+      expect(simulation.trades[1].sellPrice).toBe(200);
+    });
+
+    it('should be able to handle ridiculous order quantities', () => {
+      const orders = createOrders([
+        { quantity: 0.1, price: 100, type: OrderType.SELL },
+        { quantity: 0.6, price: 150, type: OrderType.BUY },
+        { quantity: 0.6, price: 200, type: OrderType.BUY },
+        { quantity: 0.9, price: 250, type: OrderType.SELL },
+        { quantity: 0.9, price: 300, type: OrderType.SELL },
+      ]);
+
+      orders.forEach(order => simulation.handleOrder(order));
+
+      expect(simulation.trades).toHaveLength(5);
+
+      expect(simulation.trades[0].buyPrice).toBe(null);
+      expect(simulation.trades[0].quantity).toBe(0.1);
+      expect(simulation.trades[0].sellPrice).toBe(100);
+
+      expect(simulation.trades[1].buyPrice).toBe(150);
+      expect(simulation.trades[1].quantity).toBe(0.6);
+      expect(simulation.trades[1].sellPrice).toBe(250);
+
+      expect(simulation.trades[2].buyPrice).toBe(200);
+      expect(simulation.trades[2].quantity).toBe(0.3);
+      expect(simulation.trades[2].sellPrice).toBe(250);
+
+      expect(simulation.trades[3].buyPrice).toBe(200);
+      expect(simulation.trades[3].quantity).toBe(0.3);
+      expect(simulation.trades[3].sellPrice).toBe(300);
+
+      expect(simulation.trades[4].buyPrice).toBe(null);
+      expect(simulation.trades[4].quantity).toBe(0.6);
+      expect(simulation.trades[4].sellPrice).toBe(300);
     })
   });
 

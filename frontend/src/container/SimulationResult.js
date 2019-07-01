@@ -20,7 +20,7 @@ class SimulationResult extends Component {
     simulation: PropTypes.object.isRequired,
   };
 
-  formatDate = date => moment(date).format('YYYY-MM-DD hh:mm:ss');
+  formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
 
   renderOrder(order) {
     return (

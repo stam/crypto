@@ -27,6 +27,7 @@
   type Trade {
     buyPrice: Int
     sellPrice: Int
+    quantity: Int
     buyDate: Date
     sellDate: Date
     result: Float
