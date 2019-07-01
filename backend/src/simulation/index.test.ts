@@ -110,6 +110,42 @@ describe('A Simulation', () => {
       expect(simulation.trades[1].buyPrice).toBe(100);
       expect(simulation.trades[1].sellPrice).toBe(150);
       expect(simulation.trades[1].result).toBe(150);
+    });
+
+    it('should be able to handle successive buy orders', () => {
+      const orders = createOrders([
+        { quantity: 1, price: 99, type: OrderType.BUY },
+        { quantity: 1, price: 100, type: OrderType.BUY },
+        { quantity: 1, price: 149, type: OrderType.SELL },
+        { quantity: 1, price: 150, type: OrderType.SELL },
+      ]);
+
+      orders.forEach(order => simulation.handleOrder(order));
+
+      expect(simulation.trades).toHaveLength(2);
+      expect(simulation.trades[0].buyPrice).toBe(99);
+      expect(simulation.trades[0].sellPrice).toBe(149);
+      expect(simulation.trades[1].buyPrice).toBe(100);
+      expect(simulation.trades[1].sellPrice).toBe(150);
+    });
+
+    it('should be able to handle orders of different quantities', () => {
+      const orders = createOrders([
+        { quantity: 0.5, price: 100, type: OrderType.BUY },
+        { quantity: 0.2, price: 200, type: OrderType.SELL },
+        { quantity: 0.3, price: 300, type: OrderType.SELL },
+      ]);
+
+      orders.forEach(order => simulation.handleOrder(order));
+
+      expect(simulation.trades).toHaveLength(2);
+
+      expect(simulation.trades[0].buyPrice).toBe(100);
+      expect(simulation.trades[0].quantity).toBe(0.2);
+      expect(simulation.trades[0].sellPrice).toBe(200);
+      expect(simulation.trades[1].buyPrice).toBe(100);
+      expect(simulation.trades[1].quantity).toBe(0.3);
+      expect(simulation.trades[1].sellPrice).toBe(300);
     })
   });
 
