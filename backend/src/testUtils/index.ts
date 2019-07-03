@@ -1,5 +1,6 @@
 import { createConnection, getConnection, ConnectionOptions, getRepository } from 'typeorm';
 import Tick from '../models/tick';
+import Candle from '../models/candle';
 import { Order, OrderType } from '../market';
 
 export async function ensureConnection () {
@@ -12,6 +13,17 @@ export async function ensureConnection () {
     });
   }
 }
+export const delay = delayTime => new Promise(resolve => setTimeout(resolve, delayTime))
+
+
+export async function cleanup() {
+  const tickRepo = getRepository(Tick);
+
+  return tickRepo.clear();
+}
+
+////////////// TICKS ///////////////
+
 
 let tickIndex = 0;
 
@@ -49,15 +61,8 @@ export function createTicks(tickData) {
   return tickData.map(data => createTick(data));
 }
 
-export const delay = delayTime => new Promise(resolve => setTimeout(resolve, delayTime))
 
-
-export async function cleanup() {
-  const tickRepo = getRepository(Tick);
-
-  return tickRepo.clear();
-}
-
+////////////// ORDERS ///////////////
 
 let orderIndex = 0;
 
@@ -77,3 +82,25 @@ export function createOrders(orderData): Order[] {
   return orderData.map(data => createOrder(data));
 }
 
+////////////// CANDLES ///////////////
+
+let candleIndex = 0;
+
+function createCandle(candleData): Candle {
+  const data = {
+    open: 20,
+    close: 80,
+    low: 10,
+    high: 100,
+    timespan: '1D',
+    datetime: new Date(`2019-01-01 15:00:${candleIndex}`),
+    ...candleData
+  }
+  const candle = new Candle();
+  Object.assign(candle, data);
+  return candle;
+}
+
+export function createCandles(candleData): Candle[] {
+  return candleData.map(data => createCandle(data));
+}

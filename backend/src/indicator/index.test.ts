@@ -1,7 +1,6 @@
 import Indicator from '.';
 import * as TA from 'technicalindicators';
-// import { bulkCreate } from '../simulation/index.test';
-import Candle from '../models/candle';
+import { createCandles } from '../testUtils';
 
 const candleData = [
   { open: 1037801, close: 1030748, low: 1030748, high: 1037801, timespan: '1D', datetime: new Date('2018-03-07T00:00:00.000Z')},
@@ -18,9 +17,9 @@ const candleData = [
   { open: 937230, close: 860124, low: 850001, high: 951140, timespan: '1D', datetime: new Date('2018-03-14T00:00:00.000Z')},
 ];
 
-export const candles = [];
+export const candles = createCandles(candleData);
 
-xit('The TA lib supports rolling indicator calculations', () => {
+it('The TA lib supports rolling indicator calculations', () => {
   const ta = new TA.EMA({
     period: 7,
     values: [],
@@ -47,7 +46,7 @@ xit('The TA lib supports rolling indicator calculations', () => {
 });
 
 describe('An indicator', () => {
-  xit('will calculate a result based on candles', async () => {
+  it('will calculate a result based on candles', async () => {
     const emaIndicator = new Indicator('EMA', 7);
 
     emaIndicator.updateValue(candles[0]);
@@ -66,7 +65,7 @@ describe('An indicator', () => {
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
 
-  xit('calculates intermediate values', async () => {
+  it('calculates intermediate values', async () => {
     const emaIndicator = new Indicator('EMA', 7);
 
     emaIndicator.updateValue(candles[0]);
@@ -87,6 +86,4 @@ describe('An indicator', () => {
     emaIndicator.updateValue(candles[8]);
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
-
-  // TODO create a test with ticks...
 });
