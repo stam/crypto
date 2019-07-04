@@ -1,23 +1,19 @@
 import Indicator from '.';
 import * as TA from 'technicalindicators';
-import { createCandles } from '../testUtils';
 
-const candleData = [
-  { open: 1037801, close: 1030748, low: 1030748, high: 1037801, timespan: '1D', datetime: new Date('2018-03-07T00:00:00.000Z')},
-  { open: 1031580, close: 962644, low: 961699, high: 1043700, timespan: '1D', datetime: new Date('2018-03-08T00:00:00.000Z')},
-  { open: 962500, close: 962912, low: 900002, high: 975756, timespan: '1D', datetime: new Date('2018-03-09T00:00:00.000Z')},
-  { open: 961182, close: 901575, low: 900773, high: 977840, timespan: '1D', datetime: new Date('2018-03-10T00:00:00.000Z')},
-  { open: 901618, close: 964205, low: 882721, high: 979625, timespan: '1D', datetime: new Date('2018-03-11T00:00:00.000Z')},
-  { open: 964600, close: 933945, low: 901524, high: 999988, timespan: '1D', datetime: new Date('2018-03-12T00:00:00.000Z')},
-  { open: 935230, close: 935627, low: 907508, high: 955300, timespan: '1D', datetime: new Date('2018-03-13T00:00:00.000Z')},
-
+const values = [
+  1030748,
+  962644,
+  962912,
+  901575,
+  964205,
+  933945,
+  935627,
   // Intermediate value
-  { open: 937230, close: 924967, low: 850001, high: 951140, timespan: '1D', datetime: new Date('2018-03-13T12:00:00.000Z')},
+  924967,
 
-  { open: 937230, close: 860124, low: 850001, high: 951140, timespan: '1D', datetime: new Date('2018-03-14T00:00:00.000Z')},
+  860124,
 ];
-
-export const candles = createCandles(candleData);
 
 it('The TA lib supports rolling indicator calculations', () => {
   const ta = new TA.EMA({
@@ -29,19 +25,19 @@ it('The TA lib supports rolling indicator calculations', () => {
 
   let result;
 
-  ta.nextValue(candleData[0].close);
-  ta.nextValue(candleData[1].close);
-  ta.nextValue(candleData[2].close);
-  ta.nextValue(candleData[3].close);
-  ta.nextValue(candleData[4].close);
-  result = ta.nextValue(candleData[5].close);
+  ta.nextValue(values[0]);
+  ta.nextValue(values[1]);
+  ta.nextValue(values[2]);
+  ta.nextValue(values[3]);
+  ta.nextValue(values[4]);
+  result = ta.nextValue(values[5]);
 
   expect(result).toBeUndefined();
 
-  result = ta.nextValue(candleData[6].close);
+  result = ta.nextValue(values[6]);
   expect(Math.round(result)).toBe(955951);
 
-  result = ta.nextValue(candleData[8].close);
+  result = ta.nextValue(values[8]);
   expect(Math.round(result)).toBe(931994);
 });
 
@@ -49,41 +45,45 @@ describe('An indicator', () => {
   it('will calculate a result based on candles', async () => {
     const emaIndicator = new Indicator('EMA', 7);
 
-    emaIndicator.updateValue(candles[0]);
-    emaIndicator.updateValue(candles[1]);
-    emaIndicator.updateValue(candles[2]);
-    emaIndicator.updateValue(candles[3]);
-    emaIndicator.updateValue(candles[4]);
-    emaIndicator.updateValue(candles[5]);
+    emaIndicator.updateValue(values[0]);
+    emaIndicator.updateValue(values[1]);
+    emaIndicator.updateValue(values[2]);
+    emaIndicator.updateValue(values[3]);
+    emaIndicator.updateValue(values[4]);
+    emaIndicator.updateValue(values[5]);
 
     expect(emaIndicator.result).toBe(null);
 
-    emaIndicator.updateValue(candles[6]);
+    emaIndicator.updateValue(values[6]);
     expect(Math.round(emaIndicator.result)).toBe(955951);
 
-    emaIndicator.updateValue(candles[8]);
+    emaIndicator.updateValue(values[8]);
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
 
-  it('calculates intermediate values', async () => {
+  it('calculates intermediate values', () => {
     const emaIndicator = new Indicator('EMA', 7);
 
-    emaIndicator.updateValue(candles[0]);
-    emaIndicator.updateValue(candles[1]);
-    emaIndicator.updateValue(candles[2]);
-    emaIndicator.updateValue(candles[3]);
-    emaIndicator.updateValue(candles[4]);
-    emaIndicator.updateValue(candles[5]);
+    emaIndicator.updateValue(values[0]);
+    emaIndicator.updateValue(values[1]);
+    emaIndicator.updateValue(values[2]);
+    emaIndicator.updateValue(values[3]);
+    emaIndicator.updateValue(values[4]);
+    emaIndicator.updateValue(values[5]);
 
     expect(emaIndicator.result).toBe(null);
 
-    emaIndicator.updateValue(candles[6]);
+    emaIndicator.updateValue(values[6]);
     expect(Math.round(emaIndicator.result)).toBe(955951);
 
-    emaIndicator.updateIntermediateValue(candles[7]);
-    expect(Math.round(emaIndicator.result)).toBe(948205);
+    // Note the previous test:
+    // We feed value[7] to the indicator (as a testValue),
+    // and it should NOT alter the chain:
+    // updateValue w/ values[8] should act like values[7] was never added.
+    const testValue = emaIndicator.testValue(values[7]);
+    expect(Math.round(testValue)).toBe(948205);
 
-    emaIndicator.updateValue(candles[8]);
+    emaIndicator.updateValue(values[8]);
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
 });
