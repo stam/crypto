@@ -13,6 +13,46 @@ const values = [
   924967,
 
   860124,
+  823055,
+850494,
+801134,
+865185,
+878744,
+910155,
+911966,
+887303,
+910020,
+872971,
+861454,
+826020,
+796002,
+800501,
+714836,
+732404,
+724072,
+723592,
+726249,
+752900,
+698253,
+700799,
+708363,
+716640,
+731721,
+695105,
+706623,
+707763,
+800243,
+825615,
+825252,
+856005,
+826070,
+817313,
+836317,
+855664,
+897950,
+900005,
+902331,
+934822,
 ];
 
 it('The TA lib supports rolling indicator calculations', () => {
@@ -60,6 +100,22 @@ describe('An indicator', () => {
     emaIndicator.updateValue(values[8]);
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
+
+  it('keeps track of its own history, 7 times the period', () => {
+    const emaIndicator = new Indicator('EMA', 7);
+
+    values.map((value, index) => {
+      emaIndicator.updateValue(value);
+    })
+
+    expect(values).toHaveLength(49);
+    expect(emaIndicator.previousValues).toEqual(values);
+
+    emaIndicator.updateValue(974004);
+    expect(emaIndicator.previousValues).toHaveLength(49);
+    expect(emaIndicator.previousValues[0]).toBe(values[1]);
+    expect(emaIndicator.previousValues[48]).toBe(974004);
+  })
 
   it('calculates intermediate values', () => {
     const emaIndicator = new Indicator('EMA', 7);

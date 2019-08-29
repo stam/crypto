@@ -20,6 +20,10 @@ class Indicator {
     });
   }
 
+  get desiredLengthOrPreviousValues() {
+    return 7 * this.period;
+  }
+
   // translateCandles(candles: Candle[]) {
   //   return reduce(candles, (data, candle) => {
   //     data.open.push(candle.open);
@@ -43,12 +47,10 @@ class Indicator {
 
   updateValue(value: number) {
     this.previousValues.push(value);
-    // const marketData = this.translateCandles(this.candles);
 
-    // this.ta = new TA.EMA({
-    //   period: this.period,
-    //   values: marketData.close,
-    // })
+    if (this.previousValues.length > this.desiredLengthOrPreviousValues) {
+      this.previousValues.shift();
+    }
 
     this.result = this.ta.nextValue(value) || null;
     return this.result;
