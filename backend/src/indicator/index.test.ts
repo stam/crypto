@@ -142,4 +142,61 @@ describe('An indicator', () => {
     emaIndicator.updateValue(values[8]);
     expect(Math.round(emaIndicator.result)).toBe(931994);
   });
+
+  describe('when handling strategy ticks', () => {
+    it('creates new candles', () => {
+      const emaIndicator = new Indicator('EMA', 7);
+      emaIndicator.handleTick(5, new Date('2018-05-06 23:59:00'));
+
+      expect(emaIndicator.currentCandle).not.toBeNull();
+    });
+
+    it('will not create a new candle when it is the same date', () => {
+      const emaIndicator = new Indicator('EMA', 7);
+      emaIndicator.handleTick(4, new Date('2018-05-06 23:58:00'));
+
+      const candle = emaIndicator.currentCandle;
+
+      emaIndicator.handleTick(5, new Date('2018-05-06 23:59:00'));
+
+      expect(emaIndicator.currentCandle).toBe(candle);
+    })
+
+    it('creates new candles based on date', () => {
+      const emaIndicator = new Indicator('EMA', 7);
+      emaIndicator.handleTick(4, new Date('2018-05-06 23:00:00'));
+
+      const candle = emaIndicator.currentCandle;
+
+      emaIndicator.handleTick(5, new Date('2018-05-07 09:01:00'));
+
+      expect(emaIndicator.currentCandle).not.toBe(candle);
+    });
+
+    it('always updates intermediate values', () => {
+      const emaIndicator = new Indicator('EMA', 7);
+      emaIndicator.testValue = jest.fn();
+
+      emaIndicator.handleTick(4, new Date('2018-05-06 23:00:00'));
+      emaIndicator.handleTick(5, new Date('2018-05-07 09:01:00'));
+      emaIndicator.handleTick(6, new Date('2018-05-07 10:01:00'));
+
+      expect(emaIndicator.testValue).toHaveBeenCalledTimes(3);
+    });
+
+
+    it('updates its value when a candle is done', () => {
+      const emaIndicator = new Indicator('EMA', 7);
+      emaIndicator.updateValue = jest.fn();
+
+      emaIndicator.handleTick(4, new Date('2018-05-06 05:00:00'));
+      emaIndicator.handleTick(4, new Date('2018-05-06 10:00:00'));
+      emaIndicator.handleTick(4, new Date('2018-05-06 15:00:00'));
+      expect(emaIndicator.updateValue).not.toHaveBeenCalled();
+
+      emaIndicator.handleTick(5, new Date('2018-05-07 09:01:00'));
+      expect(emaIndicator.updateValue).toHaveBeenCalled();
+
+    });
+  })
 });

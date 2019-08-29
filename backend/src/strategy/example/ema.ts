@@ -46,23 +46,16 @@ class EmaStrategy extends BaseStrategy {
 
   // Buy if we have no crypto
   signalBuy(tick: Tick) {
-    if (this.assets.length === 0) {
-      this.market.buy(tick, this.quantity);
-      const asset = new Asset(tick.last, 1);
-      this.assets.push(asset);
+    const hasFunds = this.market.accountFiat >= tick.last;
+    if (!this.market.unfullfilledOrders.length && hasFunds) {
+      this.market.buy(tick.last, 1);
     }
   }
 
   signalSell(tick: Tick) {
-    // Shallow clone because deleting items while iterating is bad
-    const assets = [...this.assets];
-
-    assets.forEach((asset) => {
-      this.market.sell(tick, asset.quantity);
-      // Remove it from the OG array, not from the clone
-      const index = this.assets.indexOf(asset);
-      this.assets.splice(index, 1);
-    });
+    if (!this.market.unfullfilledOrders.length && this.market.accountValue >= 1) {
+      this.market.sell(tick.last, 1);
+    }
   }
 }
 
