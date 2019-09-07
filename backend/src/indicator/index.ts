@@ -1,5 +1,6 @@
 import * as TA from 'technicalindicators';
 import Candle from '../models/candle';
+import { last } from 'lodash';
 
 
 class Indicator {

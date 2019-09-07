@@ -1,8 +1,8 @@
-import { getRepository } from 'typeorm';
+import { getRepository, LessThan } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
 import MockMarket from './market/mock';
-import Strategy from './strategy/example/simple';
+import Strategy from './strategy/example/ema';
 import Simulation from './simulation';
 
 export const resolvers = {
@@ -21,6 +21,9 @@ export const resolvers = {
   Mutation: {
     runSimulation: async (_, { startValue, startFiat }) => {
       const ticks = await getRepository(Tick).find({
+        // where: {
+        //   timestamp: LessThan('2018-05-15'),
+        // },
         order: {
           timestamp: 'ASC',
         },

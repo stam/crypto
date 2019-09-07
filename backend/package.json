@@ -7,7 +7,7 @@
     "ts": "tsc",
     "watch-build": "nodemon build/src/index.js",
     "watch-ts": "tsc -w",
-    "start": "ts-node-dev src/index.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "debug": "node --inspect -r ts-node/register src/index.ts",
     "test": "jest -i",
     "test-dev": "jest -i --watch",
