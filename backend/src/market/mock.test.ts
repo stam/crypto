@@ -101,4 +101,8 @@ describe('The MockMarket', () => {
     expect(sellOrder.price).toBe(6200);
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
+
+  it('should support market orders', async () => {
+
+  })
 })

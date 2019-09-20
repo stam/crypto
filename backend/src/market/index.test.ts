@@ -1,4 +1,4 @@
-import BaseMarket, { InsufficientFiatError, InsufficientCryptoError } from '.';
+import BaseMarket, { InsufficientFiatError, InsufficientCryptoError, Order, OrderSide } from '.';
 import Tick from '../models/tick';
 
 class DumbMarket extends BaseMarket {
@@ -7,9 +7,8 @@ class DumbMarket extends BaseMarket {
     return new Tick();
   }
 
-  async checkIfOrdersResolve() {
-    return;
-  }
+  async placeOrder() {}
+  async checkIfOrdersResolve() {}
 }
 
 describe('The market', () => {
@@ -18,6 +17,17 @@ describe('The market', () => {
     expect(market.accountValue).toBe(0);
     expect(market.accountFiat).toBe(0);
   });
+
+  describe('when placing market orders', () => {
+    xit('supports buy orders', async () => {
+      const market = new DumbMarket();
+
+      const order = await market.createMarketOrder(OrderSide.BUY, 1);
+      expect(order.quantity).toBe(1);
+      expect(order.)
+      expect(order.side).toBe(OrderSide.BUY);
+    });
+  })
 
   describe('when buying', () => {
     it('returns a promise which resolves in an order of that price and quantity', async () => {

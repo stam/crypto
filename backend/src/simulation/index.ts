@@ -1,5 +1,5 @@
 import { round, remove, last} from 'lodash';
-import { Order, OrderType } from '../market';
+import { Order, OrderType, OrderSide } from '../market';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
@@ -87,7 +87,7 @@ class Simulation {
   }
 
   matchOrderIntoTrades(order: Order) {
-    if (order.type === OrderType.SELL && this.openTrades.length === 0) {
+    if (order.type === OrderSide.SELL && this.openTrades.length === 0) {
       const startingTrade = new Trade(null, order.quantity, null);
       startingTrade.sellPrice = order.price;
       startingTrade.sellDate = order.date;
@@ -95,7 +95,7 @@ class Simulation {
       return;
     }
 
-    if (order.type === OrderType.BUY) {
+    if (order.type === OrderSide.BUY) {
       const newTrade = new Trade(order.price, order.quantity, order.date);
       this.openTrades.push(newTrade);
       return;

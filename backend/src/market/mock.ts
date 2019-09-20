@@ -1,13 +1,14 @@
 import Tick from '../models/tick';
 import { remove } from 'lodash';
-import BaseMarket, { Order, OrderType, PendingOrder } from '.';
+import BaseMarket from '.';
+import Order, {OrderSide, OrderType } from './order';
 
 export default class MockMarket extends BaseMarket {
   ticks: Tick[] = [];
   tickIndex: number = 0;
   onPlaceOrder: (order: Order) => void = null;
 
-  unfullfilledOrders: PendingOrder[] = [];
+  unfullfilledOrders: Order[] = [];
 
   constructor(accountStartValues) {
     super(accountStartValues);
@@ -19,31 +20,11 @@ export default class MockMarket extends BaseMarket {
 
   async checkIfOrdersResolve(tick: Tick) {
     remove(this.unfullfilledOrders, (order) => {
-
-      if (order.type === OrderType.BUY && tick.last <= order.price ) {
-        const o = new Order({
-          date: tick.timestamp,
-          quantity: order.quantity,
-          type: order.type,
-          price: tick.last,
-        });
+      if (order.checkIfResolves) {
         if (this.onPlaceOrder) {
-          this.onPlaceOrder(o);
+          this.onPlaceOrder(order);
         }
-        order.resolve(o);
-        return true;
-      }
-      if (order.type === OrderType.SELL && tick.last >= order.price) {
-        const o = new Order({
-          date: tick.timestamp,
-          quantity: order.quantity,
-          type: order.type,
-          price: tick.last,
-        });
-        if (this.onPlaceOrder) {
-          this.onPlaceOrder(o);
-        }
-        order.resolve(o);
+        order.resolve(tick.last, tick.timestamp);
         return true;
       }
       return false;
@@ -61,21 +42,30 @@ export default class MockMarket extends BaseMarket {
     return tick;
   }
 
-  async placeOrder(price: number, quantity: number, type: OrderType) {
+  async placeOrder(type: OrderType, side: OrderSide, quantity: number, price?: number) {
+    // Todo, pendingorder should be an order which can resolve itself,
+    // and possible rollback the transaction fees
     const p = new Promise<Order>((resolve, reject) => {
-      const pendingOrder = {
-        price,
-        quantity,
-        type,
-        resolve,
-      }
+      const order = new Order(type, side, quantity, price);
+      order.onResolve = resolve;
+      order.onReject = reject;
+      // const pendingOrder = {
+      //   price,
+      //   quantity,
+      //   type,
+      //   side,
+      //   resolve,
+      // }
 
-      if (type === OrderType.BUY) {
-        this.accountFiat -= Math.round(price * quantity);
-      } else if (type === OrderType.SELL) {
-        this.accountValue -= quantity;
-      }
-      this.unfullfilledOrders.push(pendingOrder);
+      // if (type === OrderType.LIMIT) {
+      //   if (side === OrderSide.BUY) {
+      //     this.accountFiat -= Math.round(price * quantity);
+      //   } else if (side === OrderSide.SELL) {
+      //     this.accountValue -= quantity;
+      //   }
+      // }
+
+      // this.unfullfilledOrders.push(pendingOrder);
     });
 
     return p;

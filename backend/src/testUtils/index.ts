@@ -1,7 +1,7 @@
 import { createConnection, getConnection, ConnectionOptions, getRepository } from 'typeorm';
 import Tick from '../models/tick';
 import Candle from '../models/candle';
-import { Order, OrderType } from '../market';
+import { Order, OrderType, OrderSide } from '../market';
 
 export async function ensureConnection () {
   try {
@@ -72,7 +72,7 @@ function createOrder(orderData): Order {
     date: new Date(`2019-01-01 15:00:${orderIndex}`),
     quantity: 1,
     price: 1,
-    type: OrderType.BUY,
+    type: OrderSide.BUY,
     ...orderData
   }
   return new Order(data)
