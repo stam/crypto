@@ -46,12 +46,11 @@ describe('The simple strategy', () => {
     await market.tick();
     await market.tick();
 
-
     expect(market.unfullfilledOrders).toHaveLength(1);
-
     await market.tick();
+
     expect(market.unfullfilledOrders).toHaveLength(0);
-    expect(market.accountFiat).toBe(100) // 6999 - 6998
+    expect(market.accountFiat).toBe(200) // 7000 - 6998
     expect(market.accountValue).toBe(1)
 
   });
@@ -62,10 +61,10 @@ describe('The simple strategy', () => {
     await market.tick();
     await market.tick();
     await market.tick();
-    await delay(0);
 
     expect(market.unfullfilledOrders).toHaveLength(1);
-    expect(market.unfullfilledOrders[0].type).toBe('sell');
+    expect(market.unfullfilledOrders[0].type).toBe('limit');
+    expect(market.unfullfilledOrders[0].side).toBe('sell');
   });
 
   it('should resolve the sell order when a price above 9500 is found', async () => {
@@ -74,15 +73,12 @@ describe('The simple strategy', () => {
     await market.tick();
     await market.tick();
     await market.tick();
-    await delay(0);
-
     await market.tick();
     await market.tick();
-    await delay(0);
 
 
     expect(market.unfullfilledOrders).toHaveLength(0);
-    expect(market.accountFiat).toBe(950100) // 6999 - 6998 + 9500
+    expect(market.accountFiat).toBe(950300) // 7000 - 6998 + 9501
     expect(market.accountValue).toBe(0)
   });
 });

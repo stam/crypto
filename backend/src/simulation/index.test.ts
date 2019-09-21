@@ -79,8 +79,8 @@ describe('A Simulation', () => {
   describe('when condensing trades', () => {
     it('should calculate the result based on sell and buyPrice', () => {
       const orders = createOrders([
-        { quantity: 1, price: 100, type: OrderSide.BUY },
-        { quantity: 1, price: 150, type: OrderSide.SELL },
+        { quantity: 1, price: 100, side: OrderSide.BUY },
+        { quantity: 1, price: 150, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));
@@ -94,9 +94,9 @@ describe('A Simulation', () => {
 
     it('should leave initial sell orders as open trades', () => {
       const orders = createOrders([
-        { quantity: 1, price: 150, type: OrderSide.SELL },
-        { quantity: 1, price: 100, type: OrderSide.BUY },
-        { quantity: 1, price: 150, type: OrderSide.SELL },
+        { quantity: 1, price: 150, side: OrderSide.SELL },
+        { quantity: 1, price: 100, side: OrderSide.BUY },
+        { quantity: 1, price: 150, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));
@@ -112,10 +112,10 @@ describe('A Simulation', () => {
 
     it('should be able to handle successive buy orders', () => {
       const orders = createOrders([
-        { quantity: 1, price: 99, type: OrderSide.BUY },
-        { quantity: 1, price: 100, type: OrderSide.BUY },
-        { quantity: 1, price: 149, type: OrderSide.SELL },
-        { quantity: 1, price: 150, type: OrderSide.SELL },
+        { quantity: 1, price: 99, side: OrderSide.BUY },
+        { quantity: 1, price: 100, side: OrderSide.BUY },
+        { quantity: 1, price: 149, side: OrderSide.SELL },
+        { quantity: 1, price: 150, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));
@@ -129,9 +129,9 @@ describe('A Simulation', () => {
 
     it('should be able to handle orders of different quantities', () => {
       const orders = createOrders([
-        { quantity: 0.5, price: 100, type: OrderSide.BUY },
-        { quantity: 0.2, price: 200, type: OrderSide.SELL },
-        { quantity: 0.3, price: 300, type: OrderSide.SELL },
+        { quantity: 0.5, price: 100, side: OrderSide.BUY },
+        { quantity: 0.2, price: 200, side: OrderSide.SELL },
+        { quantity: 0.3, price: 300, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));
@@ -148,8 +148,8 @@ describe('A Simulation', () => {
 
     it('should be able to handle sellOrders with more quantity than the initial buyOrders', () => {
       const orders = createOrders([
-        { quantity: 0.5, price: 100, type: OrderSide.BUY },
-        { quantity: 1, price: 200, type: OrderSide.SELL },
+        { quantity: 0.5, price: 100, side: OrderSide.BUY },
+        { quantity: 1, price: 200, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));
@@ -166,11 +166,11 @@ describe('A Simulation', () => {
 
     it('should be able to handle ridiculous order quantities', () => {
       const orders = createOrders([
-        { quantity: 0.1, price: 100, type: OrderSide.SELL },
-        { quantity: 0.6, price: 150, type: OrderSide.BUY },
-        { quantity: 0.6, price: 200, type: OrderSide.BUY },
-        { quantity: 0.9, price: 250, type: OrderSide.SELL },
-        { quantity: 0.9, price: 300, type: OrderSide.SELL },
+        { quantity: 0.1, price: 100, side: OrderSide.SELL },
+        { quantity: 0.6, price: 150, side: OrderSide.BUY },
+        { quantity: 0.6, price: 200, side: OrderSide.BUY },
+        { quantity: 0.9, price: 250, side: OrderSide.SELL },
+        { quantity: 0.9, price: 300, side: OrderSide.SELL },
       ]);
 
       orders.forEach(order => simulation.handleOrder(order));

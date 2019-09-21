@@ -1,7 +1,7 @@
 import { createConnection, getConnection, ConnectionOptions, getRepository } from 'typeorm';
 import Tick from '../models/tick';
 import Candle from '../models/candle';
-import { Order, OrderType, OrderSide } from '../market';
+import Order, { OrderType, OrderSide, OrderSummary } from '../market/order';
 
 export async function ensureConnection () {
   try {
@@ -68,14 +68,17 @@ let orderIndex = 0;
 
 
 function createOrder(orderData): Order {
-  const data = {
-    date: new Date(`2019-01-01 15:00:${orderIndex}`),
-    quantity: 1,
-    price: 1,
-    type: OrderSide.BUY,
-    ...orderData
-  }
-  return new Order(data)
+  const type = orderData.type || OrderType.LIMIT;
+  const side = orderData.side || OrderSide.BUY;
+  const quantity = orderData.quantity || 1;
+  const price = orderData.price || 1;
+  const date = orderData.date || new Date(`2019-01-01 15:00:${orderIndex}`);
+
+  const order = new Order(type, side, quantity, price);
+  order.date = date;
+  order.resultPrice = orderData.resultPrice || price;
+
+  return order;
 }
 
 export function createOrders(orderData): Order[] {

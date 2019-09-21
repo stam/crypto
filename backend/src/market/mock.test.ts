@@ -35,7 +35,8 @@ describe('The MockMarket', () => {
 
     expect(tick.last).toBeLessThanOrEqual(6000);
     expect(buyOrder).not.toBe(null);
-    expect(buyOrder.price).toBe(5200);
+    expect(buyOrder.price).toBe(6000);
+    expect(buyOrder.resultPrice).toBe(5200);
   })
 
   it('only executes a buy order once', async () => {
@@ -51,8 +52,7 @@ describe('The MockMarket', () => {
     expect(market.unfullfilledOrders).toHaveLength(1);
     await market.tick();
 
-    await delay(0);
-    expect(buyOrder.price).toBe(5200);
+    expect(buyOrder.resultPrice).toBe(5200);
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
 
@@ -73,7 +73,6 @@ describe('The MockMarket', () => {
 
     const tick = ticks[1];
 
-    await delay(0);
     expect(buyOrder.date).toBe(tick.timestamp);
   });
 
@@ -94,7 +93,7 @@ describe('The MockMarket', () => {
     await market.tick();
     await market.tick();
 
-    expect(sellOrder.price).toBe(6200);
+    expect(sellOrder.resultPrice).toBe(6200);
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
 

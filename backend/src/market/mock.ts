@@ -19,14 +19,14 @@ export default class MockMarket extends BaseMarket {
   }
 
   async checkIfOrdersResolve(tick: Tick) {
-    console.log('[MockMarket] | checkIfOrdersResolve | ', this.unfullfilledOrders.length, tick.last);
+    // console.log('[MockMarket] | checkIfOrdersResolve | ', this.unfullfilledOrders.length, tick.last);
     remove(this.unfullfilledOrders, (order) => {
       if (order.checkIfResolves(tick)) {
-        console.log('[MockMarket] | checkIfOrdersResolve | done',order);
+        order.resolve(tick.last, tick.timestamp);
+        // console.log('[MockMarket] | checkIfOrdersResolve | done',order);
         if (this.onPlaceOrder) {
           this.onPlaceOrder(order);
         }
-        order.resolve(tick.last, tick.timestamp);
         return true;
       }
       return false;

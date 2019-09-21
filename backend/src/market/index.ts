@@ -64,13 +64,13 @@ export default abstract class BaseMarket {
   protected abstract async placeOrder(type: OrderType, side: OrderSide, quantity: number, price?: number): Promise<Order>
 
   async tick() {
-    console.log('[Market] | tick | start');
+    // console.log('[Market] | tick | start');
     const tick = await this.queryTick();
 
     await this.checkIfOrdersResolve(tick);
 
     for (let callback of this.listeners) {
-      console.log('[Market] | tick | feed tick to listener');
+      // console.log('[Market] | tick | feed tick to listener');
       await callback(tick);
     }
 

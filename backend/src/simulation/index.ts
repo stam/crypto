@@ -86,6 +86,7 @@ class Simulation {
   }
 
   matchOrderIntoTrades(order: OrderSummary) {
+    console.log('m', order)
     if (order.side === OrderSide.SELL && this.openTrades.length === 0) {
       const startingTrade = new Trade(null, order.quantity, null);
       startingTrade.sellPrice = order.price;
