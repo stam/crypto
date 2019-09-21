@@ -198,20 +198,4 @@ describe('A Simulation', () => {
       expect(simulation.trades[4].sellPrice).toBe(300);
     })
   });
-
-  xit('should track trades', async () => {
-    ticks = createTicks([
-      { last: 6900, },
-      { last: 6900, },
-      { last: 9600, },
-      { last: 9600, }
-    ])
-    market.setTicks(ticks);
-
-    await simulation.run();
-
-    await delay(0);
-
-    expect(simulation.trades).toHaveLength(1);
-  })
 });

@@ -116,6 +116,7 @@ describe('The MockMarket', () => {
       const market = new MockMarket({ accountValue: 1, accountFiat: 100 });
       market.sell(6100, 1);
       expect(market.accountFiat).toBe(100);
+      expect(market.accountValue).toBe(0);
 
       market.setTicks(ticks);
       await market.tick();
@@ -128,14 +129,14 @@ describe('The MockMarket', () => {
       expect(market.accountValue).toBe(0);
     });
 
-    xit('for buy market orders', async () => {
+    it('for buy market orders', async () => {
       const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
       market.createOrder(OrderType.MARKET, OrderSide.BUY, 1);
 
       // What should we do with this?
       // How much accountFiat should we reserve if the tick price is not known?
       // Maybe take price of previous tick with percentage?
-      expect(market.accountFiat).toBe(100);
+      expect(market.accountFiat).toBe(0);
 
       // buy for 6001
       market.setTicks(ticks);
@@ -143,6 +144,31 @@ describe('The MockMarket', () => {
 
       expect(market.accountFiat).toBe(7000 - 6001);
       expect(market.accountValue).toBe(1);
-    })
-  })
+    });
+
+    it('for sell market orders', async () => {
+      const market = new MockMarket({ accountValue: 1, accountFiat: 100 });
+      market.createOrder(OrderType.MARKET, OrderSide.SELL, 1);
+
+      // What should we do with this?
+      // How much accountFiat should we reserve if the tick price is not known?
+      // Maybe take price of previous tick with percentage?
+      expect(market.accountValue).toBe(0);
+      expect(market.accountFiat).toBe(100);
+
+      market.setTicks(ticks);
+      await market.tick(); // sold for 6001
+
+      expect(market.accountFiat).toBe(100 + 6001);
+      expect(market.accountValue).toBe(0);
+    });
+  });
+
+  xit('should throw errors the account balance is too small for the market order', async () => {
+    const market = new MockMarket({ accountValue: 0, accountFiat: 100 });
+
+    expect(() => {
+      market.createOrder(OrderType.MARKET, OrderSide.BUY, 2);
+    }).toThrow();
+  });
 })

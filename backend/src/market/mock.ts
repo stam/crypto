@@ -51,6 +51,14 @@ export default class MockMarket extends BaseMarket {
       } else if (side === OrderSide.SELL) {
         this.accountValue -= quantity;
       }
+    } else if (type === OrderType.MARKET) {
+      if (side === OrderSide.BUY) {
+        price = Math.round(this.accountFiat / quantity);
+        this.accountFiat = 0;
+      } else if (side === OrderSide.SELL) {
+        price = 0;
+        this.accountValue -= quantity;
+      }
     }
     const p = new Promise<Order>((resolve, reject) => {
       const order = new Order(type, side, quantity, price);

@@ -5,6 +5,7 @@ import BaseStrategy from '../base';
 import Market from '../../market';
 import Indicator from '../../indicator';
 import Asset from '../base/asset';
+import { OrderType, OrderSide } from '../../market/order';
 
 class EmaStrategy extends BaseStrategy {
   indicators: { [key: string]: Indicator } = {};
@@ -48,13 +49,13 @@ class EmaStrategy extends BaseStrategy {
   signalBuy(tick: Tick) {
     const hasFunds = this.market.accountFiat >= tick.last;
     if (!this.market.unfullfilledOrders.length && hasFunds) {
-      this.market.buy(tick.last, 1);
+      this.market.createOrder(OrderType.MARKET, OrderSide.BUY, 1);
     }
   }
 
   signalSell(tick: Tick) {
     if (!this.market.unfullfilledOrders.length && this.market.accountValue >= 1) {
-      this.market.sell(tick.last, 1);
+      this.market.createOrder(OrderType.MARKET, OrderSide.SELL, 1);
     }
   }
 }

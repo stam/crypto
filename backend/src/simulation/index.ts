@@ -19,9 +19,9 @@ class Trade {
   }
 
   sell(sellOrder: OrderSummary): Trade | undefined {
-    this.sellPrice = sellOrder.price;
+    this.sellPrice = sellOrder.resultPrice;
     this.sellDate = sellOrder.date;
-    this.result = round((100 * sellOrder.price) / this.buyPrice, 1);
+    this.result = round((100 * sellOrder.resultPrice) / this.buyPrice, 1);
 
     if (this.quantity > sellOrder.quantity) {
       const remainingQuantity = round(this.quantity - sellOrder.quantity, 3);
@@ -88,14 +88,14 @@ class Simulation {
   matchOrderIntoTrades(order: OrderSummary) {
     if (order.side === OrderSide.SELL && this.openTrades.length === 0) {
       const startingTrade = new Trade(null, order.quantity, null);
-      startingTrade.sellPrice = order.price;
+      startingTrade.sellPrice = order.resultPrice;
       startingTrade.sellDate = order.date;
       this.trades.push(startingTrade)
       return;
     }
 
     if (order.side === OrderSide.BUY) {
-      const newTrade = new Trade(order.price, order.quantity, order.date);
+      const newTrade = new Trade(order.resultPrice, order.quantity, order.date);
       this.openTrades.push(newTrade);
       return;
     }

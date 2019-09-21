@@ -22,7 +22,7 @@ export const resolvers = {
     runSimulation: async (_, { startValue, startFiat }) => {
       const ticks = await getRepository(Tick).find({
         // where: {
-        //   timestamp: LessThan('2018-05-15'),
+        //   timestamp: LessThan('2018-08-03'),
         // },
         order: {
           timestamp: 'ASC',
