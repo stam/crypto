@@ -7,7 +7,7 @@ class BaseStrategy {
 
   constructor(market: Market) {
     this.market = market;
-    this.market.addTickListener(this.handleTick);
+    this.market.addTickListener((...args) => this.handleTick(...args));
   }
 
   handleTick(tick: Tick) {}

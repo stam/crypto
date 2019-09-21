@@ -19,8 +19,10 @@ export default class MockMarket extends BaseMarket {
   }
 
   async checkIfOrdersResolve(tick: Tick) {
+    console.log('[MockMarket] | checkIfOrdersResolve | ', this.unfullfilledOrders.length, tick.last);
     remove(this.unfullfilledOrders, (order) => {
-      if (order.checkIfResolves) {
+      if (order.checkIfResolves(tick)) {
+        console.log('[MockMarket] | checkIfOrdersResolve | done',order);
         if (this.onPlaceOrder) {
           this.onPlaceOrder(order);
         }
@@ -42,30 +44,20 @@ export default class MockMarket extends BaseMarket {
     return tick;
   }
 
-  async placeOrder(type: OrderType, side: OrderSide, quantity: number, price?: number) {
-    // Todo, pendingorder should be an order which can resolve itself,
-    // and possible rollback the transaction fees
+  protected async placeOrder(type: OrderType, side: OrderSide, quantity: number, price?: number) {
+    if (type === OrderType.LIMIT) {
+      if (side === OrderSide.BUY) {
+        this.accountFiat -= Math.round(price * quantity);
+      } else if (side === OrderSide.SELL) {
+        this.accountValue -= quantity;
+      }
+    }
     const p = new Promise<Order>((resolve, reject) => {
       const order = new Order(type, side, quantity, price);
       order.onResolve = resolve;
       order.onReject = reject;
-      // const pendingOrder = {
-      //   price,
-      //   quantity,
-      //   type,
-      //   side,
-      //   resolve,
-      // }
 
-      // if (type === OrderType.LIMIT) {
-      //   if (side === OrderSide.BUY) {
-      //     this.accountFiat -= Math.round(price * quantity);
-      //   } else if (side === OrderSide.SELL) {
-      //     this.accountValue -= quantity;
-      //   }
-      // }
-
-      // this.unfullfilledOrders.push(pendingOrder);
+      this.unfullfilledOrders.push(order);
     });
 
     return p;

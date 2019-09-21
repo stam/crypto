@@ -18,6 +18,15 @@ export enum OrderType {
 
 type OrderCallback = (order: Order) => void;
 
+export interface OrderSummary {
+  price: number;
+  resultPrice: number;
+  quantity: number;
+  side: OrderSide;
+  type: OrderType;
+  date: Date;
+}
+
 export default class Order {
   id: string;
   quantity: number;
@@ -28,6 +37,7 @@ export default class Order {
   onReject?: OrderCallback;
   date?: Date;
   price?: number;
+  resultPrice?: number;
 
   constructor(type: OrderType, side: OrderSide, quantity: number, price?: number) {
     if (price === undefined && type !== OrderType.MARKET) {
@@ -39,7 +49,6 @@ export default class Order {
     this.side = side;
     this.quantity = quantity;
     this.price = price;
-
   }
 
   // TODO, make a migration like structure for adding and subtracting account value
@@ -47,7 +56,7 @@ export default class Order {
     this.pending = false;
 
     this.date = date;
-    this.price = price;
+    this.resultPrice = price;
 
     if (this.onResolve) {
       this.onResolve(this);
@@ -60,6 +69,17 @@ export default class Order {
     }
   }
 
+  public toSummary() : OrderSummary {
+    return {
+      price: this.price,
+      resultPrice: this.resultPrice,
+      quantity: this.quantity,
+      side: this.side,
+      date: this.date,
+      type: this.type,
+    }
+  }
+
   // Backtest purposes uses only
   checkIfResolves(tick: Tick) : boolean {
     if (this.type === OrderType.MARKET) {
@@ -69,7 +89,7 @@ export default class Order {
       if (this.side === OrderSide.BUY && tick.last <= this.price) {
         return true;
       } else if (this.side === OrderSide.SELL && tick.last >= this.price) {
-        return false;
+        return true;
       }
       return false
     }

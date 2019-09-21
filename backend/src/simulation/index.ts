@@ -1,5 +1,5 @@
 import { round, remove, last} from 'lodash';
-import { Order, OrderType, OrderSide } from '../market';
+import Order, { OrderType, OrderSide, OrderSummary } from '../market/order';
 import Tick from '../models/tick';
 import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
@@ -18,7 +18,7 @@ class Trade {
     this.buyDate = buyDate;
   }
 
-  sell(sellOrder: Order): Trade | undefined {
+  sell(sellOrder: OrderSummary): Trade | undefined {
     this.sellPrice = sellOrder.price;
     this.sellDate = sellOrder.date;
     this.result = round((100 * sellOrder.price) / this.buyPrice, 1);
@@ -82,12 +82,11 @@ class Simulation {
 
   handleOrder(order: Order) {
     this.orders.push(order);
-    // this.openTrades.push(new Trade(order));
-    this.matchOrderIntoTrades(order);
+    this.matchOrderIntoTrades(order.toSummary());
   }
 
-  matchOrderIntoTrades(order: Order) {
-    if (order.type === OrderSide.SELL && this.openTrades.length === 0) {
+  matchOrderIntoTrades(order: OrderSummary) {
+    if (order.side === OrderSide.SELL && this.openTrades.length === 0) {
       const startingTrade = new Trade(null, order.quantity, null);
       startingTrade.sellPrice = order.price;
       startingTrade.sellDate = order.date;
@@ -95,7 +94,7 @@ class Simulation {
       return;
     }
 
-    if (order.type === OrderSide.BUY) {
+    if (order.side === OrderSide.BUY) {
       const newTrade = new Trade(order.price, order.quantity, order.date);
       this.openTrades.push(newTrade);
       return;

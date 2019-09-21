@@ -37,23 +37,19 @@ describe('The simple strategy', () => {
     await market.tick();
     await market.tick();
 
-    await delay(0);
-
     expect(market.unfullfilledOrders).toHaveLength(1);
-    expect(market.unfullfilledOrders[0].type).toBe('buy');
+    expect(market.unfullfilledOrders[0].side).toBe('buy');
   });
 
   it('should not have orders resolve immediately, only after the next matching tick', async () => {
     await market.tick();
     await market.tick();
     await market.tick();
-    await delay(0);
 
 
     expect(market.unfullfilledOrders).toHaveLength(1);
 
     await market.tick();
-    await delay(0);
     expect(market.unfullfilledOrders).toHaveLength(0);
     expect(market.accountFiat).toBe(100) // 6999 - 6998
     expect(market.accountValue).toBe(1)

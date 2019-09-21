@@ -1,9 +1,8 @@
 import MockMarket from './mock';
 
-import { getRepository } from 'typeorm';
 import Tick from '../models/tick';
 import { delay, createTicks } from '../testUtils';
-import { Order } from '.';
+import Order, { OrderType, OrderSide } from './order';
 
 
 describe('The MockMarket', () => {
@@ -28,13 +27,11 @@ describe('The MockMarket', () => {
     expect(buyOrder).toBeNull();
 
     let tick = await market.tick();
-    await delay(0);
 
     expect(tick.last).toBeGreaterThan(6000);
     expect(buyOrder).toBeNull();
 
     tick = await market.tick();
-    await delay(0);
 
     expect(tick.last).toBeLessThanOrEqual(6000);
     expect(buyOrder).not.toBe(null);
@@ -97,12 +94,56 @@ describe('The MockMarket', () => {
     await market.tick();
     await market.tick();
 
-    await delay(0);
     expect(sellOrder.price).toBe(6200);
     expect(market.unfullfilledOrders).toHaveLength(0);
   });
 
-  it('should support market orders', async () => {
+  describe('should update account totals', () => {
+    it('for buy limit orders', async () => {
+      const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+      market.buy(6900, 1);
 
+      expect(market.accountFiat).toBe(100);
+
+      // buy for 6001
+      market.setTicks(ticks);
+      await market.tick();
+
+      expect(market.accountFiat).toBe(7000 - 6001);
+      expect(market.accountValue).toBe(1);
+    });
+
+    it('for sell limit orders', async () => {
+      const market = new MockMarket({ accountValue: 1, accountFiat: 100 });
+      market.sell(6100, 1);
+      expect(market.accountFiat).toBe(100);
+
+      market.setTicks(ticks);
+      await market.tick();
+      await market.tick();
+      await market.tick();
+      await market.tick(); // sell for 6200
+
+      expect(market.unfullfilledOrders.length).toBe(0);
+      expect(market.accountFiat).toBe(100 + 6200);
+      expect(market.accountValue).toBe(0);
+    });
+
+    xit('for buy market orders', async () => {
+      const market = new MockMarket({ accountValue: 0, accountFiat: 7000 });
+      market.createOrder(OrderType.MARKET, OrderSide.BUY, 1);
+
+      // What should we do with this?
+      // How much accountFiat should we reserve if the tick price is not known?
+      // Maybe take price of previous tick with percentage?
+      expect(market.accountFiat).toBe(100);
+
+      // buy for 6001
+      market.setTicks(ticks);
+      await market.tick();
+
+      expect(market.accountFiat).toBe(7000 - 6001);
+      expect(market.accountValue).toBe(1);
+    })
   })
 })

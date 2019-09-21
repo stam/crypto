@@ -20,6 +20,7 @@ class SimpleStrategy extends BaseStrategy {
   // Buy if we have no crypto
   signalBuy(tick: Tick) {
     const hasFunds = this.market.accountFiat >= tick.last;
+    console.log('[SimpleStrategy] | signalBuy |', this.market.accountFiat)
     if (!this.market.unfullfilledOrders.length && hasFunds) {
       this.market.buy(tick.last, 1);
     }

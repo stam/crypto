@@ -5,7 +5,7 @@ import MockMarket from '../market/mock';
 import BaseStrategy from '../strategy/base';
 import { createTicks, delay, createOrders } from '../testUtils';
 import Tick from '../models/tick';
-import { Order, OrderSide } from '../market';
+import Order, { OrderSide } from '../market/order';
 
 
 describe('A Simulation', () => {
@@ -46,8 +46,6 @@ describe('A Simulation', () => {
     market.setTicks(ticks);
 
     await simulation.run();
-
-    await delay(0);
 
     expect(simulation.orders).toHaveLength(2);
   });
