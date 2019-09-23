@@ -1,12 +1,7 @@
 import React from 'react';
 import { zipObject } from 'lodash';
 import PropTypes from 'prop-types';
-import {
-  Annotate,
-  SvgPathAnnotation,
-  buyPath,
-  sellPath,
-} from 'react-stockcharts/lib/annotation';
+import { Annotate, SvgPathAnnotation, buyPath, sellPath } from 'react-stockcharts/lib/annotation';
 import { observer } from 'mobx-react';
 
 const sellProps = {
@@ -42,14 +37,14 @@ class OrderAnnotations extends React.Component {
     return ({ yScale, datum }) => {
       const date = toDateString(datum);
       const order = mappedOrders[date];
-      return yScale(parseInt(order.price / 100));
+      return yScale(parseInt(order.resultPrice / 100));
     };
   }
 
   render() {
     const { orders } = this.props;
-    const buyOrders = orders.filter(o => o.type === 'buy');
-    const sellOrders = orders.filter(o => o.type === 'sell');
+    const buyOrders = orders.filter(o => o.side === 'buy');
+    const sellOrders = orders.filter(o => o.side === 'sell');
 
     const enhancedBuyProps = {
       ...buyProps,

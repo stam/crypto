@@ -15,9 +15,11 @@
   }
   type Order {
     type: String
+    side: String
     date: Date
     quantity: Int
     price: Int
+    resultPrice: Int
   }
   type Tick {
     id: Int!

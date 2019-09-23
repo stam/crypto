@@ -26,7 +26,9 @@ export default class Simulation extends BaseModel {
             orders {
               date
               type
+              side
               quantity
+              resultPrice
               price
             }
             trades {
