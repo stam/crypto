@@ -13,7 +13,8 @@ const Main = styled.main`
   padding: 16px 32px;
   height: 100vh;
   width: 100vw;
-  font-family: system-ui;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
   grid-template-rows: repeat(16, 1fr);
   grid-template-columns: repeat(8, 1fr);
