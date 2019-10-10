@@ -10,6 +10,9 @@ export default class Simulation extends BaseModel {
   @observable endBalance;
   @observable profit;
 
+  @observable startValue = 1;
+  @observable startFiat = 0;
+
   @observable _loading = false;
 
   async fetch() {
@@ -20,8 +23,8 @@ export default class Simulation extends BaseModel {
       body: JSON.stringify({
         query: `mutation {
           runSimulation(
-            startValue: 1
-            startFiat: 0
+            startValue: ${this.startValue}
+            startFiat: ${this.startFiat}
           ) {
             orders {
               date

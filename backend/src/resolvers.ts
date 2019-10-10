@@ -21,9 +21,9 @@ export const resolvers = {
   Mutation: {
     runSimulation: async (_, { startValue, startFiat }) => {
       const ticks = await getRepository(Tick).find({
-        // where: {
-        //   timestamp: LessThan('2018-08-03'),
-        // },
+        where: {
+          timestamp: LessThan('2018-08-03'),
+        },
         order: {
           timestamp: 'ASC',
         },

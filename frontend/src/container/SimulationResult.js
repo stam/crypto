@@ -5,8 +5,9 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 const Container = styled.div`
+  overflow-y: scroll;
   grid-row: 10 / -1;
-  grid-column: 2 / -1;
+  grid-column: 3 / -1;
 `;
 
 const Table = styled.table`
@@ -30,17 +31,18 @@ class SimulationResult extends Component {
     );
   }
 
-  renderTrade = (trade, i) => (
-    <tr key={trade.buyDate + trade.sellPrice}>
-      <td>{i}.</td>
-      <td>{this.formatDate(trade.buyDate)}</td>
-      <td>{trade.buyPrice}</td>
-      <td>{trade.quantity}</td>
-      <td>{trade.result}%</td>
-      <td>{trade.sellPrice}</td>
-      <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
-    </tr>
-  );
+  renderTrade = (trade, i) =>
+    trade.buyDate && (
+      <tr key={trade.buyDate + trade.sellPrice}>
+        <td>{i}.</td>
+        <td>{this.formatDate(trade.buyDate)}</td>
+        <td>{trade.buyPrice}</td>
+        <td>{trade.quantity}</td>
+        <td>{trade.result}%</td>
+        <td>{trade.sellPrice}</td>
+        <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
+      </tr>
+    );
 
   render() {
     const { simulation } = this.props;
