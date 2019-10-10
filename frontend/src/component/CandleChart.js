@@ -13,7 +13,7 @@ import {
   CurrentCoordinate,
   MouseCoordinateY,
 } from 'react-stockcharts/lib/coordinates';
-import { ema, wma, sma, tma } from 'react-stockcharts/lib/indicator';
+import { ema } from 'react-stockcharts/lib/indicator';
 import { CandlestickSeries, LineSeries } from 'react-stockcharts/lib/series';
 import { MovingAverageTooltip } from 'react-stockcharts/lib/tooltip';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';

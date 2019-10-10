@@ -37,7 +37,7 @@ class OrderAnnotations extends React.Component {
     return ({ yScale, datum }) => {
       const date = toDateString(datum);
       const order = mappedOrders[date];
-      return yScale(parseInt(order.resultPrice / 100));
+      return yScale(parseInt(order.resultPrice / 100, 10));
     };
   }
 
