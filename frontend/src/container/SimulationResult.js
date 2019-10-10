@@ -65,9 +65,9 @@ class SimulationResult extends Component {
       <Container>
         <h3>Simulated trades:</h3>
         <div>
-          <span>Start balance: {simulation.startBalance}</span>
-          <span>End balance: {simulation.endBalance}</span>
-          <span>Result: {simulation.profit}%</span>
+          <p>Start balance: {simulation.startBalance}</p>
+          <p>End balance: {simulation.endBalance}</p>
+          <p>Result: {simulation.profit}%</p>
         </div>
         <Table>
           <thead>
