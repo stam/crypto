@@ -10,11 +10,12 @@ import Simulation from '../store/Simulation';
 
 const Main = styled.main`
   display: grid;
-  padding: 16px 32px;
+  padding: 1rem 1rem;
+
+  background: linear-gradient(#1f2640, #070a17);
+  color: white;
   height: 100vh;
   width: 100vw;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
   grid-template-rows: repeat(16, 1fr);
   grid-template-columns: repeat(8, 1fr);
