@@ -1,10 +1,16 @@
 import styled from 'styled-components';
 
 export default styled.input`
-  padding: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  // color: white;
   border: none;
   border-radius: 2px;
-  background: #eee;
   font-family: inherit;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
+
+  &:not(:disabled) {
+    color: white;
+  }
 `;

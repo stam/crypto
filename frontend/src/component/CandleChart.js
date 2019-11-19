@@ -5,6 +5,7 @@ import { scaleTime } from 'd3-scale';
 import { utcDay } from 'd3-time';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
+import './candleChart.css';
 
 import { ChartCanvas, Chart } from 'react-stockcharts';
 import {
@@ -26,15 +27,26 @@ import { observer } from 'mobx-react';
 const toDateString = d => d.date.toISOString().substring(0, 10);
 
 const sellProps = {
-  fill: '#FF0000',
+  fill: 'rgb(255, 95, 169)',
   path: sellPath,
   tooltip: 'Sell',
 };
 
 const buyProps = {
-  fill: '#006517',
+  fill: 'rgb(174, 236, 225)',
   path: buyPath,
   tooltip: 'Buy',
+};
+
+const candleAppearance = {
+  // wickStore: 'hotpink',
+  fill: function fill(d) {
+    return d.close > d.open ? 'rgb(96,196,178	)' : 'rgb(220,121,	167)';
+  },
+  stroke: 'none',
+  candleStrokeWidth: 1,
+  widthRatio: 0.8,
+  opacity: 1,
 };
 
 class CandleStickChart extends React.Component {
@@ -119,20 +131,6 @@ class CandleStickChart extends React.Component {
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
           <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
-          {simulation.orders && (
-            <React.Fragment>
-              <Annotate
-                with={SvgPathAnnotation}
-                when={this.filterCandleOnOrderDate(buyOrders)}
-                usingProps={enhancedBuyProps}
-              />
-              <Annotate
-                with={SvgPathAnnotation}
-                when={this.filterCandleOnOrderDate(sellOrders)}
-                usingProps={enhancedSellProps}
-              />
-            </React.Fragment>
-          )}
           <MouseCoordinateY at="left" orient="left" displayFormat={format('.0f')} />
           <LineSeries yAccessor={emaA.accessor()} stroke={emaA.stroke()} />
           <LineSeries yAccessor={emaB.accessor()} stroke={emaB.stroke()} />
@@ -155,9 +153,23 @@ class CandleStickChart extends React.Component {
               },
             ]}
           />
-          <CandlestickSeries width={timeIntervalBarWidth(utcDay)} />
+          <CandlestickSeries width={timeIntervalBarWidth(utcDay)} {...candleAppearance} />
+          {simulation.orders && (
+            <React.Fragment>
+              <Annotate
+                with={SvgPathAnnotation}
+                when={this.filterCandleOnOrderDate(buyOrders)}
+                usingProps={enhancedBuyProps}
+              />
+              <Annotate
+                with={SvgPathAnnotation}
+                when={this.filterCandleOnOrderDate(sellOrders)}
+                usingProps={enhancedSellProps}
+              />
+            </React.Fragment>
+          )}
         </Chart>
-        <CrossHairCursor />
+        <CrossHairCursor stroke="#FFFFFF" />
       </ChartCanvas>
     );
   }
