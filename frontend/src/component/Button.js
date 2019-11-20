@@ -4,6 +4,7 @@ export default styled.button`
   cursor: pointer;
   width: 100%;
   padding: 8px 16px;
+  height: 2.5rem;
   border-radius: 4px;
 
   font-size: 1em;

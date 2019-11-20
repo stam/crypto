@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export default styled.input`
   padding: 0.75rem;
   background: rgba(0, 0, 0, 0.3);
-  // color: white;
+  height: 2.5rem;
   border: none;
   border-radius: 2px;
   font-family: inherit;
