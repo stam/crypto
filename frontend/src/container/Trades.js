@@ -24,6 +24,20 @@ const RightAlignTd = styled.td`
   text-align: right;
 `;
 
+let lastDate = {};
+const isFirstOfDate = (key, date) => {
+  let firstOfDate = false;
+  if (!lastDate[key]) {
+    firstOfDate = true;
+  } else {
+    if (lastDate[key] < date) {
+      firstOfDate = true;
+    }
+  }
+  lastDate[key] = date;
+  return firstOfDate;
+};
+
 class Trades extends Component {
   static propTypes = {
     simulation: PropTypes.object.isRequired,
@@ -41,20 +55,28 @@ class Trades extends Component {
     );
   }
 
-  renderTrade = (trade, i, firstOfDate) =>
-    trade.buyDate && (
+  renderTrade = (trade, i) => {
+    if (!trade.buyDate) {
+      return null;
+    }
+    const buyDate = moment(trade.buyDate).format('YYYY-MM-DD HH:mm:ss');
+    const sellDate = moment(trade.sellDate).format('YYYY-MM-DD HH:mm:ss');
+    const firstOfBuyDate = isFirstOfDate('buy', buyDate.substr(0, 10));
+    const firstOfSellDate = isFirstOfDate('sell', sellDate.substr(0, 10));
+    return (
       <tr key={trade.buyDate + trade.sellPrice}>
         <td>{i}.</td>
-        <RightAlignTd>
-          {firstOfDate ? this.formatDate(trade.buyDate) : this.formatTime(trade.buyDate)}
-        </RightAlignTd>
+        <RightAlignTd>{firstOfBuyDate ? buyDate : this.formatTime(trade.buyDate)}</RightAlignTd>
         <td>{this.formatPrice(trade.buyPrice)}</td>
         <td>{trade.quantity}</td>
         <RightAlignTd>{trade.result}%</RightAlignTd>
         <td>{this.formatPrice(trade.sellPrice)}</td>
-        <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
+        <RightAlignTd>
+          {trade.sellDate && (firstOfSellDate ? sellDate : this.formatTime(trade.sellDate))}
+        </RightAlignTd>
       </tr>
     );
+  };
 
   render() {
     const { simulation } = this.props;
@@ -70,7 +92,7 @@ class Trades extends Component {
       return <Container />;
     }
 
-    let lastDate = null;
+    lastDate = {};
     return (
       <Container>
         <h3>Trades:</h3>
@@ -86,22 +108,7 @@ class Trades extends Component {
               <th>Sell Date</th>
             </tr>
           </thead>
-          <tbody>
-            {simulation.trades.map((t, i) => {
-              const date = t.sellDate.substr(0, 10);
-
-              let firstOfDate = false;
-              if (!lastDate) {
-                firstOfDate = true;
-              } else {
-                if (lastDate < date) {
-                  firstOfDate = true;
-                }
-              }
-              lastDate = date;
-              return this.renderTrade(t, i, firstOfDate);
-            })}
-          </tbody>
+          <tbody>{simulation.trades.map(this.renderTrade)}</tbody>
         </Table>
       </Container>
     );
