@@ -20,12 +20,18 @@ const Table = styled.table`
   }
 `;
 
+const RightAlignTd = styled.td`
+  text-align: right;
+`;
+
 class Trades extends Component {
   static propTypes = {
     simulation: PropTypes.object.isRequired,
   };
 
   formatDate = date => moment(date).format('YYYY-MM-DD HH:mm:ss');
+  formatTime = date => moment(date).format('HH:mm:ss');
+  formatPrice = price => Math.round(price / 100).toLocaleString();
 
   renderOrder(order) {
     return (
@@ -35,15 +41,17 @@ class Trades extends Component {
     );
   }
 
-  renderTrade = (trade, i) =>
+  renderTrade = (trade, i, firstOfDate) =>
     trade.buyDate && (
       <tr key={trade.buyDate + trade.sellPrice}>
         <td>{i}.</td>
-        <td>{this.formatDate(trade.buyDate)}</td>
-        <td>{trade.buyPrice}</td>
+        <RightAlignTd>
+          {firstOfDate ? this.formatDate(trade.buyDate) : this.formatTime(trade.buyDate)}
+        </RightAlignTd>
+        <td>{this.formatPrice(trade.buyPrice)}</td>
         <td>{trade.quantity}</td>
-        <td>{trade.result}%</td>
-        <td>{trade.sellPrice}</td>
+        <RightAlignTd>{trade.result}%</RightAlignTd>
+        <td>{this.formatPrice(trade.sellPrice)}</td>
         <td>{trade.sellDate && this.formatDate(trade.sellDate)}</td>
       </tr>
     );
@@ -61,6 +69,8 @@ class Trades extends Component {
     if (!simulation.orders) {
       return <Container />;
     }
+
+    let lastDate = null;
     return (
       <Container>
         <h3>Trades:</h3>
@@ -76,7 +86,22 @@ class Trades extends Component {
               <th>Sell Date</th>
             </tr>
           </thead>
-          <tbody>{simulation.trades.map(this.renderTrade)}</tbody>
+          <tbody>
+            {simulation.trades.map((t, i) => {
+              const date = t.sellDate.substr(0, 10);
+
+              let firstOfDate = false;
+              if (!lastDate) {
+                firstOfDate = true;
+              } else {
+                if (lastDate < date) {
+                  firstOfDate = true;
+                }
+              }
+              lastDate = date;
+              return this.renderTrade(t, i, firstOfDate);
+            })}
+          </tbody>
         </Table>
       </Container>
     );
