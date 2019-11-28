@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import styled from 'styled-components';
+import {
+  COLOR_SOFT,
+  COLOR_POSITIVE,
+  COLOR_NEGATIVE,
+  COLOR_NEUTRAL,
+  COLOR_EMPHASIS,
+} from '../utils/colors';
 
 const Container = styled.div`
   overflow-y: scroll;
@@ -10,14 +17,27 @@ const Container = styled.div`
   grid-column: 3 / -1;
 
   h3 {
-    opacity: 0.4;
+    color: ${COLOR_SOFT};
   }
 `;
 
 const Table = styled.table`
   td {
+    color: ${COLOR_NEUTRAL};
     padding: 8px 16px;
   }
+`;
+
+const EmphasisTd = styled.td`
+  color: ${COLOR_EMPHASIS} !important;
+`;
+const THead = styled.thead`
+  color: ${COLOR_SOFT};
+  text-align: right;
+`;
+
+const ValueTd = styled.td`
+  color: ${props => (props.profit ? COLOR_POSITIVE : COLOR_NEGATIVE)} !important;
 `;
 
 const RightAlignTd = styled.td`
@@ -63,14 +83,15 @@ class Trades extends Component {
     const sellDate = moment(trade.sellDate).format('YYYY-MM-DD HH:mm:ss');
     const firstOfBuyDate = isFirstOfDate('buy', buyDate.substr(0, 10));
     const firstOfSellDate = isFirstOfDate('sell', sellDate.substr(0, 10));
+
     return (
       <tr key={trade.buyDate + trade.sellPrice}>
         <td>{i}.</td>
         <RightAlignTd>{firstOfBuyDate ? buyDate : this.formatTime(trade.buyDate)}</RightAlignTd>
-        <td>{this.formatPrice(trade.buyPrice)}</td>
+        <EmphasisTd>{this.formatPrice(trade.buyPrice)}</EmphasisTd>
         <td>{trade.quantity}</td>
-        <RightAlignTd>{trade.result}%</RightAlignTd>
-        <td>{this.formatPrice(trade.sellPrice)}</td>
+        <ValueTd profit={trade.result > 100}>{trade.result}%</ValueTd>
+        <EmphasisTd>{this.formatPrice(trade.sellPrice)}</EmphasisTd>
         <RightAlignTd>
           {trade.sellDate && (firstOfSellDate ? sellDate : this.formatTime(trade.sellDate))}
         </RightAlignTd>
@@ -95,9 +116,8 @@ class Trades extends Component {
     lastDate = {};
     return (
       <Container>
-        <h3>Trades:</h3>
         <Table>
-          <thead>
+          <THead>
             <tr>
               <th />
               <th>Buy Date</th>
@@ -107,7 +127,7 @@ class Trades extends Component {
               <th>Sell Price</th>
               <th>Sell Date</th>
             </tr>
-          </thead>
+          </THead>
           <tbody>{simulation.trades.map(this.renderTrade)}</tbody>
         </Table>
       </Container>
