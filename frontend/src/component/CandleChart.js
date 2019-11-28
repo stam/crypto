@@ -7,6 +7,7 @@ import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
 
 import { ChartCanvas, Chart } from 'react-stockcharts';
+import styled from 'styled-components';
 import {
   CrossHairCursor,
   MouseCoordinateX,
@@ -22,20 +23,67 @@ import { fitDimensions } from 'react-stockcharts/lib/helper';
 import { last, timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
 
 import { observer } from 'mobx-react';
+import {
+  COLOR_NEUTRAL,
+  COLOR_POSITIVE,
+  COLOR_NEGATIVE,
+  COLOR_NEGATIVE_2,
+  COLOR_POSITIVE_2,
+} from '../utils/colors';
 
 const toDateString = d => d.date.toISOString().substring(0, 10);
 
 const sellProps = {
-  fill: '#FF0000',
+  fill: COLOR_NEGATIVE_2,
   path: sellPath,
   tooltip: 'Sell',
 };
 
 const buyProps = {
-  fill: '#006517',
+  fill: COLOR_POSITIVE_2,
   path: buyPath,
   tooltip: 'Buy',
 };
+
+const candleAppearance = {
+  // wickStore: 'hotpink',
+  fill: function fill(d) {
+    return d.close > d.open ? COLOR_POSITIVE : COLOR_NEGATIVE;
+  },
+  stroke: 'none',
+  candleStrokeWidth: 1,
+  widthRatio: 0.8,
+  opacity: 1,
+};
+
+const StyledCanvas = styled(ChartCanvas)`
+  .react-stockcharts-y-axis text,
+  .react-stockcharts-x-axis text {
+    fill: ${COLOR_NEUTRAL};
+  }
+
+  .react-stockcharts-candlestick-wick path.up {
+    stroke: ${COLOR_POSITIVE};
+  }
+
+  .react-stockcharts-candlestick-wick path.down {
+    stroke: ${COLOR_NEGATIVE};
+  }
+
+  .react-stockcharts-tooltip tspan {
+    opacity: 0.5;
+    fill: ${COLOR_NEUTRAL};
+  }
+
+  tspan.react-stockcharts-tooltip-label {
+    opacity: 1;
+    fill: ${COLOR_NEUTRAL};
+  }
+
+  .react-stockcharts-axis-domain {
+    display: none;
+  }
+`;
 
 class CandleStickChart extends React.Component {
   static propTypes = {
@@ -103,7 +151,7 @@ class CandleStickChart extends React.Component {
     const calculatedData = emaA(emaB(data));
 
     return (
-      <ChartCanvas
+      <StyledCanvas
         height={height}
         ratio={ratio}
         width={width}
@@ -119,20 +167,6 @@ class CandleStickChart extends React.Component {
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
           <MouseCoordinateX at="bottom" orient="bottom" displayFormat={timeFormat('%Y-%m-%d')} />
-          {simulation.orders && (
-            <React.Fragment>
-              <Annotate
-                with={SvgPathAnnotation}
-                when={this.filterCandleOnOrderDate(buyOrders)}
-                usingProps={enhancedBuyProps}
-              />
-              <Annotate
-                with={SvgPathAnnotation}
-                when={this.filterCandleOnOrderDate(sellOrders)}
-                usingProps={enhancedSellProps}
-              />
-            </React.Fragment>
-          )}
           <MouseCoordinateY at="left" orient="left" displayFormat={format('.0f')} />
           <LineSeries yAccessor={emaA.accessor()} stroke={emaA.stroke()} />
           <LineSeries yAccessor={emaB.accessor()} stroke={emaB.stroke()} />
@@ -155,10 +189,24 @@ class CandleStickChart extends React.Component {
               },
             ]}
           />
-          <CandlestickSeries width={timeIntervalBarWidth(utcDay)} />
+          <CandlestickSeries width={timeIntervalBarWidth(utcDay)} {...candleAppearance} />
+          {simulation.orders && (
+            <React.Fragment>
+              <Annotate
+                with={SvgPathAnnotation}
+                when={this.filterCandleOnOrderDate(buyOrders)}
+                usingProps={enhancedBuyProps}
+              />
+              <Annotate
+                with={SvgPathAnnotation}
+                when={this.filterCandleOnOrderDate(sellOrders)}
+                usingProps={enhancedSellProps}
+              />
+            </React.Fragment>
+          )}
         </Chart>
-        <CrossHairCursor />
-      </ChartCanvas>
+        <CrossHairCursor stroke="#FFFFFF" />
+      </StyledCanvas>
     );
   }
 }

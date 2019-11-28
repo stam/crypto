@@ -4,17 +4,18 @@ export default styled.button`
   cursor: pointer;
   width: 100%;
   padding: 8px 16px;
+  height: 2.5rem;
   border-radius: 4px;
 
   font-size: 1em;
   color: white;
-  background: #6ec990;
+  background: linear-gradient(95deg, rgb(244, 132, 186), rgb(161, 129, 223));
   border: none;
   outline: none;
 
-  transition: background 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
 
   &:hover {
-    background: #60b27e;
+    filter: brightness(1.1);
   }
 `;

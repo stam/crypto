@@ -8,11 +8,19 @@ import Input from '../component/Input';
 import Label from '../component/Label';
 
 const Form = styled.form`
-  grid-row: 10 / -1;
+  grid-row: 2 / 10;
   grid-column: 1 / 3;
 
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: repeat(2, auto) 1fr;
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+
+  button {
+    margin-top: auto;
+    grid-column: 1 / -1;
+  }
 `;
 
 @observer
@@ -36,7 +44,6 @@ class SimulationForm extends Component {
 
     return (
       <Form onSubmit={this.handleSubmit} className="toolbar">
-        <h3>Simulate</h3>
         <Label>
           Start date
           <Input type="date" disabled name="startDate" />
@@ -53,7 +60,7 @@ class SimulationForm extends Component {
           Initial $ value
           <Input name="startFiat" value={simulation.startFiat} onChange={this.handleChange} />
         </Label>
-        <Button>Run</Button>
+        <Button>Start simulation</Button>
       </Form>
     );
   }

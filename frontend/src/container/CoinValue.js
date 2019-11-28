@@ -8,7 +8,7 @@ import CandleChart from '../component/CandleChart';
 
 const Container = styled.div`
   grid-row: 2 / 10;
-  grid-column: 1 / -1;
+  grid-column: 3 / -1;
 `;
 
 function parseData(data) {
