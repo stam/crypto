@@ -13,8 +13,8 @@ export default class Simulation extends BaseModel {
   @observable startValue = 1;
   @observable startFiat = 0;
   @observable startDate = '';
-  @observable endDate = '2018-08-03';
   @observable strategy = 'ema';
+  @observable endDate = '2018-08-03';
 
   @observable _loading = false;
 
@@ -24,10 +24,11 @@ export default class Simulation extends BaseModel {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        query: `mutation($startValue: Float!, $startFiat: Int!, $startDate: Date, $endDate: Date) {
+        query: `mutation($startValue: Float!, $startFiat: Int!, $strategy: String!, $startDate: Date, $endDate: Date) {
           runSimulation(
             startValue: $startValue
             startFiat: $startFiat
+            strategy: $strategy
             startDate: $startDate
             endDate: $endDate
           ) {
@@ -53,6 +54,7 @@ export default class Simulation extends BaseModel {
           }
         }`,
         variables: {
+          strategy: this.strategy,
           startValue: this.startValue,
           startFiat: this.startFiat,
           startDate: this.startDate,

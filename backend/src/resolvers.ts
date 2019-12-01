@@ -3,7 +3,6 @@ import Tick from './models/tick';
 import Candle from './models/candle';
 import MockMarket from './market/mock';
 import * as Strategies from './strategy';
-import Strategy from './strategy/example/ema';
 import Simulation from './simulation';
 
 export const resolvers = {
@@ -23,7 +22,10 @@ export const resolvers = {
     },
   },
   Mutation: {
-    runSimulation: async (_, { startValue, startFiat, startDate, endDate }) => {
+    runSimulation: async (
+      _,
+      { startValue, startFiat, strategy: strategyName, startDate, endDate },
+    ) => {
       let where = {};
       if (startDate && endDate) {
         where = {
@@ -47,7 +49,9 @@ export const resolvers = {
       });
 
       const market = new MockMarket({ accountValue: startValue, accountFiat: startFiat });
-      const strategy = new Strategy(market);
+
+      const TargetStrat = Strategies[strategyName];
+      const strategy = new TargetStrat(market);
       const simulation = new Simulation({ market, strategy });
 
       market.setTicks(ticks);

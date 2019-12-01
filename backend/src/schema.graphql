@@ -5,7 +5,13 @@ type Query {
   candles: [Candle]
 }
 type Mutation {
-  runSimulation(startValue: Float!, startFiat: Int!, startDate: Date, endDate: Date): Simulation
+  runSimulation(
+    startValue: Float!
+    startFiat: Int!
+    strategy: String!
+    startDate: Date
+    endDate: Date
+  ): Simulation
 }
 type Simulation {
   orders: [Order]
