@@ -46,11 +46,21 @@ class SimulationForm extends Component {
       <Form onSubmit={this.handleSubmit} className="toolbar">
         <Label>
           Start date
-          <Input type="date" disabled name="startDate" />
+          <Input
+            type="date"
+            value={simulation.startDate}
+            name="startDate"
+            onChange={this.handleChange}
+          />
         </Label>
         <Label>
           End date
-          <Input type="date" disabled name="endDate" />
+          <Input
+            type="date"
+            value={simulation.endDate}
+            name="endDate"
+            onChange={this.handleChange}
+          />
         </Label>
         <Label>
           Initial btc value

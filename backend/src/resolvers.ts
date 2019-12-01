@@ -1,4 +1,4 @@
-import { getRepository, LessThan } from 'typeorm';
+import { getRepository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
 import MockMarket from './market/mock';
@@ -10,20 +10,33 @@ export const resolvers = {
     tick: (_, { id }) => {
       return getRepository(Tick).findOne(id);
     },
-    candles: (_) => {
+    candles: _ => {
       return getRepository(Candle).find({
         order: {
           datetime: 'ASC',
-        }
+        },
       });
-    }
+    },
   },
   Mutation: {
-    runSimulation: async (_, { startValue, startFiat }) => {
+    runSimulation: async (_, { startValue, startFiat, startDate, endDate }) => {
+      let where = {};
+      if (startDate && endDate) {
+        where = {
+          timestamp: Between(startDate, endDate),
+        };
+      } else if (startDate && !endDate) {
+        where = {
+          timestamp: MoreThanOrEqual(startDate),
+        };
+      } else if (!startDate && endDate) {
+        where = {
+          timestamp: LessThanOrEqual(endDate),
+        };
+      }
+
       const ticks = await getRepository(Tick).find({
-        // where: {
-        //   timestamp: LessThan('2018-08-03'),
-        // },
+        where,
         order: {
           timestamp: 'ASC',
         },
@@ -39,8 +52,5 @@ export const resolvers = {
 
       return simulation;
     },
-  }
+  },
 };
-
-
-

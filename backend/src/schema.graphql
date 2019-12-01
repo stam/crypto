@@ -1,44 +1,44 @@
-  scalar Date
-  type Query {
-    tick(id: ID!): Tick
-    candles: [Candle]
-  }
-  type Mutation {
-    runSimulation(startValue: Float!, startFiat: Int!): Simulation
-  }
-  type Simulation {
-    orders: [Order]
-    trades: [Trade]
-    startBalance: Int
-    endBalance: Int
-    profit: String
-  }
-  type Order {
-    type: String
-    side: String
-    date: Date
-    quantity: Int
-    price: Int
-    resultPrice: Int
-  }
-  type Tick {
-    id: Int!
-    last: Int
-    timestamp: Date
-  }
-  type Trade {
-    buyPrice: Int
-    sellPrice: Int
-    quantity: Int
-    buyDate: Date
-    sellDate: Date
-    result: Float
-  }
-  type Candle {
-    id: Int
-    open: Int
-    close: Int
-    high: Int
-    low: Int
-    datetime: Date
-  }
+scalar Date
+type Query {
+  tick(id: ID!): Tick
+  candles: [Candle]
+}
+type Mutation {
+  runSimulation(startValue: Float!, startFiat: Int!, startDate: Date, endDate: Date): Simulation
+}
+type Simulation {
+  orders: [Order]
+  trades: [Trade]
+  startBalance: Int
+  endBalance: Int
+  profit: String
+}
+type Order {
+  type: String
+  side: String
+  date: Date
+  quantity: Int
+  price: Int
+  resultPrice: Int
+}
+type Tick {
+  id: Int!
+  last: Int
+  timestamp: Date
+}
+type Trade {
+  buyPrice: Int
+  sellPrice: Int
+  quantity: Int
+  buyDate: Date
+  sellDate: Date
+  result: Float
+}
+type Candle {
+  id: Int
+  open: Int
+  close: Int
+  high: Int
+  low: Int
+  datetime: Date
+}
