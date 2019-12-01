@@ -17,8 +17,8 @@ jest.mock('./market/mock', () => ({
     setTicks(...args) {
       mockTickSetter(...args);
     }
-  }
-}))
+  },
+}));
 
 describe('The server', () => {
   let getHost;
@@ -34,7 +34,6 @@ describe('The server', () => {
       last: 5200,
     });
 
-
     const { port } = app.address();
 
     getHost = () => `http://127.0.0.1:${port}/api`;
@@ -42,7 +41,7 @@ describe('The server', () => {
     Simulation.prototype.run = jest.fn();
 
     const params = `mutation {
-      runSimulation(startFiat: 2000, startValue: 0) {
+      runSimulation(startFiat: 2000, startValue: 0, strategy: "ema") {
         orders {
           date
           type
@@ -65,9 +64,7 @@ describe('The server', () => {
     });
 
     it('creates a market with the given fiat and value', () => {
-      expect(mockMarketConstructor).toHaveBeenCalledWith(
-        { accountFiat: 2000, accountValue: 0 }
-      );
+      expect(mockMarketConstructor).toHaveBeenCalledWith({ accountFiat: 2000, accountValue: 0 });
     });
 
     it('should query ticks and feed them into the market', async () => {
