@@ -39,8 +39,9 @@ class AsyncSelect extends Component {
   };
 
   render() {
+    const { getter, query, ...selectProps } = this.props;
     return (
-      <Select>
+      <Select {...selectProps}>
         {this.loading ? (
           <option value={this.props.value}>Loading..</option>
         ) : (
