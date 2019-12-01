@@ -6,13 +6,14 @@ import styled from 'styled-components';
 import Button from '../component/Button';
 import Input from '../component/Input';
 import Label from '../component/Label';
+import AsyncSelect from '../component/AsyncSelect';
 
 const Form = styled.form`
   grid-row: 2 / 10;
   grid-column: 1 / 3;
 
   display: grid;
-  grid-template-rows: repeat(2, auto) 1fr;
+  grid-template-rows: repeat(3, auto) 1fr;
   grid-column-gap: 1rem;
   grid-row-gap: 1rem;
   grid-template-columns: repeat(2, 1fr);
@@ -45,12 +46,33 @@ class SimulationForm extends Component {
     return (
       <Form onSubmit={this.handleSubmit} className="toolbar">
         <Label>
+          Strategy
+          <AsyncSelect
+            query="strategies"
+            getter={d => d.strategies}
+            value={simulation.strategy}
+            onChange={this.handleChange}
+            name="strategy"
+          />
+        </Label>
+        <Label />
+        <Label>
           Start date
-          <Input type="date" disabled name="startDate" />
+          <Input
+            type="date"
+            value={simulation.startDate}
+            name="startDate"
+            onChange={this.handleChange}
+          />
         </Label>
         <Label>
           End date
-          <Input type="date" disabled name="endDate" />
+          <Input
+            type="date"
+            value={simulation.endDate}
+            name="endDate"
+            onChange={this.handleChange}
+          />
         </Label>
         <Label>
           Initial btc value

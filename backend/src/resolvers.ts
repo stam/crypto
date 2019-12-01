@@ -1,8 +1,8 @@
-import { getRepository, LessThan } from 'typeorm';
+import { getRepository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 import Tick from './models/tick';
 import Candle from './models/candle';
 import MockMarket from './market/mock';
-import Strategy from './strategy/example/ema';
+import * as Strategies from './strategy';
 import Simulation from './simulation';
 
 export const resolvers = {
@@ -10,27 +10,48 @@ export const resolvers = {
     tick: (_, { id }) => {
       return getRepository(Tick).findOne(id);
     },
-    candles: (_) => {
+    candles: _ => {
       return getRepository(Candle).find({
         order: {
           datetime: 'ASC',
-        }
+        },
       });
-    }
+    },
+    strategies: _ => {
+      return Object.keys(Strategies);
+    },
   },
   Mutation: {
-    runSimulation: async (_, { startValue, startFiat }) => {
+    runSimulation: async (
+      _,
+      { startValue, startFiat, strategy: strategyName, startDate, endDate },
+    ) => {
+      let where = {};
+      if (startDate && endDate) {
+        where = {
+          timestamp: Between(startDate, endDate),
+        };
+      } else if (startDate && !endDate) {
+        where = {
+          timestamp: MoreThanOrEqual(startDate),
+        };
+      } else if (!startDate && endDate) {
+        where = {
+          timestamp: LessThanOrEqual(endDate),
+        };
+      }
+
       const ticks = await getRepository(Tick).find({
-        // where: {
-        //   timestamp: LessThan('2018-08-03'),
-        // },
+        where,
         order: {
           timestamp: 'ASC',
         },
       });
 
       const market = new MockMarket({ accountValue: startValue, accountFiat: startFiat });
-      const strategy = new Strategy(market);
+
+      const TargetStrat = Strategies[strategyName];
+      const strategy = new TargetStrat(market);
       const simulation = new Simulation({ market, strategy });
 
       market.setTicks(ticks);
@@ -39,8 +60,5 @@ export const resolvers = {
 
       return simulation;
     },
-  }
+  },
 };
-
-
-
