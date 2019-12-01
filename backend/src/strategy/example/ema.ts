@@ -24,7 +24,9 @@ class EmaStrategy extends BaseStrategy {
   }
 
   updateIndicators(tick: Tick) {
-    const promises = values(this.indicators).map(indicator => indicator.handleTick(tick.last, tick.timestamp));
+    const promises = values(this.indicators).map(indicator =>
+      indicator.handleTick(tick.last, tick.timestamp),
+    );
     return Promise.all(promises);
   }
 

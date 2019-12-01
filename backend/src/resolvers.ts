@@ -2,6 +2,7 @@ import { getRepository, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeor
 import Tick from './models/tick';
 import Candle from './models/candle';
 import MockMarket from './market/mock';
+import * as Strategies from './strategy';
 import Strategy from './strategy/example/ema';
 import Simulation from './simulation';
 
@@ -16,6 +17,9 @@ export const resolvers = {
           datetime: 'ASC',
         },
       });
+    },
+    strategies: _ => {
+      return Object.keys(Strategies);
     },
   },
   Mutation: {

@@ -1,6 +1,7 @@
 scalar Date
 type Query {
   tick(id: ID!): Tick
+  strategies: [String]
   candles: [Candle]
 }
 type Mutation {

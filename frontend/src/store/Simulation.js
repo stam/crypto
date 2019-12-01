@@ -8,12 +8,13 @@ export default class Simulation extends BaseModel {
   @observable trades;
   @observable startBalance;
   @observable endBalance;
-  @observable startDate = '';
-  @observable endDate = '2018-08-03';
   @observable profit;
 
   @observable startValue = 1;
   @observable startFiat = 0;
+  @observable startDate = '';
+  @observable endDate = '2018-08-03';
+  @observable strategy = 'ema';
 
   @observable _loading = false;
 
