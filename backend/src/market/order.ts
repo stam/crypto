@@ -3,7 +3,7 @@ import Tick from '../models/tick';
 
 export enum OrderSide {
   BUY = 'buy',
-  SELL = 'sell'
+  SELL = 'sell',
 }
 
 export enum OrderType {
@@ -69,7 +69,7 @@ export default class Order {
     }
   }
 
-  public toSummary() : OrderSummary {
+  public toSummary(): OrderSummary {
     return {
       price: this.price,
       resultPrice: this.resultPrice,
@@ -77,12 +77,15 @@ export default class Order {
       side: this.side,
       date: this.date,
       type: this.type,
-    }
+    };
   }
 
   // Backtest purposes uses only
-  checkIfResolves(tick: Tick) : boolean {
+  checkIfResolves(tick: Tick): boolean {
     if (this.type === OrderType.MARKET) {
+      if (this.side === OrderSide.BUY) {
+        return tick.last <= this.price;
+      }
       return true;
     }
     if (this.type === OrderType.LIMIT) {
@@ -91,7 +94,7 @@ export default class Order {
       } else if (this.side === OrderSide.SELL && tick.last >= this.price) {
         return true;
       }
-      return false
+      return false;
     }
     throw new Error('Not implemented');
   }

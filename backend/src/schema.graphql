@@ -24,7 +24,7 @@ type Order {
   type: String
   side: String
   date: Date
-  quantity: Int
+  quantity: Float
   price: Int
   resultPrice: Int
 }
@@ -36,7 +36,7 @@ type Tick {
 type Trade {
   buyPrice: Int
   sellPrice: Int
-  quantity: Int
+  quantity: Float
   buyDate: Date
   sellDate: Date
   result: Float

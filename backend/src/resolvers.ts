@@ -26,6 +26,7 @@ export const resolvers = {
       _,
       { startValue, startFiat, strategy: strategyName, startDate, endDate },
     ) => {
+      console.info('--- Running simulation');
       let where = {};
       if (startDate && endDate) {
         where = {

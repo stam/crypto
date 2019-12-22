@@ -2,8 +2,8 @@ import { uniqueId } from 'lodash';
 import Tick from '../models/tick';
 import Order, { OrderSide, OrderType } from './order';
 
-export class InsufficientFiatError extends Error { }
-export class InsufficientCryptoError extends Error { }
+export class InsufficientFiatError extends Error {}
+export class InsufficientCryptoError extends Error {}
 
 type TickCallback = (tick: Tick) => void;
 
@@ -27,7 +27,12 @@ export default abstract class BaseMarket {
     this.accountValue = accountValue;
   }
 
-  async createOrder(type: OrderType, side: OrderSide, quantity: number, price?: number): Promise<Order> {
+  async createOrder(
+    type: OrderType,
+    side: OrderSide,
+    quantity: number,
+    price?: number,
+  ): Promise<Order> {
     if (type === OrderType.LIMIT && side === OrderSide.BUY) {
       if (price * quantity > this.accountFiat) {
         throw new InsufficientFiatError();
@@ -41,7 +46,7 @@ export default abstract class BaseMarket {
     const order = await this.placeOrder(type, side, quantity, price);
 
     if (side === OrderSide.BUY) {
-      this.accountFiat += (order.price - order.resultPrice); // If you order was for more than the sell, "refund" the difference
+      this.accountFiat += order.price - order.resultPrice; // If you order was for more than the sell, "refund" the difference
       this.accountValue += quantity;
     } else if (side === OrderSide.SELL) {
       this.accountFiat += order.resultPrice * quantity;
@@ -50,7 +55,7 @@ export default abstract class BaseMarket {
     return order;
   }
 
-  abstract async checkIfOrdersResolve(tick: Tick): Promise<void>
+  abstract async checkIfOrdersResolve(tick: Tick): Promise<void>;
 
   get timestamp() {
     return Date.now();
@@ -61,7 +66,12 @@ export default abstract class BaseMarket {
   }
 
   protected abstract async queryTick(): Promise<Tick>;
-  protected abstract async placeOrder(type: OrderType, side: OrderSide, quantity: number, price?: number): Promise<Order>
+  protected abstract async placeOrder(
+    type: OrderType,
+    side: OrderSide,
+    quantity: number,
+    price?: number,
+  ): Promise<Order>;
 
   async tick() {
     // console.log('[Market] | tick | start');

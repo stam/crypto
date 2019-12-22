@@ -14,7 +14,7 @@ export default class Simulation extends BaseModel {
   @observable startFiat = 0;
   @observable startDate = '';
   @observable strategy = 'ema';
-  @observable endDate = '2018-08-03';
+  @observable endDate = '2018-08-06';
 
   @observable _loading = false;
 

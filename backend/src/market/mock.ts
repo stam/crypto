@@ -1,7 +1,7 @@
 import Tick from '../models/tick';
 import { remove } from 'lodash';
 import BaseMarket from '.';
-import Order, {OrderSide, OrderType } from './order';
+import Order, { OrderSide, OrderType } from './order';
 
 export default class MockMarket extends BaseMarket {
   ticks: Tick[] = [];
@@ -14,13 +14,13 @@ export default class MockMarket extends BaseMarket {
     super(accountStartValues);
   }
 
-  async setTicks (ticks: Tick[]) {
+  async setTicks(ticks: Tick[]) {
     this.ticks = ticks;
   }
 
   async checkIfOrdersResolve(tick: Tick) {
     // console.log('[MockMarket] | checkIfOrdersResolve | ', this.unfullfilledOrders.length, tick.last);
-    remove(this.unfullfilledOrders, (order) => {
+    remove(this.unfullfilledOrders, order => {
       if (order.checkIfResolves(tick)) {
         order.resolve(tick.last, tick.timestamp);
         // console.log('[MockMarket] | checkIfOrdersResolve | done',order);
@@ -30,11 +30,15 @@ export default class MockMarket extends BaseMarket {
         return true;
       }
       return false;
-    })
+    });
   }
 
   get hasTicks() {
     return this.tickIndex < this.ticks.length;
+  }
+
+  get nextTick() {
+    return this.ticks[this.tickIndex];
   }
 
   protected async queryTick() {
@@ -53,8 +57,10 @@ export default class MockMarket extends BaseMarket {
       }
     } else if (type === OrderType.MARKET) {
       if (side === OrderSide.BUY) {
-        price = Math.round(this.accountFiat / quantity);
-        this.accountFiat = 0;
+        const reservationCost = this.nextTick ? this.nextTick.last * quantity : this.accountFiat;
+
+        price = Math.round(reservationCost / quantity);
+        this.accountFiat -= reservationCost;
       } else if (side === OrderSide.SELL) {
         price = 0;
         this.accountValue -= quantity;
