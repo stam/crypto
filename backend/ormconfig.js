@@ -2,8 +2,12 @@ require('dotenv').config();
 
 if (process.env.NODE_ENV === 'test') {
   module.exports = {
-    type: 'sqlite',
-    database: 'test.sqlite',
+    type: process.env.DB_TYPE,
+    host: process.env.DB_HOST,
+    port: process.env.DB_POST,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     logging: false,
     synchronize: true,
     entities: ['src/models/**/*.ts'],
